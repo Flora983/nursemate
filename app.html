@@ -1176,7 +1176,7 @@ const BURNOUT_T = {
 };
 
 // ─── FEEDBACK & DEMO ───
-const FEEDBACK_EMAIL = 'munthaliflora@yahoo.com'; // <-- VERVANG DIT MET JOUW EMAIL
+const FEEDBACK_EMAIL = 'jouw-email@voorbeeld.com'; // <-- VERVANG DIT MET JOUW EMAIL
 
 const DEMO_FALLBACK = {
   en: {
@@ -2548,7 +2548,7 @@ function renderTasksPage() {
       const b = document.createElement('button');
       b.textContent = q;
       b.style.cssText = 'padding:5px 11px;border-radius:20px;border:1px solid rgba(251,191,36,0.25);background:rgba(251,191,36,0.07);color:rgba(251,191,36,0.8);font-size:0.75rem;cursor:pointer;font-family:sans-serif;';
-      b.onclick = () => { const inp = el('task-input'); if(inp){inp.value=q;inp.focus();} };
+      b.onclick = () => { const inp = el('task-input'); if(inp){inp.value=q;} addTask(); };
       qc.appendChild(b);
     });
   }
