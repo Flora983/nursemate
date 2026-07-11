@@ -1,0 +1,3035 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maya — NurseMate</title>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0a3d4a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Maya">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --teal:#0d4f5c;--teal-light:#0f8fa0;--teal-mid:#13919f;
+  --green:#34d399;--red:#f87171;--amber:#fcd34d;
+  --bg:#0f1f35;--bg2:#0a111f;--bg3:rgba(255,255,255,0.07);
+  --border:rgba(255,255,255,0.14);--border2:rgba(255,255,255,0.2);
+  --text:#e0f2f1;--text2:#94a3b8;--text3:#7de8f0;
+  --radius:14px;--shadow:0 4px 20px rgba(0,0,0,0.35);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{background:var(--bg2);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:0.5}50%{opacity:1}}
+
+/* HEADER */
+.header{background:linear-gradient(135deg,#0a3d4a,var(--teal-light));padding:14px 18px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(0,0,0,0.4);}
+.logo{font-family:'DM Serif Display',serif;font-size:1.6rem;color:#fff;flex:1;}
+.logo span{color:#7de8f0;font-style:italic;}
+.back-btn{display:none;background:rgba(255,255,255,0.14);border:1px solid rgba(255,255,255,0.25);color:#fff;padding:6px 14px;border-radius:20px;font-family:'DM Sans',sans-serif;font-size:0.8rem;font-weight:600;cursor:pointer;}
+.back-btn.visible{display:flex;align-items:center;gap:5px;}
+.lang-btn{background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);color:#fff;padding:5px 11px;border-radius:16px;font-size:0.75rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.lang-btn:hover{background:rgba(255,255,255,0.22);}
+
+/* DISCLAIMER */
+.disc{background:rgba(252,211,77,0.1);border-bottom:1px solid rgba(252,211,77,0.25);padding:8px 18px;font-size:0.76rem;color:var(--amber);text-align:center;font-weight:500;}
+
+/* PAGES */
+.page{display:none;background:var(--bg2);min-height:calc(100vh - 60px);animation:fadeUp 0.25s ease;}
+.page.active{display:block;}
+
+/* DASHBOARD */
+.hero{background:linear-gradient(135deg,#0a3d4a,var(--teal-light));padding:20px 20px 18px;position:relative;overflow:hidden;}
+.hero::after{content:'';position:absolute;top:-40px;right:-40px;width:130px;height:130px;background:rgba(255,255,255,0.05);border-radius:50%;}
+.hero-title{font-family:'DM Serif Display',serif;font-size:1.75rem;color:#fff;line-height:1.2;margin-bottom:5px;}
+.hero-title span{color:#7de8f0;font-style:italic;}
+.hero-sub{font-size:0.83rem;color:rgba(255,255,255,0.78);}
+
+.qn-btn{display:flex;align-items:center;gap:14px;margin:18px 16px 14px;padding:18px 20px;background:linear-gradient(135deg,#0a3d4a,var(--teal-light));border:none;border-radius:16px;color:#fff;font-family:'DM Serif Display',serif;font-size:1.05rem;cursor:pointer;box-shadow:0 6px 22px rgba(13,110,122,0.4);width:calc(100% - 32px);transition:all 0.2s;}
+.qn-btn:hover{opacity:0.92;transform:translateY(-2px);}
+.qn-sub{font-family:'DM Sans',sans-serif;font-size:0.76rem;opacity:0.82;margin-top:2px;}
+
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;padding:0 16px 80px;}
+.card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:20px 14px 16px;text-align:center;cursor:pointer;transition:all 0.22s;position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--teal),var(--teal-light));opacity:0;transition:opacity 0.2s;}
+.card:hover{border-color:var(--teal-light);transform:translateY(-4px);box-shadow:0 10px 30px rgba(0,0,0,0.4);}
+.card:hover::before{opacity:1;}
+.card .ico{font-size:2.2rem;display:block;margin-bottom:8px;}
+.card .cn{font-family:'DM Serif Display',serif;font-size:0.95rem;color:var(--text3);margin-bottom:3px;}
+.card .cd{font-size:0.72rem;color:var(--text2);line-height:1.4;}
+
+/* MODULE PAGES */
+.mod-page{padding:20px 16px 80px;max-width:640px;margin:0 auto;}
+.mod-title{font-family:'DM Serif Display',serif;font-size:1.4rem;color:var(--text3);margin-bottom:4px;}
+.mod-desc{font-size:0.83rem;color:var(--text2);margin-bottom:18px;line-height:1.6;}
+.priv{background:rgba(252,211,77,0.1);border:1px solid rgba(252,211,77,0.3);border-radius:10px;padding:10px 14px;font-size:0.78rem;color:var(--amber);margin-bottom:18px;font-weight:500;line-height:1.6;}
+
+.blk{margin-bottom:18px;}
+.lbl{font-size:0.72rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;display:block;}
+
+.chips{display:flex;flex-wrap:wrap;gap:7px;}
+.chip{padding:8px 15px;border-radius:22px;border:1px solid var(--border2);background:rgba(255,255,255,0.07);font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:500;color:var(--text);cursor:pointer;transition:all 0.15s;}
+.chip:hover{border-color:var(--teal-light);color:var(--text3);}
+.chip.sel{background:linear-gradient(135deg,var(--teal),var(--teal-light));border-color:var(--teal-light);color:#fff;box-shadow:0 2px 10px rgba(13,110,122,0.4);}
+
+input.f,textarea.f,select.f{width:100%;padding:11px 13px;border:1px solid var(--border2);border-radius:10px;background:rgba(255,255,255,0.07);color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.88rem;outline:none;transition:border-color 0.2s;}
+input.f::placeholder,textarea.f::placeholder{color:rgba(148,163,184,0.5);}
+input.f:focus,textarea.f:focus{border-color:var(--teal-light);}
+textarea.f{min-height:70px;resize:vertical;line-height:1.6;}
+select.f{cursor:pointer;}
+select.f option{background:#1e2937;}
+
+.gen-btn{width:100%;padding:14px;background:linear-gradient(135deg,#0a3d4a,var(--teal-light));color:#fff;border:none;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:700;cursor:pointer;margin-top:10px;transition:all 0.2s;box-shadow:0 4px 16px rgba(13,110,122,0.3);}
+.gen-btn:hover{opacity:0.92;transform:translateY(-2px);}
+.gen-btn:disabled{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.3);cursor:not-allowed;transform:none;box-shadow:none;}
+
+.loader{display:none;align-items:center;justify-content:center;gap:10px;padding:14px;color:var(--text3);font-size:0.86rem;font-weight:600;}
+.loader.vis{display:flex;}
+.spinner{width:18px;height:18px;border:2.5px solid rgba(13,145,159,0.25);border-top-color:var(--teal-light);border-radius:50%;animation:spin 0.8s linear infinite;}
+
+.err{display:none;background:rgba(248,113,113,0.12);border:1px solid rgba(248,113,113,0.3);border-radius:10px;padding:11px 14px;font-size:0.83rem;color:var(--red);margin-top:10px;}
+.err.vis{display:block;}
+
+.res-lbl{font-family:'DM Serif Display',serif;font-size:1.05rem;color:var(--text3);margin-bottom:8px;}
+.res-box{width:100%;min-height:130px;padding:16px 18px;border:1px solid rgba(13,145,159,0.35);border-left:4px solid var(--teal-light);border-radius:var(--radius);background:rgba(255,255,255,0.06);color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.93rem;line-height:1.75;white-space:pre-wrap;resize:vertical;margin-bottom:12px;}
+.res-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.res-btn{padding:11px;border-radius:10px;border:1px solid var(--border2);background:rgba(255,255,255,0.07);font-family:'DM Sans',sans-serif;font-size:0.83rem;font-weight:600;color:var(--text);cursor:pointer;transition:all 0.2s;text-align:center;}
+.res-btn:hover{border-color:var(--teal-light);color:var(--text3);}
+.res-btn.pri{background:linear-gradient(135deg,#0a3d4a,var(--teal-light));border:none;color:#fff;}
+
+.voice-btn{background:rgba(13,145,159,0.18);border:1px solid rgba(13,145,159,0.35);color:var(--text3);width:38px;height:38px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:1.1rem;cursor:pointer;margin-left:8px;flex-shrink:0;transition:all 0.2s;}
+.voice-btn.rec{background:rgba(239,68,68,0.2);border-color:#ef4444;color:#f87171;animation:pulse 1s infinite;}
+.voice-row{display:flex;align-items:flex-start;}
+.voice-row textarea.f{flex:1;}
+
+.scenario{display:none;background:rgba(255,255,255,0.04);border-radius:12px;padding:14px;border:1px solid var(--border);margin-top:4px;}
+.scenario.act{display:block;}
+
+/* POPUP */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.78);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;}
+.popup{background:#1a2840;border:1px solid var(--border2);border-radius:18px;padding:26px 22px;max-width:400px;width:100%;box-shadow:0 24px 60px rgba(0,0,0,0.6);text-align:center;}
+.popup h2{font-family:'DM Serif Display',serif;font-size:1.25rem;color:var(--text3);margin-bottom:10px;}
+.popup p{font-size:0.84rem;color:var(--text2);line-height:1.65;margin-bottom:14px;}
+.popup-rules{background:rgba(252,211,77,0.1);border:1px solid rgba(252,211,77,0.28);border-radius:10px;padding:12px 14px;text-align:left;font-size:0.79rem;color:var(--amber);margin-bottom:20px;line-height:1.75;font-weight:500;}
+.popup-btn{width:100%;padding:13px;background:linear-gradient(135deg,#0a3d4a,var(--teal-light));color:#fff;border:none;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:0.93rem;font-weight:700;cursor:pointer;}
+
+/* SUPPORT CHAT */
+#support-chat{min-height:180px;margin-bottom:14px;display:flex;flex-direction:column;gap:10px;}
+.chat-msg{display:flex;max-width:85%;animation:fadeUp 0.3s ease;}
+.chat-msg.user{align-self:flex-end;flex-direction:row-reverse;}
+.chat-bubble{padding:10px 14px;border-radius:18px;font-size:0.88rem;line-height:1.65;font-family:'DM Sans',sans-serif;}
+.chat-msg.maya .chat-bubble{background:rgba(255,255,255,0.08);border:1px solid var(--border);border-radius:18px 18px 18px 4px;color:var(--text);}
+.chat-msg.user .chat-bubble{background:linear-gradient(135deg,#0a3d4a,var(--teal-light));color:#fff;border-radius:18px 18px 4px 18px;}
+
+/* LEARN */
+.tip-box{background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.28);border-radius:14px;padding:15px;margin-bottom:14px;}
+.quiz-box{background:rgba(167,139,250,0.07);border:1px solid rgba(167,139,250,0.25);border-radius:14px;padding:15px;}
+.quiz-opt{padding:10px 13px;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,0.06);color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.86rem;text-align:left;cursor:pointer;transition:all 0.2s;width:100%;margin-bottom:7px;display:block;}
+.quiz-opt:last-child{margin-bottom:0;}
+.quiz-opt.correct{border-color:var(--green);background:rgba(52,211,153,0.15);color:var(--green);}
+.quiz-opt.wrong{border-color:var(--red);background:rgba(248,113,113,0.15);color:var(--red);}
+
+@media(max-width:600px){.grid{grid-template-columns:1fr;}.res-actions{grid-template-columns:1fr;}.chip{padding:7px 12px;font-size:0.78rem;}.mod-page{padding:16px 12px 70px;}.blk{margin-bottom:15px;}.lbl{font-size:0.68rem;}}
+</style>
+</head>
+<body>
+
+<!-- POPUP -->
+<div class="overlay" id="popup">
+  <div class="popup" style="max-width:340px;">
+    <div style="font-size:2.8rem;margin-bottom:10px;">🩺</div>
+    <h2 id="popup-title" style="font-family:'DM Serif Display',serif;font-size:1.4rem;color:var(--text3);margin-bottom:8px;">Maya NurseMate</h2>
+    <p id="popup-sub" style="font-size:0.88rem;color:var(--text2);line-height:1.6;margin-bottom:16px;"></p>
+    <div style="background:rgba(252,211,77,0.1);border:1px solid rgba(252,211,77,0.25);border-radius:10px;padding:11px 14px;font-size:0.8rem;color:var(--amber);margin-bottom:18px;line-height:1.65;">
+      🔒 <span id="popup-rule"></span>
+    </div>
+    <button class="popup-btn" id="popup-btn" onclick="closePopup()" style="font-size:1rem;padding:15px;"></button>
+  </div>
+</div>
+
+<!-- QUICK NOTE MODAL -->
+<div class="overlay" id="qn-modal" style="display:none;">
+  <div class="popup" style="text-align:left;">
+    <h2 id="qn-title" style="text-align:center;margin-bottom:14px;"></h2>
+    <div class="priv" id="qn-priv"></div>
+    <span class="lbl" id="qn-room-lbl"></span>
+    <input type="text" class="f" id="qn-kamer" style="margin-bottom:12px;">
+    <span class="lbl" id="qn-note-lbl"></span>
+    <div class="voice-row">
+      <textarea class="f" id="qn-text" style="min-height:80px;flex:1;"></textarea>
+      <button class="voice-btn" onclick="toggleVoice(this,'qn-text')">🎤</button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;">
+      <button class="res-btn" onclick="closeQnModal()" id="qn-cancel"></button>
+      <button class="res-btn pri" onclick="submitQn()" id="qn-submit"></button>
+    </div>
+  </div>
+</div>
+
+<!-- RESULT MODAL -->
+<div class="overlay" id="res-modal" style="display:none;">
+  <div class="popup" style="text-align:left;max-width:480px;">
+    <div class="res-lbl" id="res-modal-title"></div>
+    <textarea class="res-box" id="res-modal-text"></textarea>
+    <div class="res-actions">
+      <button class="res-btn" onclick="copyRes()" id="res-copy-btn"></button>
+      <button class="res-btn pri" onclick="document.getElementById('res-modal').style.display='none'" id="res-done-btn"></button>
+    </div>
+    <div style="font-size:0.73rem;color:var(--text2);margin-top:10px;text-align:center;" id="res-disclaimer"></div>
+  </div>
+</div>
+
+<!-- GESCHIEDENIS MODAL -->
+<div class="overlay" id="hist-modal" style="display:none;">
+  <div class="popup" style="text-align:left;max-width:480px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+      <div style="font-family:'DM Serif Display',serif;font-size:1.1rem;color:var(--text3);" id="hist-title">Recent reports</div>
+      <button onclick="document.getElementById('hist-modal').style.display='none'" style="background:none;border:none;color:var(--text2);font-size:1.2rem;cursor:pointer;">✕</button>
+    </div>
+    <div id="hist-list" style="display:flex;flex-direction:column;gap:10px;max-height:60vh;overflow-y:auto;"></div>
+    <button onclick="document.getElementById('hist-modal').style.display='none'" class="gen-btn" id="hist-close-btn" style="margin-top:14px;"></button>
+  </div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <button class="back-btn" id="back-btn" onclick="goBack()">← <span id="back-lbl">Back</span></button>
+  <div class="logo" style="flex:1;">Maya <span>NurseMate</span></div>
+  <button onclick="sendFeedback()" title="Feedback" style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);color:#fff;padding:5px 11px;border-radius:16px;font-size:0.75rem;cursor:pointer;font-family:'DM Sans',sans-serif;">💬</button>
+  <button onclick="openHistory()" id="hist-btn" style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);color:#fff;padding:5px 11px;border-radius:16px;font-size:0.75rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;display:none;">📋</button>
+  <button class="lang-btn" onclick="cycleLang()">🌐 <span id="lang-display">EN</span></button>
+</div>
+<div class="disc" id="disc-bar"></div>
+<div id="install-banner" style="display:none;background:linear-gradient(135deg,#0a3d4a,#0f8fa0);padding:10px 18px;align-items:center;justify-content:space-between;gap:10px;">
+  <div style="font-size:0.8rem;color:rgba(255,255,255,0.9);font-family:'DM Sans',sans-serif;">📱 <span id="install-txt">Install Maya on your phone</span></div>
+  <div style="display:flex;gap:8px;">
+    <button onclick="installApp()" id="install-btn" style="padding:6px 14px;border-radius:20px;border:none;background:white;color:#0a3d4a;font-family:'DM Sans',sans-serif;font-size:0.78rem;font-weight:700;cursor:pointer;"></button>
+    <button onclick="document.getElementById('install-banner').style.display='none'" style="padding:6px 10px;border-radius:20px;border:1px solid rgba(255,255,255,0.3);background:transparent;color:rgba(255,255,255,0.7);font-family:'DM Sans',sans-serif;font-size:0.78rem;cursor:pointer;">✕</button>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="page-home" class="page active">
+  <div class="hero">
+    <div class="hero-title" id="hero-title">Your AI <span>colleague.</span></div>
+    <div class="hero-sub" id="hero-sub">Professional nursing documentation in 30 seconds</div>
+    <div id="time-saved-bar" style="display:none;margin-top:14px;background:rgba(255,255,255,0.12);border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:10px;">
+      <span style="font-size:1.3rem;">⏱️</span>
+      <div>
+        <div style="font-size:0.72rem;color:rgba(255,255,255,0.7);font-weight:500;" id="time-saved-label"></div>
+        <div style="font-size:1.1rem;color:#fff;font-weight:700;" id="time-saved-value"></div>
+      </div>
+    </div>
+  </div>
+  <button class="qn-btn" onclick="openQnModal()">
+    <span style="font-size:1.6rem;">🎤</span>
+    <div><div id="qn-btn-title">Quick Note</div><div class="qn-sub" id="qn-btn-sub">Speak or type — AI writes the report</div></div>
+  </button>
+  <div class="grid" id="module-grid"></div>
+</div>
+
+<!-- SHIFT BRIEFING -->
+<div id="page-shift" class="page">
+  <div class="mod-page">
+    <div class="mod-title" id="shift-title">📋 Shift Briefing</div>
+    <div class="mod-desc" id="shift-desc"></div>
+    <div class="priv" id="shift-priv"></div>
+
+    <!-- PATIENT LIST -->
+    <div id="sh-patient-list" style="display:none;margin-bottom:16px;">
+      <div style="font-size:0.72rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;" id="sh-list-lbl"></div>
+      <div id="sh-patient-cards"></div>
+    </div>
+
+    <!-- SHIFT RUSTIG KNOP -->
+    <button id="sh-quiet-btn" onclick="generateQuietShift()" style="width:100%;padding:14px;border-radius:12px;border:1px solid rgba(52,211,153,0.35);background:rgba(52,211,153,0.08);color:#34d399;font-family:'DM Sans',sans-serif;font-size:0.9rem;font-weight:700;cursor:pointer;margin-bottom:14px;display:flex;align-items:center;justify-content:center;gap:8px;"></button>
+
+    <div style="background:rgba(13,145,159,0.08);border:1px solid rgba(13,145,159,0.2);border-radius:12px;padding:14px;margin-bottom:16px;">
+      <div style="font-size:0.72rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px;" id="sh-add-lbl"></div>
+      <div class="blk" style="margin-bottom:12px;"><span class="lbl" id="shift-room-lbl"></span><input type="text" class="f" id="sh-kamer" oninput="refreshBtns()"></div>
+    <div class="blk">
+      <span class="lbl" id="shift-status-lbl"></span>
+      <div class="chips" id="sh-status-chips"></div>
+    </div>
+    <div class="blk">
+      <span class="lbl" id="shift-obs-lbl"></span>
+      <div class="chips" id="sh-obs-chips"></div>
+      <div id="sh-pain-wrap" style="display:none;margin-top:8px;"><input type="text" class="f" id="sh-pain-loc"></div>
+      <div id="sh-params-wrap" style="display:none;margin-top:8px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;">
+          <input class="f" id="sh-rr" placeholder="BP e.g. 120/70" style="padding:8px 10px;font-size:0.82rem;">
+          <input class="f" id="sh-hf" placeholder="HR e.g. 82" style="padding:8px 10px;font-size:0.82rem;">
+          <input class="f" id="sh-sat" placeholder="SpO2 e.g. 96%" style="padding:8px 10px;font-size:0.82rem;">
+          <input class="f" id="sh-temp" placeholder="Temp e.g. 37.1°C" style="padding:8px 10px;font-size:0.82rem;">
+        </div>
+      </div>
+      <div id="sh-glyc-wrap" style="display:none;margin-top:8px;"><input type="text" class="f" id="sh-glyc"></div>
+    </div>
+    <div class="blk">
+      <span class="lbl" id="shift-act-lbl"></span>
+      <div class="chips" id="sh-act-chips"></div>
+      <div id="sh-med-wrap" style="display:none;margin-top:8px;"><input type="text" class="f" id="sh-med-detail"></div>
+      <div id="sh-urine-wrap" style="display:none;margin-top:8px;"><input type="text" class="f" id="sh-urine-detail"></div>
+    </div>
+    <div class="blk">
+      <span class="lbl" id="shift-fup-lbl"></span>
+      <div class="chips" id="sh-fup-chips"></div>
+    </div>
+    <div class="blk"><span class="lbl" id="shift-notes-lbl"></span>
+      <div class="voice-row"><textarea class="f" id="sh-notes"></textarea><button class="voice-btn" onclick="toggleVoice(this,'sh-notes')">🎤</button></div>
+    </div>
+    </div><!-- end patient input box -->
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+      <button class="gen-btn" id="sh-add-btn" onclick="addPatient()" style="background:rgba(13,145,159,0.2);border:1px solid rgba(13,145,159,0.4);color:var(--text3);" disabled></button>
+      <button class="gen-btn" id="sh-btn" onclick="generate('shift')" disabled></button>
+    </div>
+    <div class="loader" id="sh-loader"><div class="spinner"></div><span id="sh-loading-txt"></span></div>
+    <div class="err" id="sh-err"></div>
+  </div>
+</div>
+
+<!-- INCIDENT -->
+<div id="page-incident" class="page">
+  <div class="mod-page">
+    <div class="mod-title" id="inc-title">⚠️ Incident</div>
+    <div class="mod-desc" id="inc-desc"></div>
+    <div class="priv" id="inc-priv"></div>
+    <div class="blk"><span class="lbl" id="inc-room-lbl"></span><input type="text" class="f" id="inc-kamer" oninput="refreshBtns()"></div>
+    <div class="blk"><span class="lbl" id="inc-type-lbl"></span><div class="chips" id="inc-type-chips"></div></div>
+    <div class="scenario" id="inc-sc-fall">
+      <div class="blk"><span class="lbl" id="inc-loc-lbl"></span><div class="chips" data-key="inc-loc"></div></div>
+      <div class="blk"><span class="lbl" id="inc-time-lbl"></span><input type="time" class="f" id="inc-time"></div>
+      <div class="blk"><span class="lbl" id="inc-found-lbl"></span><div class="chips" data-key="inc-found"></div></div>
+      <div class="blk"><span class="lbl" id="inc-head-lbl"></span><div class="chips" data-key="inc-head"></div></div>
+      <div class="blk">
+        <span class="lbl" id="inc-injury-lbl"></span>
+        <div class="chips" id="inc-injury-chips"></div>
+        <div id="inc-pain-wrap" style="display:none;margin-top:7px;"><input class="f" id="inc-pain-loc"></div>
+      </div>
+      <div class="blk"><span class="lbl" id="inc-params-lbl"></span>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;">
+          <input class="f" id="inc-rr" placeholder="BP" style="padding:8px 10px;font-size:0.82rem;">
+          <input class="f" id="inc-hf" placeholder="HR" style="padding:8px 10px;font-size:0.82rem;">
+          <input class="f" id="inc-sat" placeholder="SpO2%" style="padding:8px 10px;font-size:0.82rem;">
+          <input class="f" id="inc-temp" placeholder="Temp" style="padding:8px 10px;font-size:0.82rem;">
+        </div>
+      </div>
+    </div>
+    <div class="scenario" id="inc-sc-aggr">
+      <div class="blk"><span class="lbl" id="inc-agr-type-lbl"></span><div class="chips" data-key="inc-agr-type"></div></div>
+      <div class="blk"><span class="lbl" id="inc-agr-cause-lbl"></span><div class="chips" data-key="inc-agr-cause"></div></div>
+      <div class="blk"><span class="lbl" id="inc-agr-inj-lbl"></span><div class="chips" data-key="inc-agr-inj"></div></div>
+    </div>
+    <div class="scenario" id="inc-sc-wand">
+      <div class="blk"><span class="lbl" id="inc-wand-found-lbl"></span><div class="chips" data-key="inc-wand-found"></div></div>
+      <div class="blk"><span class="lbl" id="inc-wand-cond-lbl"></span><div class="chips" data-key="inc-wand-cond"></div></div>
+    </div>
+    <div class="scenario" id="inc-sc-med">
+      <div class="blk"><span class="lbl" id="inc-med-type-lbl"></span><div class="chips" data-key="inc-med-type"></div></div>
+      <div class="blk"><span class="lbl" id="inc-med-name-lbl"></span><input class="f" id="inc-med-name"></div>
+    </div>
+    <div class="blk" style="margin-top:10px;"><span class="lbl" id="inc-actions-lbl"></span><div class="chips" id="inc-act-chips"></div></div>
+    <div class="blk"><span class="lbl" id="inc-notes-lbl"></span>
+      <div class="voice-row"><textarea class="f" id="inc-notes"></textarea><button class="voice-btn" onclick="toggleVoice(this,'inc-notes')">🎤</button></div>
+    </div>
+    <button class="gen-btn" id="inc-btn" onclick="generate('incident')" disabled></button>
+    <div class="loader" id="inc-loader"><div class="spinner"></div><span id="inc-loading-txt"></span></div>
+    <div class="err" id="inc-err"></div>
+  </div>
+</div>
+
+<!-- WOUND CARE -->
+<div id="page-wound" class="page">
+  <div class="mod-page">
+    <div class="mod-title" id="wnd-title">🩹 Wound Care</div>
+    <div class="mod-desc" id="wnd-desc"></div>
+    <div class="priv" id="wnd-priv"></div>
+    <div class="blk"><span class="lbl" id="wnd-room-lbl"></span><input type="text" class="f" id="wnd-kamer" oninput="refreshBtns()"></div>
+    <div class="blk"><span class="lbl" id="wnd-type-lbl"></span><div class="chips" id="wnd-type-chips"></div></div>
+    <div class="blk"><span class="lbl" id="wnd-loc-lbl"></span><div class="chips" id="wnd-loc-chips"></div></div>
+    <div class="blk"><span class="lbl" id="wnd-evol-lbl"></span><div class="chips" data-key="wnd-evol"></div></div>
+    <div class="blk"><span class="lbl" id="wnd-asp-lbl"></span><div class="chips" id="wnd-asp-chips"></div></div>
+    <div class="blk"><span class="lbl" id="wnd-care-lbl"></span><div class="chips" id="wnd-care-chips"></div></div>
+    <div class="blk"><span class="lbl" id="wnd-fup-lbl"></span><div class="chips" data-key="wnd-fup"></div></div>
+    <div class="blk"><span class="lbl" id="wnd-notes-lbl"></span>
+      <div class="voice-row"><textarea class="f" id="wnd-notes"></textarea><button class="voice-btn" onclick="toggleVoice(this,'wnd-notes')">🎤</button></div>
+    </div>
+    <button class="gen-btn" id="wnd-btn" onclick="generate('wound')" disabled></button>
+    <div class="loader" id="wnd-loader"><div class="spinner"></div><span id="wnd-loading-txt"></span></div>
+    <div class="err" id="wnd-err"></div>
+  </div>
+</div>
+
+<!-- BEHAVIOUR -->
+<div id="page-behav" class="page">
+  <div class="mod-page">
+    <div class="mod-title" id="beh-title">🧠 Behaviour Note</div>
+    <div class="mod-desc" id="beh-desc"></div>
+    <div class="priv" id="beh-priv"></div>
+    <div class="blk"><span class="lbl" id="beh-room-lbl"></span><input type="text" class="f" id="beh-kamer" oninput="refreshBtns()"></div>
+    <div class="blk"><span class="lbl" id="beh-type-lbl"></span><div class="chips" data-key="beh-type"></div></div>
+    <div class="blk"><span class="lbl" id="beh-ctx-lbl"></span><div class="chips" data-key="beh-ctx"></div></div>
+    <div class="blk"><span class="lbl" id="beh-int-lbl"></span><div class="chips" data-key="beh-int"></div></div>
+    <div class="blk"><span class="lbl" id="beh-cause-lbl"></span><div class="chips" data-key="beh-cause"></div></div>
+    <div class="blk"><span class="lbl" id="beh-react-lbl"></span><div class="chips" data-key="beh-react"></div></div>
+    <div class="blk"><span class="lbl" id="beh-act-lbl"></span><div class="chips" id="beh-act-chips"></div></div>
+    <div class="blk"><span class="lbl" id="beh-notes-lbl"></span>
+      <div class="voice-row"><textarea class="f" id="beh-notes"></textarea><button class="voice-btn" onclick="toggleVoice(this,'beh-notes')">🎤</button></div>
+    </div>
+    <button class="gen-btn" id="beh-btn" onclick="generate('behav')" disabled></button>
+    <div class="loader" id="beh-loader"><div class="spinner"></div><span id="beh-loading-txt"></span></div>
+    <div class="err" id="beh-err"></div>
+  </div>
+</div>
+
+<!-- MEDICATION -->
+<div id="page-meds" class="page">
+  <div class="mod-page">
+    <div class="mod-title" id="med-title">💊 Medication Note</div>
+    <div class="mod-desc" id="med-desc"></div>
+    <div class="priv" id="med-priv"></div>
+    <div class="blk"><span class="lbl" id="med-room-lbl"></span><input type="text" class="f" id="med-kamer" oninput="refreshBtns()"></div>
+    <div class="blk"><span class="lbl" id="med-reason-lbl"></span><div class="chips" data-key="med-reason"></div></div>
+    <div class="blk"><span class="lbl" id="med-change-lbl"></span><div class="chips" data-key="med-change"></div></div>
+    <div class="blk"><span class="lbl" id="med-name-lbl"></span>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <input class="f" id="med-name" oninput="refreshBtns()">
+        <input class="f" id="med-dose">
+      </div>
+    </div>
+    <div class="blk"><span class="lbl" id="med-freq-lbl"></span><div class="chips" data-key="med-freq"></div></div>
+    <div class="blk"><span class="lbl" id="med-dur-lbl"></span><div class="chips" data-key="med-dur"></div></div>
+    <div class="blk"><span class="lbl" id="med-fup-lbl"></span><div class="chips" data-key="med-fup"></div></div>
+    <div class="blk"><span class="lbl" id="med-notes-lbl"></span>
+      <div class="voice-row"><textarea class="f" id="med-notes"></textarea><button class="voice-btn" onclick="toggleVoice(this,'med-notes')">🎤</button></div>
+    </div>
+    <button class="gen-btn" id="med-btn" onclick="generate('meds')" disabled></button>
+    <div class="loader" id="med-loader"><div class="spinner"></div><span id="med-loading-txt"></span></div>
+    <div class="err" id="med-err"></div>
+  </div>
+</div>
+
+<!-- KORTE COMMUNICATIE -->
+<div id="page-comm" class="page">
+  <div class="mod-page">
+    <div class="mod-title" id="comm-title">⚡ Korte Communicatie</div>
+    <div class="mod-desc" id="comm-desc"></div>
+    <div class="priv" id="comm-priv"></div>
+    <div class="blk"><span class="lbl" id="comm-room-lbl"></span><input type="text" class="f" id="comm-kamer" oninput="refreshBtns()"></div>
+    <div class="blk"><span class="lbl" id="comm-type-lbl"></span><div class="chips" id="comm-type-chips"></div></div>
+
+    <!-- SCENARIO: DOCTOR CONTACTED -->
+    <div class="scenario" id="comm-sc-doctor">
+      <div class="blk"><span class="lbl" id="comm-symp-lbl"></span><div class="chips" id="comm-symp-chips"></div></div>
+      <div class="blk"><input type="text" class="f" id="comm-symp-detail"></div>
+      <div class="blk"><span class="lbl" id="comm-dec-lbl"></span><div class="chips" id="comm-dec-chips"></div></div>
+      <div class="blk"><span class="lbl" id="comm-act-lbl"></span><div class="chips" data-key="comm-action"></div></div>
+      <div class="blk"><span class="lbl" id="comm-med-lbl"></span>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+          <input class="f" id="comm-med-name"><input class="f" id="comm-med-dose">
+        </div>
+        <div class="chips" data-key="comm-med-freq"></div>
+      </div>
+    </div>
+
+    <!-- SCENARIO: LAB/ADVICE -->
+    <div class="scenario" id="comm-sc-lab">
+      <div class="blk"><span class="lbl" id="comm-lab-sub-lbl"></span><div class="chips" data-key="comm-lab-sub"></div></div>
+      <div class="blk"><input type="text" class="f" id="comm-lab-detail"></div>
+      <div class="blk"><span class="lbl" id="comm-lab-dec-lbl"></span><div class="chips" id="comm-lab-dec-chips"></div></div>
+      <div class="blk"><span class="lbl" id="comm-med-lbl2"></span>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+          <input class="f" id="comm-lab-med-name"><input class="f" id="comm-lab-med-dose">
+        </div>
+        <div class="chips" data-key="comm-lab-med-freq"></div>
+      </div>
+    </div>
+
+    <!-- SCENARIO: ADMISSION -->
+    <div class="scenario" id="comm-sc-adm">
+      <div class="blk"><span class="lbl" id="comm-adm-reason-lbl"></span><div class="chips" id="comm-adm-reason-chips"></div></div>
+      <div class="blk" id="comm-adm-other-wrap" style="display:none;"><input class="f" id="comm-adm-other" placeholder="..."></div>
+      <div class="blk"><span class="lbl" id="comm-adm-hosp-lbl"></span><input class="f" id="comm-adm-hosp"></div>
+      <div class="blk"><span class="lbl" id="comm-adm-by-lbl"></span><div class="chips" data-key="comm-adm-by"></div></div>
+      <div class="blk"><span class="lbl" id="comm-adm-fam-lbl"></span>
+        <div style="display:flex;gap:8px;">
+          <button class="chip" id="comm-adm-fam-yes" onclick="selectFam('yes')"></button>
+          <button class="chip" id="comm-adm-fam-no" onclick="selectFam('no')"></button>
+        </div>
+      </div>
+      <div class="blk"><span class="lbl" id="comm-adm-items-lbl"></span><div class="chips" id="comm-adm-items-chips"></div></div>
+    </div>
+
+    <!-- SCENARIO: BACK FROM HOSPITAL -->
+    <div class="scenario" id="comm-sc-back">
+      <div class="blk"><span class="lbl" id="comm-back-reason-lbl"></span><div class="chips" data-key="comm-back-reason"></div></div>
+      <div class="blk"><span class="lbl" id="comm-back-dec-lbl"></span><div class="chips" id="comm-back-dec-chips"></div></div>
+      <div class="blk"><input class="f" id="comm-back-med"></div>
+      <div class="blk"><input class="f" id="comm-back-fup"></div>
+    </div>
+
+    <!-- SCENARIO: APPROVAL -->
+    <div class="scenario" id="comm-sc-approval">
+      <div class="blk"><span class="lbl" id="comm-appr-reason-lbl"></span><div class="chips" data-key="comm-appr-reason"></div></div>
+      <div class="blk"><span class="lbl" id="comm-appr-ans-lbl"></span><div class="chips" data-key="comm-appr-ans"></div></div>
+      <div class="blk"><span class="lbl" id="comm-appr-act-lbl"></span><div class="chips" id="comm-appr-act-chips"></div></div>
+    </div>
+
+    <!-- SCENARIO: PASSING AWAY -->
+    <div class="scenario" id="comm-sc-pass" style="border-color:rgba(148,163,184,0.2);">
+      <div class="blk"><span class="lbl" id="comm-pass-lbl"></span><div class="chips" id="comm-pass-chips"></div></div>
+      <div class="blk"><span class="lbl" id="comm-pass-ctx-lbl"></span><div class="chips" data-key="comm-pass-ctx"></div></div>
+      <div class="blk"><input class="f" id="comm-pass-detail"></div>
+    </div>
+
+    <!-- SCENARIO: OTHER -->
+    <div class="scenario" id="comm-sc-other">
+      <div class="blk"><span class="lbl" id="comm-other-type-lbl"></span><div class="chips" data-key="comm-other-type"></div></div>
+      <div class="blk"><span class="lbl" id="comm-other-desc-lbl"></span>
+        <div class="voice-row"><textarea class="f" id="comm-other-desc" style="min-height:70px;flex:1;"></textarea><button class="voice-btn" onclick="toggleVoice(this,'comm-other-desc')">🎤</button></div>
+      </div>
+    </div>
+
+    <div class="blk"><span class="lbl" id="comm-by-lbl"></span><div class="chips" data-key="comm-by"></div></div>
+    <div class="blk"><span class="lbl" id="comm-notes-lbl"></span>
+      <div class="voice-row"><textarea class="f" id="comm-notes"></textarea><button class="voice-btn" onclick="toggleVoice(this,'comm-notes')">🎤</button></div>
+    </div>
+    <button class="gen-btn" id="comm-btn" onclick="generate('comm')" disabled></button>
+    <div class="loader" id="comm-loader"><div class="spinner"></div><span id="comm-loading-txt"></span></div>
+    <div class="err" id="comm-err"></div>
+  </div>
+</div>
+
+<!-- SUPPORT -->
+<div id="page-support" class="page">
+  <div class="mod-page">
+    <div class="mod-title" id="sup-title">💙 <span id="sup-title-txt"></span></div>
+    <div class="mod-desc" id="sup-desc"></div>
+
+    <!-- TABS -->
+    <div style="display:flex;gap:8px;margin-bottom:18px;">
+      <button onclick="setSupportTab('chat')" id="sup-tab-chat" style="flex:1;padding:10px;border-radius:10px;border:1.5px solid rgba(244,114,182,0.5);background:rgba(244,114,182,0.15);color:#f472b6;font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:700;cursor:pointer;"></button>
+      <button onclick="setSupportTab('burnout')" id="sup-tab-burnout" style="flex:1;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);color:var(--text2);font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:600;cursor:pointer;"></button>
+    </div>
+
+    <!-- CHAT TAB -->
+    <div id="sup-chat-section">
+      <div id="support-chat" style="min-height:160px;margin-bottom:14px;display:flex;flex-direction:column;gap:10px;"></div>
+      <div class="voice-row">
+        <textarea class="f" id="sup-input" style="min-height:75px;flex:1;resize:none;" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendSupport();}"></textarea>
+        <button class="voice-btn" onclick="toggleVoice(this,'sup-input')">🎤</button>
+      </div>
+      <button class="gen-btn" onclick="sendSupport()" id="sup-send-btn" style="margin-top:10px;background:linear-gradient(135deg,#9d174d,#f472b6);box-shadow:0 4px 16px rgba(244,114,182,0.3);"></button>
+    </div>
+
+    <!-- BURNOUT TAB -->
+    <div id="sup-burnout-section" style="display:none;">
+      <div style="font-size:0.85rem;color:var(--text2);line-height:1.65;margin-bottom:18px;" id="sup-burnout-intro"></div>
+
+      <div class="blk">
+        <span class="lbl" id="sup-e-lbl" style="color:#f472b6;"></span>
+        <div style="display:flex;flex-direction:column;gap:8px;" id="sup-energy-list"></div>
+      </div>
+      <div class="blk">
+        <span class="lbl" id="sup-f-lbl" style="color:#f472b6;"></span>
+        <div style="display:flex;flex-direction:column;gap:8px;" id="sup-feel-list"></div>
+      </div>
+      <div class="blk">
+        <span class="lbl" id="sup-w-lbl" style="color:#f472b6;"></span>
+        <div style="display:flex;flex-direction:column;gap:8px;" id="sup-work-list"></div>
+      </div>
+
+      <button class="gen-btn" id="sup-burnout-btn" onclick="generateBurnoutAdvice()" style="background:linear-gradient(135deg,#9d174d,#f472b6);box-shadow:0 4px 16px rgba(244,114,182,0.3);" disabled></button>
+      <div class="loader" id="sup-burnout-loader" style="display:none;"><div class="spinner" style="border-top-color:#f472b6;"></div></div>
+      <div id="sup-burnout-result" style="display:none;margin-top:16px;background:rgba(244,114,182,0.08);border:1px solid rgba(244,114,182,0.25);border-radius:14px;padding:16px;font-size:0.92rem;color:var(--text);line-height:1.75;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- TASKS -->
+<div id="page-tasks" class="page">
+  <div class="mod-page">
+    <div class="mod-title">📋 <span id="tasks-title"></span></div>
+    <div class="mod-desc" id="tasks-desc"></div>
+
+    <!-- Nieuwe taak -->
+    <div style="background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.25);border-radius:14px;padding:16px;margin-bottom:16px;">
+      <span class="lbl" id="tasks-add-lbl" style="color:#fbbf24;"></span>
+      <div style="display:flex;gap:8px;margin-bottom:10px;">
+        <input type="text" class="f" id="task-input" style="flex:1;" onkeydown="if(event.key==='Enter')addTask()">
+        <button onclick="addTask()" style="padding:0 18px;border-radius:10px;border:none;background:linear-gradient(135deg,#d97706,#fbbf24);color:#fff;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:1.1rem;flex-shrink:0;">+</button>
+      </div>
+      <!-- Snelle tags -->
+      <div style="display:flex;flex-wrap:wrap;gap:6px;" id="task-quick-chips"></div>
+    </div>
+
+    <!-- Prioriteit filter -->
+    <div style="display:flex;gap:8px;margin-bottom:14px;">
+      <button onclick="setTaskFilter('all')" id="tf-all" style="padding:6px 14px;border-radius:20px;border:1px solid rgba(251,191,36,0.4);background:rgba(251,191,36,0.15);color:#fbbf24;font-family:'DM Sans',sans-serif;font-size:0.78rem;font-weight:600;cursor:pointer;" id="task-filter-all"></button>
+      <button onclick="setTaskFilter('urgent')" id="tf-urgent" style="padding:6px 14px;border-radius:20px;border:1px solid rgba(248,113,113,0.3);background:rgba(248,113,113,0.08);color:#f87171;font-family:'DM Sans',sans-serif;font-size:0.78rem;font-weight:600;cursor:pointer;"></button>
+      <button onclick="setTaskFilter('done')" id="tf-done" style="padding:6px 14px;border-radius:20px;border:1px solid rgba(52,211,153,0.3);background:rgba(52,211,153,0.08);color:#34d399;font-family:'DM Sans',sans-serif;font-size:0.78rem;font-weight:600;cursor:pointer;"></button>
+    </div>
+
+    <!-- Takenlijst -->
+    <div id="task-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+    <div id="task-empty" style="text-align:center;padding:30px 20px;color:var(--text2);"></div>
+
+    <!-- Shift afsluiten -->
+    <button id="task-clear-btn" onclick="clearDoneTasks()" style="width:100%;margin-top:16px;padding:11px;border-radius:10px;border:1px solid rgba(148,163,184,0.2);background:transparent;color:rgba(148,163,184,0.5);font-family:'DM Sans',sans-serif;font-size:0.82rem;cursor:pointer;display:none;"></button>
+  </div>
+</div>
+
+<!-- LEARN -->
+<div id="page-learn" class="page">
+  <div class="mod-page">
+    <div class="mod-title" id="learn-title">🧠 Learn</div>
+    <div class="mod-desc" id="learn-desc"></div>
+    <div class="blk"><span class="lbl" id="learn-topic-lbl"></span><div class="chips" id="learn-topic-chips"></div></div>
+    <div id="tip-box" class="tip-box" style="display:none;">
+      <div style="font-size:0.72rem;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;" id="tip-lbl"></div>
+      <div id="tip-text" style="font-size:0.93rem;color:var(--text);line-height:1.7;"></div>
+      <button onclick="loadTip()" style="margin-top:10px;padding:5px 13px;border-radius:20px;border:1px solid rgba(167,139,250,0.3);background:transparent;color:#a78bfa;font-size:0.78rem;cursor:pointer;" id="tip-refresh-btn"></button>
+    </div>
+    <!-- SCENARIO BOX -->
+    <div id="scenario-box" style="display:none;margin-bottom:14px;">
+      <div style="background:rgba(52,211,153,0.08);border:1px solid rgba(52,211,153,0.25);border-radius:14px;padding:15px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <div style="font-size:0.72rem;font-weight:700;color:#34d399;text-transform:uppercase;letter-spacing:1px;" id="scenario-lbl"></div>
+          <div style="display:flex;gap:6px;" id="scenario-level-chips"></div>
+        </div>
+        <div id="scenario-content">
+          <div id="scenario-situation" style="font-size:0.93rem;color:var(--text);line-height:1.7;margin-bottom:12px;padding:12px;background:rgba(255,255,255,0.05);border-radius:10px;border-left:3px solid #34d399;display:none;"></div>
+          <button id="scenario-start-btn" onclick="loadScenario()" style="width:100%;padding:11px;border-radius:10px;border:none;background:linear-gradient(135deg,#059669,#34d399);color:#fff;font-family:'DM Sans',sans-serif;font-weight:600;font-size:0.88rem;cursor:pointer;"></button>
+          <div id="scenario-answer-wrap" style="display:none;margin-top:10px;">
+            <div class="voice-row">
+              <textarea class="f" id="scenario-answer" style="flex:1;min-height:80px;resize:none;" oninput="document.getElementById('scenario-submit-btn').disabled=!this.value.trim()"></textarea>
+              <button class="voice-btn" onclick="toggleVoice(this,'scenario-answer')">🎤</button>
+            </div>
+            <button id="scenario-submit-btn" onclick="submitScenario()" disabled style="width:100%;padding:11px;border-radius:10px;border:none;background:linear-gradient(135deg,#059669,#34d399);color:#fff;font-family:'DM Sans',sans-serif;font-weight:600;font-size:0.88rem;cursor:pointer;margin-top:8px;"></button>
+          </div>
+          <div id="scenario-feedback-wrap" style="display:none;margin-top:12px;">
+            <div style="font-size:0.72rem;font-weight:700;color:#34d399;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;" id="scenario-feedback-lbl"></div>
+            <div id="scenario-feedback" style="font-size:0.9rem;color:var(--text);line-height:1.7;white-space:pre-wrap;padding:12px;background:rgba(52,211,153,0.06);border-radius:10px;"></div>
+            <button onclick="loadScenario()" style="margin-top:10px;width:100%;padding:11px;border-radius:10px;border:none;background:linear-gradient(135deg,#059669,#34d399);color:#fff;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer;" id="scenario-next-btn"></button>
+          </div>
+          <div id="scenario-loader" class="loader" style="display:none;"><div class="spinner" style="border-top-color:#34d399;"></div><span style="color:#34d399;" id="scenario-loading-txt"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="quiz-box" class="quiz-box" style="display:none;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <div style="font-size:0.72rem;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:1px;" id="quiz-lbl"></div>
+        <div id="quiz-score" style="font-size:0.78rem;color:var(--text2);"></div>
+      </div>
+      <div id="quiz-q" style="font-size:0.93rem;color:var(--text);line-height:1.6;margin-bottom:12px;font-weight:500;"></div>
+      <div id="quiz-opts"></div>
+      <div id="quiz-expl" style="display:none;margin-top:10px;padding:10px 13px;background:rgba(167,139,250,0.1);border-radius:10px;font-size:0.83rem;color:#c4b5fd;line-height:1.6;"></div>
+      <button id="quiz-next-btn" onclick="loadQuiz()" style="display:none;margin-top:10px;width:100%;padding:11px;border-radius:10px;border:none;background:linear-gradient(135deg,#a78bfa,#7c3aed);color:#fff;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer;"></button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── TRANSLATIONS ───
+const T = {
+  en: {
+    disc: '🔒 Use room number — never real names · Personal tool only',
+    back: 'Back',
+    heroTitle: 'Your AI <span>colleague.<\/span>',
+    heroSub: 'Professional nursing documentation in 30 seconds',
+    qnBtnTitle: 'Quick Note',
+    qnBtnSub: 'Speak or type — AI writes the report',
+    popupDesc: 'Your personal AI companion for nursing documentation. Fast, professional, privacy-friendly.',
+    popupRules: '⚠️ Required rules:\n🔒 Always use room number — never real name\n📋 Copy & paste manually into your EHR\n👁️ Always verify before use\n🚫 Not connected to any hospital system',
+    popupBtn: 'I understand — let\'s go',
+    modules: [
+      { id:'shift', icon:'📋', name:'Shift Briefing', desc:'Handover report in 30 seconds' },
+      { id:'comm', icon:'⚡', name:'Quick Communication', desc:'Doctor call, lab results, discharge' },
+      { id:'incident', icon:'⚠️', name:'Incident', desc:'Fall, aggression, wandering' },
+      { id:'wound', icon:'🩹', name:'Wound Care', desc:'Wound note & evolution' },
+      { id:'behav', icon:'🧠', name:'Behaviour Note', desc:'Dementia & behaviour' },
+      { id:'meds', icon:'💊', name:'Medication', desc:'Changes & new prescriptions' },
+      { id:'support', icon:'💙', name:'How are you?', desc:'Chat with Maya + burnout check' },
+      { id:'tasks', icon:'📋', name:'My Tasks', desc:'Shift reminders & to-do' },
+      { id:'learn', icon:'📖', name:'Learn & Quiz', desc:'Tips & clinical quiz', wide:true },
+    ],
+    qnTitle: 'Quick Note',
+    qnPriv: '🔒 Room number only — never real name',
+    qnRoomLbl: 'Room / Patient',
+    qnRoomPh: 'e.g. Room 12',
+    qnNoteLbl: 'Note (speak or type)',
+    qnNotePh: '"Patient was restless, reassured, medication given..."',
+    qnCancel: 'Cancel',
+    qnSubmit: '✨ Generate',
+    resCopy: '📋 Copy',
+    resDone: '✓ Done',
+    resDisc: '⚠️ Verify before use — you remain responsible',
+    loading: 'Generating...',
+    genBtn: '✨ Generate report',
+    shift: {
+      title:'📋 Shift Briefing', desc:'Handover for the next colleague — quick and professional.',
+      priv:'🔒 Room number only — never patient name',
+      roomLbl:'Room / Patient (optional)', roomPh:'e.g. Room 12 or leave blank',
+      statusLbl:'General condition ⚠️',
+      obsLbl:'What was notable? (multiple)',
+      actLbl:'What was done?',
+      fupLbl:'Follow-up for next shift',
+      notesLbl:'Extra info for colleague (optional)',
+      notesPh:'"Sample in fridge." or "Family called, will call tomorrow."',
+      painPh:'📍 Pain location (e.g. left hip)',
+      medPh:'💊 Which medication? (e.g. Haldol 5 drops)',
+      urinePh:'🧫 Result? (e.g. positive WBC, nitrite)',
+      glycPh:'🩸 Blood glucose (e.g. high 280 mg/dl)',
+      status:['😌 Calm','✅ Stable','🟡 Minor concern','🟠 Needs attention','📉 Deteriorated','📈 Improved'],
+      obs:['✅ Nothing notable','😣 Pain','😟 Restless','🧠 Confused','😰 Anxious','🌡️ Fever','🍽️ Poor intake','💧 Poor fluids','🚽 Bowel issue','🌙 Wandering','🫁 Breathing','📊 Vitals abnormal','🩸 Blood glucose','🩹 Wound issue','🧫 Urinary symptoms','⚠️ Fall','😠 Aggression','😴 Hard to wake'],
+      act:['✅ No action needed','📞 Doctor called','👨‍👩‍👧 Family called','💊 Medication given','📊 Vitals taken','🩹 Wound care','🧫 Urine tested','🧪 Sample prepared','🤝 Reassured','🔄 Repositioned','🛏️ Assisted to bed'],
+      fup:['✅ None','🌡️ Temperature','🩸 Blood glucose','🧠 Behaviour','💧 Fluid intake','🩹 Wound care','😣 Pain','📞 Contact doctor if needed','🧪 Send to lab','🍽️ Intake','👁️ Clinical condition'],
+    },
+    incident: {
+      title:'⚠️ Incident Report', desc:'Fall, aggression, wandering, medication error',
+      priv:'🔒 Room number only',
+      roomLbl:'Room / Patient', roomPh:'e.g. Room 5',
+      typeLbl:'Incident type ⚠️',
+      types:['⚠️ Fall','😰 Near fall','😠 Aggression','🚶 Wandering','💊 Medication error','📍 Other'],
+      locLbl:'Location of fall', locs:['🛏️ Room','🚿 Bathroom','🚶 Corridor','🍽️ Dining room','🌿 Garden'],
+      timeLbl:'Time', foundLbl:'How discovered?',
+      founds:['👁️ Found on floor','👀 Fall witnessed','🗣️ Reported by patient','👥 Reported by colleague'],
+      headLbl:'Head impact?', heads:['✅ Yes — head impact','❌ No head impact'],
+      injuryLbl:'Condition after (multiple)',
+      injuries:['✅ Conscious & oriented','🙌 No visible injury','😣 Pain','🫧 Swelling','🦴 Suspected fracture','🩹 Visible injury','🧠 Confused','❌ Loss of consciousness'],
+      painPh:'📍 Pain location (e.g. left hip)',
+      paramsLbl:'Vitals (optional)',
+      agrTypeLbl:'Type of aggression', agrTypes:['🗣️ Verbal','👊 Physical → nurse','👊 Physical → resident','⚠️ Self-harm','💥 Property damage'],
+      agrCauseLbl:'Trigger', agrCauses:['❓ Unknown','😣 Pain','🧠 Confusion','😤 Frustration','😰 Fear','🛁 During care'],
+      agrInjLbl:'Injury', agrInjs:['🙌 No injury','🩹 Injury treated','📞 Injury — doctor notified'],
+      wandFoundLbl:'Where found?', wandFounds:['🏠 On the ward','🚶 Outside ward','🌿 Outside building'],
+      wandCondLbl:'Condition on return', wandConds:['✅ Calm & unharmed','🧠 Confused','⚠️ Injured'],
+      medTypeLbl:'Error type', medTypes:['💊 Wrong medication','🔢 Wrong dose','❌ Missed dose','⏰ Wrong time'],
+      medNameLbl:'Medication name',
+      actionsLbl:'Actions taken (multiple)',
+      actions:['📞 Doctor notified','👨‍👩‍👧 Family notified','🤝 Reassured','🩹 Wound care','💊 Pain relief','👁️ Monitoring','🏥 Hospital notified','🔒 Safe environment'],
+      notesLbl:'Additional notes (optional)', notesPh:'Any relevant details...',
+    },
+    wound: {
+      title:'🩹 Wound Care', desc:'Wound note & evolution',
+      priv:'🔒 Room number only',
+      roomLbl:'Room / Patient', roomPh:'e.g. Room 2',
+      typeLbl:'Wound type ⚠️', types:['🔸 Skin tear','🔴 Pressure injury','💧 Moisture lesion','🩹 Abrasion','🩺 Wound','📍 Other'],
+      locLbl:'Location ⚠️', locs:['💪 Right arm','💪 Left arm','✋ Right hand','✋ Left hand','🦵 Right leg','🦵 Left leg','👟 Heel','🔻 Sacrum','🔙 Back','📍 Other'],
+      evolLbl:'Evolution', evols:['✅ Improved','😐 Stable','📉 Deteriorated','🆕 First dressing'],
+      aspLbl:'Wound appearance (multiple)', asps:['✅ No signs of infection','🔴 Redness','💧 Moist','🏜️ Dry','🟡 Exudate','👃 Odour','😣 Pain on care','⚫ Necrosis'],
+      careLbl:'Care performed (multiple)', cares:['🧴 Cleaned','🔵 Disinfected','🛡️ Covered','🔄 Dressing changed','🩹 Silicone dressing','🩹 Compress applied'],
+      fupLbl:'Follow-up', fups:['📅 Tomorrow','📅 In 2 days','📅 In 3 days','📞 Notify doctor','👩‍⚕️ Wound specialist','👁️ Monitor'],
+      notesLbl:'Notes (optional)', notesPh:'e.g. patient reported pain during care...',
+    },
+    behav: {
+      title:'🧠 Behaviour Note', desc:'Behaviour observation — factual, contextual',
+      priv:'🔒 Room number only',
+      roomLbl:'Room / Patient', roomPh:'e.g. Room 1',
+      typeLbl:'Behaviour type ⚠️', types:['😰 Restlessness','😤 Verbal agitation','😠 Verbal aggression','👊 Physical aggression','📢 Calling out','🚶 Wandering','🚫 Refusing care','😶 Apathy','🧠 Confusion','😌 Calmer than usual'],
+      ctxLbl:'Context / When ⚠️', ctxs:['🛁 During care','🧴 During ADL','🍽️ During meal','🦽 During transfer','🌙 At night','🌅 On waking','❓ No clear trigger'],
+      intLbl:'Intensity', ints:['🟢 Mild','🟡 Moderate','🔴 Severe'],
+      causeLbl:'Possible cause', causes:['😣 Pain','😨 Fear','😴 Fatigue','🔊 Overstimulation','🔄 Routine change','❓ Unknown'],
+      reactLbl:'Response to approach', reacts:['✅ Reassurance helped','🎵 Distraction worked','😌 Calmed spontaneously','⚠️ Difficult to calm','🔄 Behaviour persisted'],
+      actLbl:'Action taken (multiple)', acts:['🤝 Reassured','🎵 Distraction offered','🏠 Calm environment','📞 Doctor notified','👨‍👩‍👧 Family notified','✅ De-escalation','🙌 No injury','💊 Medication (standing order)'],
+      notesLbl:'Notes (optional)', notesPh:'Brief factual detail...',
+    },
+    meds: {
+      title:'💊 Medication Note', desc:'New medication, changes & treatment decisions',
+      priv:'🔒 Room number only',
+      roomLbl:'Room / Patient', roomPh:'e.g. Room 7',
+      reasonLbl:'Reason ⚠️', reasons:['😣 Pain','🌡️ Fever','🦠 Infection','😟 Agitation','🌙 Sleep','🩺 Blood pressure','🩸 Blood glucose','📞 After doctor contact','🏥 After hospital discharge'],
+      changeLbl:'Type of change ⚠️', changes:['▶️ Started','⛔ Stopped','🔁 Dose adjusted','💉 Short course','🏥 Taken over from hospital'],
+      nameLbl:'Medication ⚠️', namePh:'Name (e.g. Paracetamol)', dosePh:'Dose (e.g. 500mg)',
+      freqLbl:'Frequency', freqs:['1x/day','2x/day','3x/day','4x/day','As needed'],
+      durLbl:'Duration', durs:['Once','3 days','5 days','7 days','Ongoing'],
+      fupLbl:'Follow-up', fups:['📈 Monitor effect','😣 Pain','🌡️ Temperature','🩸 Blood glucose','✅ None'],
+      notesLbl:'Notes (optional)', notesPh:'Brief extra info...',
+    },
+    comm: {
+      title:'⚡ Quick Communication', desc:'Short, direct communication note for the patient record.',
+      priv:'🔒 Room number only — never real name',
+      roomLbl:'Room / Patient', roomPh:'e.g. Room 8',
+      typeLbl:'Type of communication ⚠️',
+      types:['🩺 Doctor contacted','🧪 Lab / advice','🚑 Admission to hospital','🔙 Back from hospital','📞 Telephone approval','🕊️ Passing away','📝 Other'],
+      // Doctor contacted
+      symptomsLbl:'Symptoms / complaints (multiple)',
+      symptoms:['🌡️ Fever','😣 Pain','🫁 Dyspnoea','😮‍💨 Cough','🧠 Confusion','🤢 Nausea','🫁 Abdominal pain','🔥 Dysuria','🩹 New wound','⚠️ Wound not healing','🔴 Wound infection','😵 Unwell','🦠 Suspected infection','🧫 Urinary symptoms','🦴 Joint pain'],
+      detailPh:'e.g. CRP elevated, temp 39.2°C',
+      decisionLbl:'Decision / policy (multiple)',
+      decisions:['📍 Doctor visiting today','📅 Doctor visiting tomorrow','💊 Medication started','👁️ Continue monitoring','🧪 Repeat sample','🚑 Transfer to hospital','✅ No change','📝 Other'],
+      actionLbl:'Nursing action',
+      actions:['💊 Medication administered','🧪 Sample taken','📞 Notified colleagues','👁️ Monitoring'],
+      medLbl:'Medication (optional)', medNamePh:'Name e.g. Furadantine', medDosePh:'Dose e.g. 50mg',
+      freqLbl:'Frequency', freqs:['1x/day','2x/day','3x/day','4x/day','As needed'],
+      // Lab/advice
+      labSubjectLbl:'Subject', labSubjects:['🩸 Blood results','🧫 Urine results','🧪 Sample results','🩹 Wound','📍 Other'],
+      labDetailPh:'e.g. CRP 85, Hb decreased',
+      labDecisionLbl:'Policy / decision (multiple)',
+      labDecisions:['✅ No change','💊 Start medication','🔁 Adjust medication','📍 Doctor visiting today','📅 Doctor visiting tomorrow','🧪 Repeat sample','👁️ Monitor','📝 Other'],
+      // Admission
+      admReasonLbl:'Reason for admission (multiple)',
+      admReasons:['⚠️ Fall','🌡️ Fever','🫁 Dyspnoea','📉 Low SpO2','🧠 Confusion','😣 Pain','💧 Dehydration','📉 Acute deterioration','🩹 Wound issue','📍 Other'],
+      admHospitalLbl:'Hospital (optional)', admHospitalPh:'e.g. University Hospital',
+      admByLbl:'Decision by', admBys:['👨‍⚕️ GP','🌙 Out of hours','🚑 Emergency doctor','👨‍👩‍👧 Family','📍 Other'],
+      admFamLbl:'Family notified?', admFamYes:'✅ Yes', admFamNo:'❌ Not yet',
+      admItemsLbl:'Items taken (multiple)',
+      admItems:['🪪 ID card','📋 Hospital form','💊 Medication list','📄 Referral letter','🦷 Dentures','👓 Glasses','👂 Hearing aid','👕 Clothing'],
+      // Back from hospital
+      backReasonLbl:'Reason / specialty',
+      backReasons:['⚠️ Fall','👁️ Ophthalmology','👂 ENT','❤️ Cardiology','🩸 Diabetes','🔍 Check-up','🧪 Investigation','🔪 Surgery','🦠 Infection','📍 Other'],
+      backDecisionLbl:'New agreements / policy (multiple)',
+      backDecisions:['💊 New medication','🔁 Medication changed','⛔ Medication stopped','📅 New appointment','👁️ Monitor','✅ No change'],
+      backMedPh:'e.g. Bisoprolol increased, Eliquis started',
+      backFupPh:'e.g. cardiology check 14/04, daily BP monitoring',
+      // Approval
+      approvalReasonLbl:'Approval requested for',
+      approvalReasons:['🩹 Wound care','💊 Pain relief','🧪 Sample','💉 Temporary medication','👁️ Monitoring','📍 Other'],
+      approvalAnswerLbl:'Doctor response',
+      approvalAnswers:['✅ Approved','❌ Not approved','🔄 Reassess later','📅 Will visit'],
+      approvalActionLbl:'Nursing action',
+      approvalActions:['✅ Done as advised','👨‍👩‍👧 Family informed','👁️ Follow-up planned'],
+      // Passing away
+      passLbl:'Confirmed (multiple)',
+      passItems:['✅ Death confirmed','📞 Doctor notified','🏥 GP present','📞 On-call doctor notified','🏥 On-call doctor present','✅ Confirmed by on-call doctor','👨‍👩‍👧 Family notified','🫂 Family present','🕊️ Funeral home notified'],
+      passContextLbl:'Context',
+      passContexts:['😌 Peaceful','🌿 Palliative care','⚠️ Unexpected','🌙 During the night','🫂 Family present'],
+      passDetailPh:'Brief addition if needed...',
+      // Other
+      otherTypeLbl:'Type',
+      otherTypes:['📅 Appointment','📝 Brief update','👁️ Observation','📍 Other'],
+      otherDescLbl:'Describe briefly ⚠️',
+      otherDescPh:'Type or speak what happened...',
+      // Common
+      byLbl:'Communicated by (optional)', bys:['👩‍⚕️ Care assistant','👥 Colleague nurse'],
+      notesLbl:'Extra note (optional)', notesPh:'Brief extra info...',
+      genBtn:'✨ Generate note',
+    },
+    support: {
+      title:'💙 How are you?', desc:'Maya listens. No judgment, no rush.',
+      greeting:'I\'m here. Tell me — how was your shift really?',
+      sendBtn:'Send',
+    },
+    learn: {
+      title:'📖 Learn & Quiz', desc:'Clinical tips, quiz & practice scenarios',
+      topicLbl:'Choose a topic',
+      topics:['🧠 Dementia & behaviour','🛡️ Fall prevention','🍽️ Nutrition & hydration','🕊️ Palliative care','💊 Medication','🩹 Wound care','🦠 Infection control','😣 Pain management','🚨 Emergency & triage'],
+      tipLbl:'Tip of the day',
+      tipRefresh:'🔄 New tip',
+      quizLbl:'Quiz',
+      quizNext:'Next question →',
+      scenarioLbl:'Practice Scenario',
+      scenarioDesc:'A realistic nursing situation — what would you do?',
+      scenarioLevels:['🟢 Beginner','🟡 Intermediate','🔴 Advanced'],
+      scenarioLevelLbl:'Level',
+      scenarioStart:'🎯 New scenario',
+      scenarioSubmit:'💬 Send my response',
+      scenarioNext:'Next scenario →',
+      scenarioPlaceholder:'Describe what you would do...',
+      scenarioFeedbackLbl:'Maya feedback',
+    },
+  },
+  nl: {
+    disc: '🔒 Kamernummer gebruiken — nooit echte naam · Persoonlijk hulpmiddel',
+    back: 'Terug',
+    heroTitle: 'Jouw AI-<span>collega.<\/span>',
+    heroSub: 'Professionele verpleegkundige documentatie in 30 seconden',
+    qnBtnTitle: 'Snelle Notitie',
+    qnBtnSub: 'Spreek in of typ — AI schrijft het verslag',
+    popupDesc: 'Jouw persoonlijke AI-collega voor WZC-documentatie. Snel, professioneel, privacy-vriendelijk.',
+    popupRules: '⚠️ Verplichte regels:\n🔒 Gebruik ALTIJD kamernummer — nooit echte naam\n📋 Kopieer en plak handmatig in EHR\n👁️ Controleer altijd voor gebruik\n🚫 Geen koppeling met ziekenhuissystemen',
+    popupBtn: 'Ik begrijp dit — aan de slag',
+    modules: [
+      { id:'shift', icon:'📋', name:'Shift Briefing', desc:'Overdracht in 30 seconden' },
+      { id:'comm', icon:'⚡', name:'Korte Communicatie', desc:'Arts bellen, labo, opname, overlijden' },
+      { id:'incident', icon:'⚠️', name:'Incident', desc:'Val, agressie, dwaling' },
+      { id:'wound', icon:'🩹', name:'Wondzorg', desc:'Wondnotitie & evolutie' },
+      { id:'behav', icon:'🧠', name:'Gedrag & Dementie', desc:'Gedragsnotitie WZC-stijl' },
+      { id:'meds', icon:'💊', name:'Medicatie', desc:'Wijzigingen & nieuwe medicatie' },
+      { id:'support', icon:'💙', name:'Hoe gaat het met jou?', desc:'Praat met Maya + burnout check' },
+      { id:'tasks', icon:'📋', name:'Mijn Taken', desc:'Shift herinneringen & to-do' },
+      { id:'learn', icon:'📖', name:'Bijleren & Quiz', desc:'Tips & klinische quiz', wide:true },
+    ],
+    qnTitle: 'Snelle Notitie',
+    qnPriv: '🔒 Kamernummer, nooit echte naam',
+    qnRoomLbl: 'Kamer / bewoner',
+    qnRoomPh: 'bijv. Kamer 12',
+    qnNoteLbl: 'Notitie (spreek in of typ)',
+    qnNotePh: '"Bewoner onrustig, gerustgesteld, medicatie gegeven..."',
+    qnCancel: 'Annuleer',
+    qnSubmit: '✨ Genereer',
+    resCopy: '📋 Kopieer',
+    resDone: '✓ Klaar',
+    resDisc: '⚠️ Controleer voor gebruik — jij blijft verantwoordelijk',
+    loading: 'Genereren...',
+    genBtn: '✨ Maak verslag',
+    shift: {
+      title:'📋 Shift Briefing', desc:'Overdracht voor de volgende collega — snel en professioneel.',
+      priv:'🔒 Kamernummer, nooit echte naam',
+      roomLbl:'Kamer / bewoner (optioneel)', roomPh:'bijv. Kamer 5 — of laat leeg',
+      statusLbl:'Algemene toestand ⚠️',
+      obsLbl:'Wat viel op? (meerdere mogelijk)',
+      actLbl:'Wat werd gedaan?',
+      fupLbl:'Opvolging volgende shift',
+      notesLbl:'Extra dat collega moet weten (optioneel)',
+      notesPh:'"Staal staat in frigo." of "Familie verwittigd, ze bellen morgen."',
+      painPh:'📍 Pijn — waar? (bijv. linkerheup)',
+      medPh:'💊 Welke medicatie? (bijv. Haldol 5 druppels)',
+      urinePh:'🧫 Resultaat? (bijv. positief op WBC, nitriet)',
+      glycPh:'🩸 Glycemie (bijv. hoog 280 mg/dl)',
+      status:['😌 Rustig','✅ Stabiel','🟡 Lichte zorgen','🟠 Aandacht nodig','📉 Verslechterd','📈 Verbeterd'],
+      obs:['✅ Niets bijzonders','😣 Pijn','😟 Onrustig','🧠 Verward','😰 Angstig','🌡️ Koorts','🍽️ Weinig gegeten','💧 Weinig gedronken','🚽 Stoelgang','🌙 Dwalen','🫁 Ademhaling','📊 Parameters ↑↓','🩸 Glycemie','🩹 Wond','🧫 Urineweg','⚠️ Val','😠 Agressief','😴 Moeilijk wakker'],
+      act:['✅ Geen actie','📞 Arts gebeld','👨‍👩‍👧 Familie gebeld','💊 Medicatie gegeven','📊 Parameters genomen','🩹 Wondzorg','🧫 Urine getest','🧪 Staal klaargelegd','🤝 Gerustgesteld','🔄 Wisselhouding','🛏️ In bed begeleid'],
+      fup:['✅ Geen','🌡️ Temperatuur','🩸 Glycemie','🧠 Gedrag','💧 Vocht','🩹 Wondzorg','😣 Pijn','📞 Arts indien nodig','🧪 Labo','🍽️ Intake','👁️ Toestand'],
+    },
+    incident: {
+      title:'⚠️ Incidentrapport', desc:'Val, agressie, dwaling, medicatiefout',
+      priv:'🔒 Kamernummer, nooit echte naam',
+      roomLbl:'Kamer / bewoner', roomPh:'bijv. Kamer 5',
+      typeLbl:'Type incident ⚠️',
+      types:['⚠️ Val','😰 Bijna-val','😠 Agressie','🚶 Dwaling','💊 Medicatiefout','📍 Andere'],
+      locLbl:'Locatie val', locs:['🛏️ Kamer','🚿 Badkamer','🚶 Gang','🍽️ Eetzaal','🌿 Tuin'],
+      timeLbl:'Tijdstip', foundLbl:'Hoe vastgesteld?',
+      founds:['👁️ Gevonden op grond','👀 Val gezien','🗣️ Gemeld door bewoner','👥 Gemeld door collega'],
+      headLbl:'Hoofdimpact?', heads:['✅ Ja — hoofdimpact','❌ Geen hoofdimpact'],
+      injuryLbl:'Toestand na val (meerdere)',
+      injuries:['✅ Bewust & georiënteerd','🙌 Geen letsel','😣 Pijn','🫧 Zwelling','🦴 Vermoeden fractuur','🩹 Letsel','🧠 Verward','❌ Bewustzijnsverlies'],
+      painPh:'📍 Pijn — waar? (bijv. linkerheup)',
+      paramsLbl:'Parameters (optioneel)',
+      agrTypeLbl:'Type agressie', agrTypes:['🗣️ Verbaal','👊 Fysiek → verpleegkundige','👊 Fysiek → medebewoner','⚠️ Zelfverwonding','💥 Materiaalschade'],
+      agrCauseLbl:'Aanleiding', agrCauses:['❓ Onduidelijk','😣 Pijn','🧠 Verwardheid','😤 Frustratie','😰 Angst','🛁 Tijdens verzorging'],
+      agrInjLbl:'Letsel', agrInjs:['🙌 Geen letsel','🩹 Letsel verzorgd','📞 Letsel — arts verwittigd'],
+      wandFoundLbl:'Waar teruggevonden?', wandFounds:['🏠 Op afdeling','🚶 Buiten afdeling','🌿 Buiten gebouw'],
+      wandCondLbl:'Toestand bij terugkomst', wandConds:['✅ Rustig & ongedeerd','🧠 Verward','⚠️ Letsel'],
+      medTypeLbl:'Type fout', medTypes:['💊 Verkeerd medicijn','🔢 Verkeerde dosis','❌ Vergeten','⏰ Verkeerd tijdstip'],
+      medNameLbl:'Welk medicijn?',
+      actionsLbl:'Acties ondernomen (meerdere)',
+      actions:['📞 Arts verwittigd','👨‍👩‍👧 Familie verwittigd','🤝 Gerustgesteld','🩹 Wondverzorging','💊 Pijnstilling','👁️ Observeren','🏥 Ziekenhuis','🔒 Veilige omgeving'],
+      notesLbl:'Extra beschrijving (optioneel)', notesPh:'Bijzonderheden...',
+    },
+    wound: {
+      title:'🩹 Wondzorg', desc:'Wondnotitie & evolutie vastleggen',
+      priv:'🔒 Kamernummer, nooit echte naam',
+      roomLbl:'Kamer / bewoner', roomPh:'bijv. Kamer 2',
+      typeLbl:'Type wonde ⚠️', types:['🔸 Skintear','🔴 Decubitus','💧 Vochtletsel','🩹 Schaafwonde','🩺 Wonde','📍 Andere'],
+      locLbl:'Locatie ⚠️', locs:['💪 Rechterarm','💪 Linkerarm','✋ Rechterhand','✋ Linkerhand','🦵 Rechterbeen','🦵 Linkerbeen','👟 Hiel','🔻 Stuit','🔙 Rug','📍 Andere'],
+      evolLbl:'Evolutie', evols:['✅ Verbeterd','😐 Stabiel','📉 Verslechterd','🆕 Eerste verzorging'],
+      aspLbl:'Wondaspect (meerdere)', asps:['✅ Geen infectie','🔴 Roodheid','💧 Vochtig','🏜️ Droog','🟡 Etter','👃 Geur','😣 Pijn','⚫ Necrose'],
+      careLbl:'Wondzorg uitgevoerd (meerdere)', cares:['🧴 Gereinigd','🔵 Ontsmet','🛡️ Afgedekt','🔄 Verband vernieuwd','🩹 Siliconenverband','🩹 Kompres'],
+      fupLbl:'Opvolging', fups:['📅 Morgen','📅 2 dagen','📅 3 dagen','📞 Arts','👩‍⚕️ Wondzorgref.','👁️ Observeren'],
+      notesLbl:'Extra notitie (optioneel)', notesPh:'bijv. bewoner klaagde over pijn...',
+    },
+    behav: {
+      title:'🧠 Gedrag & Dementie', desc:'Gedragsnotitie — neutraal, contextueel, WZC-stijl',
+      priv:'🔒 Kamernummer, nooit echte naam',
+      roomLbl:'Kamer / bewoner', roomPh:'bijv. Kamer 1',
+      typeLbl:'Type gedrag ⚠️', types:['😰 Onrust','😤 Verbale agitatie','😠 Verbale agressie','👊 Fysieke agressie','📢 Roepen','🚶 Dwalen','🚫 Zorgweigering','😶 Apathie','🧠 Verwardheid','😌 Rustiger'],
+      ctxLbl:'Context / wanneer ⚠️', ctxs:['🛁 Tijdens zorg','🧴 Tijdens ADL','🍽️ Tijdens maaltijd','🦽 Tijdens transfer','🌙 Nachtelijk','🌅 Bij wakker worden','❓ Geen aanleiding'],
+      intLbl:'Intensiteit', ints:['🟢 Mild','🟡 Matig','🔴 Ernstig'],
+      causeLbl:'Mogelijke aanleiding', causes:['😣 Pijn','😨 Angst','😴 Vermoeidheid','🔊 Prikkelomgeving','🔄 Verandering','❓ Onbekend'],
+      reactLbl:'Reactie op benadering', reacts:['✅ Geruststelling hielp','🎵 Afleiding werkte','😌 Spontaan gekalmeerd','⚠️ Moeilijk gerust','🔄 Gedrag bleef'],
+      actLbl:'Actie ondernomen (meerdere)', acts:['🤝 Gerustgesteld','🎵 Afleiding','🏠 Rustige omgeving','📞 Arts verwittigd','👨‍👩‍👧 Familie','✅ De-escalatie','🙌 Geen letsel','💊 Medicatie (staand order)'],
+      notesLbl:'Extra detail (optioneel)', notesPh:'Kort feitelijk detail...',
+    },
+    meds: {
+      title:'💊 Medicatiewijziging', desc:'Nieuwe medicatie, wijzigingen en behandelbeslissingen',
+      priv:'🔒 Kamernummer, nooit echte naam',
+      roomLbl:'Kamer / bewoner', roomPh:'bijv. Kamer 7',
+      reasonLbl:'Aanleiding ⚠️', reasons:['😣 Pijn','🌡️ Koorts','🦠 Infectie','😟 Onrust','🌙 Slaap','🩺 Bloeddruk','🩸 Glycemie','📞 Na dokterscontact','🏥 Na ziekenhuisontslag'],
+      changeLbl:'Type wijziging ⚠️', changes:['▶️ Opgestart','⛔ Gestopt','🔁 Dosis aangepast','💉 Tijdelijke kuur','🏥 Overgenomen van ziekenhuis'],
+      nameLbl:'Medicatie ⚠️', namePh:'Naam (bijv. Paracetamol)', dosePh:'Dosis (bijv. 500mg)',
+      freqLbl:'Frequentie', freqs:['1x/dag','2x/dag','3x/dag','4x/dag','Zo nodig'],
+      durLbl:'Duur', durs:['Eenmalig','3 dagen','5 dagen','7 dagen','Chronisch'],
+      fupLbl:'Opvolging', fups:['📈 Effect opvolgen','😣 Pijn','🌡️ Temperatuur','🩸 Glycemie','✅ Geen'],
+      notesLbl:'Extra notitie (optioneel)', notesPh:'Korte extra info...',
+    },
+    comm: {
+      title:'⚡ Korte Communicatie', desc:'Korte, directe communicatienota voor het zorgdossier.',
+      priv:'🔒 Kamernummer, nooit echte naam',
+      roomLbl:'Kamer / bewoner', roomPh:'bijv. Kamer 8',
+      typeLbl:'Type communicatie ⚠️',
+      types:['🩺 Huisarts gecontacteerd','🧪 Labo / advies','🚑 Bewoner opgenomen','🔙 Terug uit ziekenhuis','📞 Telefonische goedkeuring','🕊️ Overlijden','📝 Andere'],
+      symptomsLbl:'Klachten / symptomen (meerdere)',
+      symptoms:['🌡️ Koorts','😣 Pijn','🫁 Dyspneu','😮‍💨 Hoest','🧠 Verwardheid','🤢 Misselijkheid','🫁 Buikpijn','🔥 Dysurie','🩹 Nieuwe wonde','⚠️ Wonde geneest slecht','🔴 Infectie wonde','😵 Onwel','🦠 Vermoeden infectie','🧫 Urineweg','🦴 Gewricht'],
+      detailPh:'bijv. CRP verhoogd, temp 39.2°C',
+      decisionLbl:'Beslissing / beleid (meerdere)',
+      decisions:['📍 Arts komt vandaag langs','📅 Arts komt morgen langs','💊 Medicatie opgestart','👁️ Observatie','🧪 Staalname','🚑 Naar spoed','✅ Geen wijziging','📝 Andere'],
+      actionLbl:'Actie verpleegkundige',
+      actions:['💊 Medicatie toegediend','🧪 Staal afgenomen','📞 Collega verwittigd','👁️ Observatie verdergezet'],
+      medLbl:'Medicatie (optioneel)', medNamePh:'Naam bijv. Furadantine', medDosePh:'Dosis bijv. 50mg',
+      freqLbl:'Frequentie', freqs:['1x/dag','2x/dag','3x/dag','4x/dag','Zo nodig'],
+      labSubjectLbl:'Onderwerp', labSubjects:['🩸 Bloedresultaten','🧫 Urineresultaten','🧪 Staalresultaten','🩹 Wond','📍 Andere'],
+      labDetailPh:'bijv. CRP 85, Hb gedaald',
+      labDecisionLbl:'Beleid / beslissing (meerdere)',
+      labDecisions:['✅ Geen wijziging','💊 Medicatie opstarten','🔁 Medicatie aanpassen','📍 Vandaag langs','📅 Morgen langs','🧪 Staalname','👁️ Observatie','📝 Andere'],
+      admReasonLbl:'Reden opname (meerdere)',
+      admReasons:['⚠️ Val','🌡️ Koorts','🫁 Dyspneu','📉 Lage saturatie','🧠 Verwardheid','😣 Pijn','💧 Dehydratie','📉 Acute achteruitgang','🩹 Wondprobleem','📍 Andere'],
+      admHospitalLbl:'Ziekenhuis (optioneel)', admHospitalPh:'bijv. UZ Leuven, AZ Sint-Truiden',
+      admByLbl:'Beslist door', admBys:['👨‍⚕️ Huisarts','🌙 Wachtdienst','🚑 Spoedarts','👨‍👩‍👧 Familie','📍 Andere'],
+      admFamLbl:'Familie verwittigd?', admFamYes:'✅ Ja', admFamNo:'❌ Nog niet',
+      admItemsLbl:'Meegenomen (meerdere)',
+      admItems:['🪪 Identiteitskaart','📋 Hospitalisatiefiche','💊 Medicatielijst','📄 Verwijsbrief','🦷 Tandprothese','👓 Bril','👂 Hoorapparaat','👕 Kledij'],
+      backReasonLbl:'Reden / specialisatie',
+      backReasons:['⚠️ Val','👁️ Oogarts','👂 NKO / oor','❤️ Cardiologie','🩸 Diabetes','🔍 Controle','🧪 Onderzoek','🔪 Operatie','🦠 Infectie','📍 Andere'],
+      backDecisionLbl:'Nieuwe afspraken / beleid (meerdere)',
+      backDecisions:['💊 Nieuwe medicatie','🔁 Medicatie gewijzigd','⛔ Medicatie gestopt','📅 Nieuwe afspraak','👁️ Observatie','✅ Geen wijziging'],
+      backMedPh:'bijv. Bisoprolol verhoogd, Eliquis gestart',
+      backFupPh:'bijv. controle cardiologie 14/04, bloeddruk dagelijks meten',
+      approvalReasonLbl:'Waarvoor werd goedkeuring gevraagd?',
+      approvalReasons:['🩹 Wondzorg','💊 Pijnstilling','🧪 Staalname','💉 Tijdelijke medicatie','👁️ Observatie','📍 Andere'],
+      approvalAnswerLbl:'Antwoord arts',
+      approvalAnswers:['✅ Goedgekeurd','❌ Niet goedgekeurd','🔄 Later herevalueren','📅 Komt langs'],
+      approvalActionLbl:'Actie verpleegkundige',
+      approvalActions:['✅ Uitgevoerd volgens advies','👨‍👩‍👧 Familie geïnformeerd','👁️ Opvolging voorzien'],
+      passLbl:'Vastgesteld (meerdere)',
+      passItems:['✅ Overlijden vastgesteld','📞 Arts verwittigd','🏥 Huisarts ter plaatse','📞 Wachtarts verwittigd','🏥 Wachtarts ter plaatse','✅ Vastgesteld door wachtarts','👨‍👩‍👧 Familie verwittigd','🫂 Familie aanwezig','🕊️ Funerarium verwittigd'],
+      passContextLbl:'Context',
+      passContexts:['😌 Rustig en vredig','🌿 Palliatief traject','⚠️ Onverwacht','🌙 Tijdens de nacht','🫂 In aanwezigheid van familie'],
+      passDetailPh:'Korte aanvulling indien nodig...',
+      otherTypeLbl:'Soort communicatie',
+      otherTypes:['📅 Afspraak','📝 Korte update','👁️ Observatie doorgeven','📍 Andere'],
+      otherDescLbl:'Beschrijf kort ⚠️',
+      otherDescPh:'Typ of spreek in wat er is gebeurd...',
+      byLbl:'Doorgegeven door (optioneel)', bys:['👩‍⚕️ Zorgkundige','👥 Collega VP'],
+      notesLbl:'Extra notitie (optioneel)', notesPh:'Korte extra info...',
+      genBtn:'✨ Maak kort verslag',
+    },
+    support: {
+      title:'💙 Hoe gaat het met jou?', desc:'Maya luistert. Geen oordeel, geen haast.',
+      greeting:'Ik ben er. Vertel — hoe was het vandaag echt?',
+      sendBtn:'Verstuur',
+    },
+    learn: {
+      title:'📖 Bijleren & Quiz', desc:'Klinische tips, quiz & oefen-scenario\'s',
+      topicLbl:'Kies een onderwerp',
+      topics:['🧠 Dementie & gedrag','🛡️ Valpreventie','🍽️ Voeding & hydratatie','🕊️ Palliatieve zorg','💊 Medicatie','🩹 Wondzorg','🦠 Infectiepreventie','😣 Pijn & comfort','🚨 Spoed & triage'],
+      tipLbl:'Weetje van de dag',
+      tipRefresh:'🔄 Nieuwe tip',
+      quizLbl:'Quiz',
+      quizNext:'Volgende vraag →',
+      scenarioLbl:'Oefen-scenario',
+      scenarioDesc:'Een realistische verpleegkundige situatie — wat doe jij?',
+      scenarioLevels:['🟢 Beginner','🟡 Gevorderd','🔴 Stage-klaar'],
+      scenarioLevelLbl:'Niveau',
+      scenarioStart:'🎯 Nieuw scenario',
+      scenarioSubmit:'💬 Stuur mijn antwoord',
+      scenarioNext:'Volgend scenario →',
+      scenarioPlaceholder:'Beschrijf wat jij zou doen...',
+      scenarioFeedbackLbl:'Feedback van Maya',
+    },
+  },
+  fr: {
+    disc:'🔒 Numéro de chambre uniquement — jamais de vrai nom · Outil personnel',
+    back:'Retour',
+    heroTitle:'Votre collègue <span>IA.<\/span>',
+    heroSub:'Documentation infirmière professionnelle en 30 secondes',
+    qnBtnTitle:'Note rapide',
+    qnBtnSub:'Parlez ou tapez — l\'IA rédige le rapport',
+    popupDesc:'Votre assistante IA personnelle pour la documentation en soins infirmiers.',
+    popupRules:'⚠️ Règles obligatoires:\n🔒 Toujours utiliser le numéro de chambre — jamais le vrai nom\n📋 Copier-coller manuellement dans le dossier\n👁️ Toujours vérifier avant utilisation',
+    popupBtn:'Je comprends — commençons',
+    modules:[
+      {id:'shift',icon:'📋',name:'Rapport de garde',desc:'Transmission en 30 secondes'},
+      {id:'comm',icon:'⚡',name:'Communication rapide',desc:'Médecin, labo, sortie, décès'},
+      {id:'incident',icon:'⚠️',name:'Incident',desc:'Chute, agressivité, errance'},
+      {id:'wound',icon:'🩹',name:'Soins de plaie',desc:'Note de plaie & évolution'},
+      {id:'behav',icon:'🧠',name:'Comportement',desc:'Note comportementale'},
+      {id:'meds',icon:'💊',name:'Médicaments',desc:'Changements & nouvelles prescriptions'},
+      {id:'support',icon:'💙',name:'Comment allez-vous?',desc:'Chat avec Maya + bilan burnout'},
+      {id:'tasks',icon:'📋',name:'Mes Tâches',desc:'Rappels de garde & to-do'},
+      {id:'learn',icon:'📖',name:'Apprendre & Quiz',desc:'Conseils & quiz clinique',wide:true},
+    ],
+    qnTitle:'Note rapide', qnPriv:'🔒 Numéro de chambre uniquement',
+    qnRoomLbl:'Chambre / Patient', qnRoomPh:'ex. Chambre 12',
+    qnNoteLbl:'Note (parlez ou tapez)', qnNotePh:'"Patient agité, rassuré, médicament donné..."',
+    qnCancel:'Annuler', qnSubmit:'✨ Générer',
+    resCopy:'📋 Copier', resDone:'✓ Terminé',
+    resDisc:'⚠️ Vérifiez avant utilisation — vous restez responsable',
+    loading:'Génération...', genBtn:'✨ Générer le rapport',
+    shift:{title:'📋 Rapport de garde',desc:'Transmission au collègue suivant.',priv:'🔒 Numéro de chambre uniquement',roomLbl:'Chambre (optionnel)',roomPh:'ex. Chambre 5',statusLbl:'État général ⚠️',obsLbl:'Observations (plusieurs possible)',actLbl:'Actions effectuées',fupLbl:'Suivi pour la prochaine garde',notesLbl:'Info supplémentaire (optionnel)',notesPh:'',painPh:'📍 Localisation douleur',medPh:'💊 Quel médicament?',urinePh:'🧫 Résultat?',glycPh:'🩸 Glycémie',status:['😌 Calme','✅ Stable','🟡 Légère inquiétude','🟠 Attention requise','📉 Aggravé','📈 Amélioré'],obs:['✅ Rien à signaler','😣 Douleur','😟 Agité','🧠 Confus','😰 Anxieux','🌡️ Fièvre','🍽️ Peu mangé','💧 Peu bu','🚽 Transit','🌙 Errance','🫁 Respiration','📊 Constantes anormales','🩸 Glycémie','🩹 Plaie','🧫 Symptômes urinaires','⚠️ Chute','😠 Agressivité','😴 Difficile à réveiller'],act:['✅ Aucune action','📞 Médecin appelé','👨‍👩‍👧 Famille contactée','💊 Médicament donné','📊 Constantes prises','🩹 Soins de plaie','🧫 Urine testée','🧪 Prélèvement préparé','🤝 Rassuré','🔄 Repositionné','🛏️ Accompagné au lit'],fup:['✅ Aucun','🌡️ Température','🩸 Glycémie','🧠 Comportement','💧 Hydratation','🩹 Soins de plaie','😣 Douleur','📞 Médecin si besoin','🧪 Labo','🍽️ Alimentation','👁️ État clinique']},
+    incident:{title:'⚠️ Rapport d\'incident',desc:'Chute, agressivité, errance, erreur médicamenteuse',priv:'🔒 Numéro de chambre uniquement',roomLbl:'Chambre',roomPh:'ex. Chambre 5',typeLbl:'Type d\'incident ⚠️',types:['⚠️ Chute','😰 Quasi-chute','😠 Agressivité','🚶 Errance','💊 Erreur médicamenteuse','📍 Autre'],locLbl:'Lieu',locs:['🛏️ Chambre','🚿 Salle de bain','🚶 Couloir','🍽️ Salle à manger','🌿 Jardin'],timeLbl:'Heure',foundLbl:'Comment découvert?',founds:['👁️ Trouvé par terre','👀 Chute témoin','🗣️ Signalé par patient','👥 Signalé par collègue'],headLbl:'Impact crânien?',heads:['✅ Oui','❌ Non'],injuryLbl:'État après (plusieurs)',injuries:['✅ Conscient & orienté','🙌 Aucune blessure','😣 Douleur','🫧 Gonflement','🦴 Fracture suspectée','🩹 Blessure visible','🧠 Confus','❌ Perte de conscience'],painPh:'📍 Localisation douleur',paramsLbl:'Constantes (optionnel)',agrTypeLbl:'Type d\'agressivité',agrTypes:['🗣️ Verbale','👊 Physique → soignant','👊 Physique → résident','⚠️ Auto-agression','💥 Dégâts matériels'],agrCauseLbl:'Déclencheur',agrCauses:['❓ Inconnu','😣 Douleur','🧠 Confusion','😤 Frustration','😰 Peur','🛁 Pendant les soins'],agrInjLbl:'Blessure',agrInjs:['🙌 Aucune','🩹 Traitée','📞 Médecin notifié'],wandFoundLbl:'Où retrouvé?',wandFounds:['🏠 Dans le service','🚶 Hors service','🌿 Hors bâtiment'],wandCondLbl:'État au retour',wandConds:['✅ Calme & indemne','🧠 Confus','⚠️ Blessé'],medTypeLbl:'Type d\'erreur',medTypes:['💊 Mauvais médicament','🔢 Mauvaise dose','❌ Oublié','⏰ Mauvais moment'],medNameLbl:'Nom du médicament',actionsLbl:'Actions (plusieurs)',actions:['📞 Médecin notifié','👨‍👩‍👧 Famille notifiée','🤝 Rassuré','🩹 Soins','💊 Antalgique','👁️ Surveillance','🏥 Hôpital','🔒 Environnement sécurisé'],notesLbl:'Notes (optionnel)',notesPh:'Détails...'},
+    wound:{title:'🩹 Soins de plaie',desc:'Note de plaie & évolution',priv:'🔒 Numéro de chambre uniquement',roomLbl:'Chambre',roomPh:'ex. Chambre 2',typeLbl:'Type de plaie ⚠️',types:['🔸 Skin tear','🔴 Escarre','💧 Lésion humidité','🩹 Abrasion','🩺 Plaie','📍 Autre'],locLbl:'Localisation ⚠️',locs:['💪 Bras droit','💪 Bras gauche','✋ Main droite','✋ Main gauche','🦵 Jambe droite','🦵 Jambe gauche','👟 Talon','🔻 Sacrum','🔙 Dos','📍 Autre'],evolLbl:'Évolution',evols:['✅ Améliorée','😐 Stable','📉 Aggravée','🆕 Premier pansement'],aspLbl:'Aspect (plusieurs)',asps:['✅ Pas d\'infection','🔴 Rougeur','💧 Humide','🏜️ Sec','🟡 Exsudat','👃 Odeur','😣 Douleur','⚫ Nécrose'],careLbl:'Soins effectués (plusieurs)',cares:['🧴 Nettoyé','🔵 Désinfecté','🛡️ Couvert','🔄 Pansement changé','🩹 Pansement silicone','🩹 Compresse'],fupLbl:'Suivi',fups:['📅 Demain','📅 2 jours','📅 3 jours','📞 Médecin','👩‍⚕️ Spécialiste','👁️ Observer'],notesLbl:'Notes (optionnel)',notesPh:''},
+    behav:{title:'🧠 Note comportementale',desc:'Observation comportementale — factuelle, contextuelle',priv:'🔒 Numéro de chambre uniquement',roomLbl:'Chambre',roomPh:'ex. Chambre 1',typeLbl:'Type de comportement ⚠️',types:['😰 Agitation','😤 Agitation verbale','😠 Agressivité verbale','👊 Agressivité physique','📢 Cris','🚶 Errance','🚫 Refus de soins','😶 Apathie','🧠 Confusion','😌 Plus calme'],ctxLbl:'Contexte ⚠️',ctxs:['🛁 Pendant soins','🧴 ADL','🍽️ Repas','🦽 Transfert','🌙 Nuit','🌅 Au réveil','❓ Sans raison'],intLbl:'Intensité',ints:['🟢 Légère','🟡 Modérée','🔴 Sévère'],causeLbl:'Cause possible',causes:['😣 Douleur','😨 Peur','😴 Fatigue','🔊 Suractivation','🔄 Changement','❓ Inconnu'],reactLbl:'Réponse à l\'approche',reacts:['✅ Réassurance efficace','🎵 Distraction efficace','😌 Calmé spontanément','⚠️ Difficile à calmer','🔄 Comportement persistant'],actLbl:'Actions (plusieurs)',acts:['🤝 Rassuré','🎵 Distraction','🏠 Environnement calme','📞 Médecin','👨‍👩‍👧 Famille','✅ Désescalade','🙌 Aucune blessure','💊 Médicament (prescription)'],notesLbl:'Notes (optionnel)',notesPh:'Détail factuel...'},
+    meds:{title:'💊 Note médicamenteuse',desc:'Nouveau médicament, changements & décisions thérapeutiques',priv:'🔒 Numéro de chambre uniquement',roomLbl:'Chambre',roomPh:'ex. Chambre 7',reasonLbl:'Raison ⚠️',reasons:['😣 Douleur','🌡️ Fièvre','🦠 Infection','😟 Agitation','🌙 Sommeil','🩺 Tension','🩸 Glycémie','📞 Après contact médecin','🏥 Après hospitalisation'],changeLbl:'Type de changement ⚠️',changes:['▶️ Débuté','⛔ Arrêté','🔁 Dose modifiée','💉 Cure courte','🏥 Repris de l\'hôpital'],nameLbl:'Médicament ⚠️',namePh:'Nom (ex. Paracétamol)',dosePh:'Dose (ex. 500mg)',freqLbl:'Fréquence',freqs:['1x/jour','2x/jour','3x/jour','4x/jour','Si besoin'],durLbl:'Durée',durs:['1 fois','3 jours','5 jours','7 jours','Chronique'],fupLbl:'Suivi',fups:['📈 Surveiller l\'effet','😣 Douleur','🌡️ Température','🩸 Glycémie','✅ Aucun'],notesLbl:'Notes (optionnel)',notesPh:'Info brève...'},
+    comm:{
+      title:'⚡ Communication rapide', desc:'Note de communication courte et directe.',
+      priv:'🔒 Numéro de chambre uniquement',
+      roomLbl:'Chambre / Patient', roomPh:'ex. Chambre 8',
+      typeLbl:'Type de communication ⚠️',
+      types:['🩺 Médecin contacté','🧪 Labo / conseil','🚑 Admission hôpital','🔙 Retour hôpital','📞 Approbation téléphonique','🕊️ Décès','📝 Autre'],
+      symptomsLbl:'Symptômes / plaintes (plusieurs)',
+      symptoms:['🌡️ Fièvre','😣 Douleur','🫁 Dyspnée','😮‍💨 Toux','🧠 Confusion','🤢 Nausées','🫁 Douleur abdominale','🔥 Dysurie','🩹 Nouvelle plaie','⚠️ Plaie ne cicatrise pas','🔴 Infection plaie','😵 Malaise','🦠 Infection suspectée','🧫 Symptômes urinaires','🦴 Douleur articulaire'],
+      detailPh:'ex. CRP élevée, temp 39.2°C',
+      decisionLbl:'Décision / politique (plusieurs)',
+      decisions:['📍 Médecin visite aujourd hui','📅 Médecin visite demain','💊 Médicament débuté','👁️ Surveillance','🧪 Prélèvement','🚑 Transfert urgences','✅ Pas de changement','📝 Autre'],
+      actionLbl:'Action infirmière',
+      actions:['💊 Médicament administré','🧪 Prélèvement effectué','📞 Collègues avertis','👁️ Surveillance maintenue'],
+      medLbl:'Médicament (optionnel)', medNamePh:'Nom ex. Furadantine', medDosePh:'Dose ex. 50mg',
+      freqLbl:'Fréquence', freqs:['1x/jour','2x/jour','3x/jour','4x/jour','Si besoin'],
+      labSubjectLbl:'Sujet', labSubjects:['🩸 Résultats sang','🧫 Résultats urine','🧪 Résultats prélèvement','🩹 Plaie','📍 Autre'],
+      labDetailPh:'ex. CRP 85, Hb diminué',
+      labDecisionLbl:'Politique / décision (plusieurs)',
+      labDecisions:['✅ Pas de changement','💊 Démarrer médicament','🔁 Ajuster médicament','📍 Médecin visite aujourd hui','📅 Médecin visite demain','🧪 Nouveau prélèvement','👁️ Surveillance','📝 Autre'],
+      admReasonLbl:'Raison admission (plusieurs)',
+      admReasons:['⚠️ Chute','🌡️ Fièvre','🫁 Dyspnée','📉 SpO2 bas','🧠 Confusion','😣 Douleur','💧 Déshydratation','📉 Aggravation aiguë','🩹 Problème de plaie','📍 Autre'],
+      admHospitalLbl:'Hôpital (optionnel)', admHospitalPh:'ex. CHU Bruxelles',
+      admByLbl:'Décidé par', admBys:['👨‍⚕️ Médecin traitant','🌙 Garde','🚑 Urgentiste','👨‍👩‍👧 Famille','📍 Autre'],
+      admFamLbl:'Famille avertie?', admFamYes:'✅ Oui', admFamNo:'❌ Pas encore',
+      admItemsLbl:'Éléments emportés (plusieurs)',
+      admItems:['🪪 Carte identité','📋 Formulaire hôpital','💊 Liste médicaments','📄 Lettre de référence','🦷 Prothèse dentaire','👓 Lunettes','👂 Appareil auditif','👕 Vêtements'],
+      backReasonLbl:'Raison / spécialité',
+      backReasons:['⚠️ Chute','👁️ Ophtalmologie','👂 ORL','❤️ Cardiologie','🩸 Diabète','🔍 Contrôle','🧪 Investigation','🔪 Chirurgie','🦠 Infection','📍 Autre'],
+      backDecisionLbl:'Nouveaux accords / politique (plusieurs)',
+      backDecisions:['💊 Nouveau médicament','🔁 Médicament modifié','⛔ Médicament arrêté','📅 Nouveau rendez-vous','👁️ Surveillance','✅ Pas de changement'],
+      backMedPh:'ex. Bisoprolol augmenté, Eliquis démarré',
+      backFupPh:'ex. contrôle cardiologie 14/04, TA quotidienne',
+      approvalReasonLbl:'Approbation demandée pour',
+      approvalReasons:['🩹 Soins de plaie','💊 Antalgique','🧪 Prélèvement','💉 Médicament temporaire','👁️ Surveillance','📍 Autre'],
+      approvalAnswerLbl:'Réponse du médecin',
+      approvalAnswers:['✅ Approuvé','❌ Non approuvé','🔄 Réévaluer plus tard','📅 Visite prévue'],
+      approvalActionLbl:'Action infirmière',
+      approvalActions:['✅ Effectué selon avis','👨‍👩‍👧 Famille informée','👁️ Suivi prévu'],
+      passLbl:'Confirmé (plusieurs)',
+      passItems:['✅ Décès confirmé','📞 Médecin averti','🏥 Médecin sur place','📞 Médecin de garde averti','🏥 Médecin de garde sur place','✅ Confirmé par médecin de garde','👨‍👩‍👧 Famille avertie','🫂 Famille présente','🕊️ Pompes funèbres averties'],
+      passContextLbl:'Contexte',
+      passContexts:['😌 Paisible','🌿 Soins palliatifs','⚠️ Inattendu','🌙 Pendant la nuit','🫂 En présence de la famille'],
+      passDetailPh:'Ajout bref si nécessaire...',
+      otherTypeLbl:'Type de communication',
+      otherTypes:['📅 Rendez-vous','📝 Mise à jour','👁️ Observation','📍 Autre'],
+      otherDescLbl:'Décrivez brièvement ⚠️',
+      otherDescPh:'Tapez ou parlez ce qui sest passé...',
+      byLbl:'Communiqué par (optionnel)', bys:['👩‍⚕️ Aide-soignant','👥 Collègue infirmier'],
+      notesLbl:'Note supplémentaire (optionnel)', notesPh:'Info brève...',
+      genBtn:'✨ Générer la note',
+    },
+    support:{title:'💙 Comment allez-vous?',desc:'Maya écoute. Sans jugement, sans précipitation.',greeting:'Je suis là. Dites-moi — comment s\'est vraiment passée votre journée?',sendBtn:'Envoyer'},
+    learn:{title:'📖 Apprendre & Quiz',desc:'Conseils, quiz & scénarios pratiques',topicLbl:'Choisissez un sujet',topics:['🧠 Démence & comportement','🛡️ Prévention des chutes','🍽️ Nutrition & hydratation','🕊️ Soins palliatifs','💊 Médicaments','🩹 Soins de plaie','🦠 Hygiène & infection','😣 Douleur & confort','🚨 Urgence & triage'],tipLbl:'Conseil du jour',tipRefresh:'🔄 Nouveau conseil',quizLbl:'Quiz',quizNext:'Question suivante →',scenarioLbl:'Scénario pratique',scenarioDesc:'Une situation infirmière réelle — que feriez-vous?',scenarioLevels:['🟢 Débutant','🟡 Intermédiaire','🔴 Avancé'],scenarioLevelLbl:'Niveau',scenarioStart:'🎯 Nouveau scénario',scenarioSubmit:'💬 Envoyer ma réponse',scenarioNext:'Scénario suivant →',scenarioPlaceholder:'Décrivez ce que vous feriez...',scenarioFeedbackLbl:'Retour de Maya'},
+  },
+};
+
+const TASKS_T = {
+  en: {
+    title:'My Tasks', desc:'Your shift reminders — cleared when you start fresh.',
+    addLbl:'Add task or reminder',
+    addPh:'e.g. "Call doctor for room 5" or "Send sample to lab"',
+    quick:['📞 Call doctor','🧪 Sample to lab','💊 Medication check','📋 Write report','👨‍👩‍👧 Call family','🩹 Wound care','📊 Take vitals'],
+    filterAll:'All', filterUrgent:'🔴 Urgent', filterDone:'✅ Done',
+    empty:'No tasks yet. Add one above.',
+    clearDone:'Clear completed tasks',
+    markUrgent:'Mark urgent',
+  },
+  nl: {
+    title:'Mijn Taken', desc:'Jouw shift-herinneringen — frisse start bij elke nieuwe shift.',
+    addLbl:'Taak of herinnering toevoegen',
+    addPh:'bijv. "Arts bellen voor kamer 5" of "Staal naar labo sturen"',
+    quick:['📞 Arts bellen','🧪 Staal naar labo','💊 Medicatie check','📋 Rapport schrijven','👨‍👩‍👧 Familie bellen','🩹 Wondzorg','📊 Parameters nemen'],
+    filterAll:'Alles', filterUrgent:'🔴 Dringend', filterDone:'✅ Gedaan',
+    empty:'Nog geen taken. Voeg er een toe hierboven.',
+    clearDone:'Verwijder afgeronde taken',
+    markUrgent:'Markeer dringend',
+  },
+  fr: {
+    title:'Mes Tâches', desc:'Rappels de garde — nettoyé à chaque nouvelle garde.',
+    addLbl:'Ajouter une tâche ou un rappel',
+    addPh:'ex. "Appeler médecin chambre 5" ou "Envoyer prélèvement au labo"',
+    quick:['📞 Appeler médecin','🧪 Prélèvement labo','💊 Vérif. médicament','📋 Écrire rapport','👨‍👩‍👧 Appeler famille','🩹 Soins de plaie','📊 Prendre constantes'],
+    filterAll:'Tout', filterUrgent:'🔴 Urgent', filterDone:'✅ Fait',
+    empty:'Pas encore de tâches.',
+    clearDone:'Supprimer les tâches terminées',
+    markUrgent:'Marquer urgent',
+  },
+};
+
+const BURNOUT_T = {
+  en: {
+    tabChat:'💬 Talk with Maya', tabBurnout:'🧘 Burnout check',
+    intro:'Three quick questions. Maya gives you personal advice based on how you feel right now.',
+    eLbl:'Your energy level today', fLbl:'Emotionally, how are you?', wLbl:'Workload this shift',
+    energy:['🔋 Full energy','😐 Okay','😓 Tired','💀 Completely drained'],
+    feel:['😊 Good','😐 Neutral','😟 A bit down','😭 Really struggling'],
+    work:['✅ Manageable','🟡 Heavy','🔴 Too much','😮 Overwhelming'],
+    btn:'💜 Get Maya advice',
+  },
+  nl: {
+    tabChat:'💬 Praten met Maya', tabBurnout:'🧘 Burnout check',
+    intro:'Drie snelle vragen. Maya geeft jou persoonlijk advies op basis van hoe je je nu voelt.',
+    eLbl:'Jouw energieniveau vandaag', fLbl:'Hoe voel je je emotioneel?', wLbl:'Werkdruk deze shift',
+    energy:['🔋 Vol energie','😐 Gaat wel','😓 Moe','💀 Volledig leeg'],
+    feel:['😊 Goed','😐 Neutraal','😟 Beetje neerslachtig','😭 Echt moeilijk'],
+    work:['✅ Behapbaar','🟡 Zwaar','🔴 Te veel','😮 Overweldigend'],
+    btn:'💜 Krijg advies van Maya',
+  },
+  fr: {
+    tabChat:'💬 Parler avec Maya', tabBurnout:'🧘 Bilan burnout',
+    intro:'Trois questions rapides. Maya vous donne un conseil personnalisé.',
+    eLbl:'Votre niveau energie', fLbl:'Comment vous sentez-vous?', wLbl:'Charge de travail',
+    energy:['🔋 Plein énergie','😐 Ca va','😓 Fatigué','💀 Vide'],
+    feel:['😊 Bien','😐 Neutre','😟 Un peu bas','😭 Vraiment difficile'],
+    work:['✅ Gérable','🟡 Lourde','🔴 Trop','😮 Écrasante'],
+    btn:'💜 Obtenir l avis de Maya',
+  },
+};
+
+// ─── FEEDBACK & DEMO ───
+const FEEDBACK_EMAIL = 'jouw-email@voorbeeld.com'; // <-- VERVANG DIT MET JOUW EMAIL
+
+const DEMO_FALLBACK = {
+  en: {
+    prefix: '(!) No connection to Maya AI right now. Here is an example of what Maya writes:\n\n',
+    shift: 'Room 5 more confused this evening with urinary symptoms. Urine tested positive, sample prepared for lab. Doctor notified.',
+    comm: 'GP contacted for fever and confusion. Doctor visiting tomorrow, antibiotics started.',
+    incident: 'At 14:30 found on the floor in the bathroom. Pain at left hip, no head impact. Doctor notified.',
+    wound: 'Skin tear right forearm, improving. Cleaned and covered with silicone dressing. Next check in 2 days.',
+    behav: 'Restlessness during evening care, calmed after reassurance. No injury.',
+    meds: 'Paracetamol 1g 3x/day started for pain. Monitor effect.',
+    generic: 'Example report. Please check your internet connection and try again.',
+  },
+  nl: {
+    prefix: '(!) Geen verbinding met Maya AI. Dit is een voorbeeld van wat Maya schrijft:\n\n',
+    shift: 'Kamer 5 vanavond meer verward met urinewegklachten. Urine positief, staal klaar voor labo. Arts gebeld.',
+    comm: 'Huisarts gebeld wegens koorts en verwardheid. Arts komt morgen langs, antibiotica opgestart.',
+    incident: 'Om 14:30 gevonden op de grond in de badkamer. Pijn ter hoogte van de linkerheup, geen hoofdimpact. Arts verwittigd.',
+    wound: 'Skintear rechteronderarm, verbeterd. Gereinigd en afgedekt met siliconenverband. Controle over 2 dagen.',
+    behav: 'Onrust tijdens avondzorg, gekalmeerd na geruststelling. Geen letsel.',
+    meds: 'Paracetamol 1g 3x/dag opgestart wegens pijn. Effect opvolgen.',
+    generic: 'Voorbeeldverslag. Controleer je internetverbinding en probeer opnieuw.',
+  },
+  fr: {
+    prefix: '(!) Pas de connexion avec Maya AI. Voici un exemple de ce que Maya rédige:\n\n',
+    shift: 'Chambre 5 plus confuse ce soir avec symptomes urinaires. Urine positive, prelevement prepare pour le labo. Medecin averti.',
+    comm: 'Medecin contacte pour fievre et confusion. Visite demain, antibiotiques demarres.',
+    incident: 'A 14h30 trouvee par terre dans la salle de bain. Douleur hanche gauche, pas de choc cranien. Medecin averti.',
+    wound: 'Dechirure cutanee avant-bras droit, amelioree. Nettoyee et couverte. Controle dans 2 jours.',
+    behav: 'Agitation pendant les soins du soir, calmee apres reassurance. Aucune blessure.',
+    meds: 'Paracetamol 1g 3x/jour demarre pour douleur. Surveiller effet.',
+    generic: 'Exemple de rapport. Verifiez votre connexion et reessayez.',
+  },
+};
+
+function sendFeedback() {
+  const subject = encodeURIComponent('Maya NurseMate feedback');
+  const bodyTxt = lang==='nl' ? 'Hoi Flora, mijn feedback over Maya: ' : lang==='fr' ? 'Bonjour, mon retour sur Maya: ' : 'Hi, my feedback about Maya: ';
+  window.location.href = 'mailto:' + FEEDBACK_EMAIL + '?subject=' + subject + '&body=' + encodeURIComponent(bodyTxt);
+}
+
+// ─── STATE ───
+let lang = 'en';
+let currentPage = 'home';
+let incidentType = null;
+let commType = null;
+let commFam = null;
+let patients = [];
+let learnTopic = null;
+let currentLearnTopic = null;
+let scenarioLevel = 'beginner';
+let currentScenario = null;
+let quizScore = 0, quizTotal = 0;
+let supportHistory = [];
+let voiceRec = null;
+let burnEnergy = null, burnFeel = null, burnWork = null;
+let supTab = 'chat';
+let taskFilter = 'all';
+let tasks = [];
+const multiSel = {};
+let timeSaved = 0; // in minuten
+
+// ─── INIT ───
+(function(){
+  const bl = navigator.language || navigator.userLanguage || 'en';
+  if (bl.startsWith('nl')) lang = 'nl';
+  else if (bl.startsWith('fr')) lang = 'fr';
+  else lang = 'en';
+
+  if (localStorage.getItem('maya-seen')) {
+    document.getElementById('popup').style.display = 'none';
+  }
+  renderAll();
+  initSupportGreeting();
+})();
+
+function cycleLang() {
+  const langs = ['en','nl','fr'];
+  lang = langs[(langs.indexOf(lang) + 1) % langs.length];
+  document.getElementById('lang-display').textContent = lang.toUpperCase();
+  renderAll();
+  initSupportGreeting();
+}
+
+function closePopup() {
+  localStorage.setItem('maya-seen','1');
+  document.getElementById('popup').style.display = 'none';
+}
+
+// ─── RENDER ALL TEXT ───
+function renderAll() {
+  const t = T[lang];
+  document.getElementById('disc-bar').textContent = t.disc;
+  document.getElementById('back-lbl').textContent = t.back;
+  document.getElementById('hero-title').innerHTML = t.heroTitle;
+  document.getElementById('hero-sub').textContent = t.heroSub;
+  document.getElementById('qn-btn-title').textContent = t.qnBtnTitle;
+  document.getElementById('qn-btn-sub').textContent = t.qnBtnSub;
+
+  // Popup
+  const popTitle = document.getElementById('popup-title');
+  if (popTitle) popTitle.textContent = 'Maya NurseMate';
+  const popSub = document.getElementById('popup-sub');
+  if (popSub) popSub.textContent = lang==='nl'?'Jouw AI-collega voor verpleegkundige documentatie. Professioneel, snel en privacy-vriendelijk.':lang==='fr'?'Votre assistante IA pour la documentation infirmière. Professionnel, rapide et respectueux de la vie privée.':'Your AI companion for nursing documentation. Professional, fast and privacy-friendly.';
+  const popRule = document.getElementById('popup-rule');
+  if (popRule) popRule.textContent = lang==='nl'?'Gebruik kamernummer — nooit echte naam. Controleer altijd voor gebruik.':lang==='fr'?'Utilisez le numéro de chambre — jamais le vrai nom. Vérifiez toujours avant utilisation.':'Use room number — never real name. Always verify before use.';
+  document.getElementById('popup-btn').textContent = t.popupBtn;
+
+  // Quick note modal
+  document.getElementById('qn-title').textContent = t.qnTitle;
+  document.getElementById('qn-priv').textContent = t.qnPriv;
+  document.getElementById('qn-room-lbl').textContent = t.qnRoomLbl;
+  document.getElementById('qn-kamer').placeholder = t.qnRoomPh;
+  document.getElementById('qn-note-lbl').textContent = t.qnNoteLbl;
+  document.getElementById('qn-text').placeholder = t.qnNotePh;
+  document.getElementById('qn-cancel').textContent = t.qnCancel;
+  document.getElementById('qn-submit').textContent = t.qnSubmit;
+
+  // Result modal
+  document.getElementById('res-copy-btn').textContent = t.resCopy;
+  document.getElementById('res-done-btn').textContent = t.resDone;
+  document.getElementById('res-disclaimer').textContent = t.resDisc;
+
+  // Module grid
+  renderGrid();
+
+  // Module pages
+  renderShift();
+  renderIncident();
+  renderWound();
+  renderBehav();
+  renderMeds();
+
+  // Comm
+  renderComm();
+
+  // Support
+  const supTitleEl = document.getElementById('sup-title-txt');
+  if (supTitleEl) supTitleEl.textContent = t.support.title.replace('💙 ','');
+  document.getElementById('sup-desc').textContent = t.support.desc;
+  document.getElementById('sup-send-btn').textContent = t.support.sendBtn;
+
+  // Learn
+  document.getElementById('learn-title').textContent = t.learn.title;
+  document.getElementById('learn-desc').textContent = t.learn.desc;
+  document.getElementById('tip-lbl').textContent = t.learn.tipLbl;
+  document.getElementById('tip-refresh-btn').textContent = t.learn.tipRefresh;
+  document.getElementById('quiz-lbl').textContent = t.learn.quizLbl;
+  document.getElementById('quiz-next-btn').textContent = t.learn.quizNext;
+
+  // Learn topics
+  const tc = document.getElementById('learn-topic-chips');
+  tc.innerHTML = '';
+  document.getElementById('learn-topic-lbl').textContent = t.learn.topicLbl;
+  t.learn.topics.forEach(topic => {
+    const b = document.createElement('button');
+    b.className = 'chip' + (learnTopic === topic ? ' sel' : '');
+    b.textContent = topic;
+    b.onclick = () => selectLearnTopic(topic, b);
+    tc.appendChild(b);
+  });
+
+  initScenarioUI();
+  refreshBtns();
+
+  // Tasks & Burnout
+  renderTasksPage();
+  renderBurnoutSection();
+
+  // PWA install banner tekst
+  const installTxt = document.getElementById('install-txt');
+  const installBtn = document.getElementById('install-btn');
+  if (installTxt) installTxt.textContent = lang==='nl'?'Installeer Maya op je telefoon':lang==='fr'?'Installer Maya sur votre téléphone':'Install Maya on your phone';
+  if (installBtn) installBtn.textContent = lang==='nl'?'Installeer':lang==='fr'?'Installer':'Install';
+}
+
+function renderGrid() {
+  const grid = document.getElementById('module-grid');
+  grid.innerHTML = '';
+  T[lang].modules.forEach(m => {
+    const d = document.createElement('div');
+    d.className = 'card' + (m.wide ? ' ' : '');
+    if (m.wide) d.style.gridColumn = 'span 2';
+    d.innerHTML = '<span class="ico">' + m.icon + '<\/span><div class="cn">' + m.name + '<\/div><div class="cd">' + m.desc + '<\/div>';
+    d.onclick = () => openModule(m.id);
+    grid.appendChild(d);
+  });
+}
+
+function makeChips(containerId, items, key, exclusive) {
+  const el = document.getElementById(containerId) || document.querySelector(`[data-key="${key}"]`);
+  if (!el) return;
+  if (!multiSel[key]) multiSel[key] = new Set();
+  el.innerHTML = '';
+  items.forEach(item => {
+    const b = document.createElement('button');
+    b.className = 'chip' + (multiSel[key].has(item) ? ' sel' : '');
+    b.textContent = item;
+    b.onclick = () => {
+      if (exclusive) {
+        el.querySelectorAll('.chip').forEach(c => c.classList.remove('sel'));
+        multiSel[key] = new Set([item]);
+        b.classList.add('sel');
+      } else {
+        if (b.classList.contains('sel')) { b.classList.remove('sel'); multiSel[key].delete(item); }
+        else { b.classList.add('sel'); multiSel[key].add(item); }
+      }
+      refreshBtns();
+    };
+    el.appendChild(b);
+  });
+}
+
+function getChips(key) { return multiSel[key] ? [...multiSel[key]].join(', ') : ''; }
+
+function renderShift() {
+  const s = T[lang].shift;
+  document.getElementById('shift-title').textContent = s.title;
+  document.getElementById('shift-desc').textContent = s.desc;
+  const quietBtn = document.getElementById('sh-quiet-btn');
+  if (quietBtn) quietBtn.textContent = lang==='nl'?'✅ Shift rustig — niets te melden':lang==='fr'?'✅ Garde calme — rien à signaler':'✅ Shift uneventful — nothing to report';
+  const listLbl = document.getElementById('sh-list-lbl');
+  if (listLbl) listLbl.textContent = lang==='nl'?'Toegevoegde bewoners':lang==='fr'?'Patients ajoutés':'Patients added';
+  const addLbl = document.getElementById('sh-add-lbl');
+  if (addLbl) addLbl.textContent = lang==='nl'?'Patiënt / bewoner invullen':lang==='fr'?'Remplir patient':'Fill in patient';
+  const addBtn = document.getElementById('sh-add-btn');
+  if (addBtn) addBtn.textContent = lang==='nl'?'+ Volgende patiënt':lang==='fr'?'+ Patient suivant':'+ Add patient';
+  document.getElementById('shift-priv').textContent = s.priv;
+  document.getElementById('shift-room-lbl').textContent = s.roomLbl;
+  document.getElementById('sh-kamer').placeholder = s.roomPh;
+  document.getElementById('shift-status-lbl').textContent = s.statusLbl;
+  document.getElementById('shift-obs-lbl').textContent = s.obsLbl;
+  document.getElementById('shift-act-lbl').textContent = s.actLbl;
+  document.getElementById('shift-fup-lbl').textContent = s.fupLbl;
+  document.getElementById('shift-notes-lbl').textContent = s.notesLbl;
+  document.getElementById('sh-notes').placeholder = s.notesPh;
+  document.getElementById('sh-pain-loc').placeholder = s.painPh;
+  document.getElementById('sh-med-detail').placeholder = s.medPh;
+  document.getElementById('sh-urine-detail').placeholder = s.urinePh;
+  document.getElementById('sh-glyc').placeholder = s.glycPh;
+  document.getElementById('sh-btn').textContent = T[lang].genBtn;
+  document.getElementById('sh-loading-txt').textContent = T[lang].loading;
+  makeChips('sh-status-chips', s.status, 'sh-status', true);
+  makeChips('sh-obs-chips', s.obs, 'sh-obs', false);
+  makeChips('sh-act-chips', s.act, 'sh-act', false);
+  makeChips('sh-fup-chips', s.fup, 'sh-fup', false);
+  // Obs callbacks
+  document.getElementById('sh-obs-chips').querySelectorAll('.chip').forEach(b => {
+    const orig = b.onclick;
+    b.onclick = function() { orig && orig.call(this);
+      document.getElementById('sh-pain-wrap').style.display = multiSel['sh-obs']?.has(s.obs[1]) ? 'block' : 'none';
+      document.getElementById('sh-params-wrap').style.display = multiSel['sh-obs']?.has(s.obs[11]) ? 'block' : 'none';
+      document.getElementById('sh-glyc-wrap').style.display = multiSel['sh-obs']?.has(s.obs[12]) ? 'block' : 'none';
+    };
+  });
+  document.getElementById('sh-act-chips').querySelectorAll('.chip').forEach(b => {
+    const orig = b.onclick;
+    b.onclick = function() { orig && orig.call(this);
+      document.getElementById('sh-med-wrap').style.display = multiSel['sh-act']?.has(s.act[3]) ? 'block' : 'none';
+      document.getElementById('sh-urine-wrap').style.display = multiSel['sh-act']?.has(s.act[5]) ? 'block' : 'none';
+    };
+  });
+}
+
+function renderIncident() {
+  const s = T[lang].incident;
+  document.getElementById('inc-title').textContent = s.title;
+  document.getElementById('inc-desc').textContent = s.desc;
+  document.getElementById('inc-priv').textContent = s.priv;
+  document.getElementById('inc-room-lbl').textContent = s.roomLbl;
+  document.getElementById('inc-kamer').placeholder = s.roomPh;
+  document.getElementById('inc-type-lbl').textContent = s.typeLbl;
+  document.getElementById('inc-loc-lbl').textContent = s.locLbl;
+  document.getElementById('inc-time-lbl').textContent = s.timeLbl;
+  document.getElementById('inc-found-lbl').textContent = s.foundLbl;
+  document.getElementById('inc-head-lbl').textContent = s.headLbl;
+  document.getElementById('inc-injury-lbl').textContent = s.injuryLbl;
+  document.getElementById('inc-params-lbl').textContent = s.paramsLbl;
+  document.getElementById('inc-agr-type-lbl').textContent = s.agrTypeLbl;
+  document.getElementById('inc-agr-cause-lbl').textContent = s.agrCauseLbl;
+  document.getElementById('inc-agr-inj-lbl').textContent = s.agrInjLbl;
+  document.getElementById('inc-wand-found-lbl').textContent = s.wandFoundLbl;
+  document.getElementById('inc-wand-cond-lbl').textContent = s.wandCondLbl;
+  document.getElementById('inc-med-type-lbl').textContent = s.medTypeLbl;
+  document.getElementById('inc-med-name-lbl').textContent = s.medNameLbl;
+  document.getElementById('inc-pain-loc').placeholder = s.painPh;
+  document.getElementById('inc-actions-lbl').textContent = s.actionsLbl;
+  document.getElementById('inc-notes-lbl').textContent = s.notesLbl;
+  document.getElementById('inc-notes').placeholder = s.notesPh;
+  document.getElementById('inc-btn').textContent = T[lang].genBtn;
+  document.getElementById('inc-loading-txt').textContent = T[lang].loading;
+
+  // Type chips
+  const tc = document.getElementById('inc-type-chips');
+  tc.innerHTML = '';
+  s.types.forEach((type, i) => {
+    const b = document.createElement('button');
+    b.className = 'chip';
+    b.textContent = type;
+    b.onclick = () => {
+      tc.querySelectorAll('.chip').forEach(c => c.classList.remove('sel'));
+      b.classList.add('sel');
+      document.querySelectorAll('.scenario').forEach(sc => sc.classList.remove('act'));
+      const map = [null,'fall','fall','aggr','wand','med','other'];
+      // simplified
+      if (i === 0 || i === 1) document.getElementById('inc-sc-fall').classList.add('act');
+      else if (i === 2) document.getElementById('inc-sc-aggr').classList.add('act');
+      else if (i === 3) document.getElementById('inc-sc-wand').classList.add('act');
+      else if (i === 4) document.getElementById('inc-sc-med').classList.add('act');
+      incidentType = type;
+      refreshBtns();
+    };
+    tc.appendChild(b);
+  });
+
+  makeChips(null, s.locs, 'inc-loc', true);
+  makeChips(null, s.founds, 'inc-found', true);
+  makeChips(null, s.heads, 'inc-head', true);
+  makeChips('inc-injury-chips', s.injuries, 'inc-injury', false);
+  document.getElementById('inc-injury-chips').querySelectorAll('.chip').forEach(b => {
+    const orig = b.onclick;
+    b.onclick = function(){ orig && orig.call(this);
+      document.getElementById('inc-pain-wrap').style.display = multiSel['inc-injury']?.has(s.injuries[2]) ? 'block' : 'none';
+    };
+  });
+  makeChips(null, s.agrTypes, 'inc-agr-type', true);
+  makeChips(null, s.agrCauses, 'inc-agr-cause', true);
+  makeChips(null, s.agrInjs, 'inc-agr-inj', true);
+  makeChips(null, s.wandFounds, 'inc-wand-found', true);
+  makeChips(null, s.wandConds, 'inc-wand-cond', true);
+  makeChips(null, s.medTypes, 'inc-med-type', true);
+  makeChips('inc-act-chips', s.actions, 'inc-act', false);
+}
+
+function renderWound() {
+  const s = T[lang].wound;
+  ['wnd-title','wnd-desc','wnd-priv','wnd-room-lbl','wnd-type-lbl','wnd-loc-lbl','wnd-evol-lbl','wnd-asp-lbl','wnd-care-lbl','wnd-fup-lbl','wnd-notes-lbl'].forEach((id,i) => {
+    const vals = [s.title,s.desc,s.priv,s.roomLbl,s.typeLbl,s.locLbl,s.evolLbl,s.aspLbl,s.careLbl,s.fupLbl,s.notesLbl];
+    document.getElementById(id).textContent = vals[i];
+  });
+  document.getElementById('wnd-kamer').placeholder = s.roomPh;
+  document.getElementById('wnd-notes').placeholder = s.notesPh;
+  document.getElementById('wnd-btn').textContent = T[lang].genBtn;
+  document.getElementById('wnd-loading-txt').textContent = T[lang].loading;
+  makeChips('wnd-type-chips', s.types, 'wnd-type', true);
+  makeChips('wnd-loc-chips', s.locs, 'wnd-loc', true);
+  makeChips(null, s.evols, 'wnd-evol', true);
+  makeChips('wnd-asp-chips', s.asps, 'wnd-asp', false);
+  makeChips('wnd-care-chips', s.cares, 'wnd-care', false);
+  makeChips(null, s.fups, 'wnd-fup', true);
+}
+
+function renderBehav() {
+  const s = T[lang].behav;
+  document.getElementById('beh-title').textContent = s.title;
+  document.getElementById('beh-desc').textContent = s.desc;
+  document.getElementById('beh-priv').textContent = s.priv;
+  document.getElementById('beh-room-lbl').textContent = s.roomLbl;
+  document.getElementById('beh-kamer').placeholder = s.roomPh;
+  document.getElementById('beh-type-lbl').textContent = s.typeLbl;
+  document.getElementById('beh-ctx-lbl').textContent = s.ctxLbl;
+  document.getElementById('beh-int-lbl').textContent = s.intLbl;
+  document.getElementById('beh-cause-lbl').textContent = s.causeLbl;
+  document.getElementById('beh-react-lbl').textContent = s.reactLbl;
+  document.getElementById('beh-act-lbl').textContent = s.actLbl;
+  document.getElementById('beh-notes-lbl').textContent = s.notesLbl;
+  document.getElementById('beh-notes').placeholder = s.notesPh;
+  document.getElementById('beh-btn').textContent = T[lang].genBtn;
+  document.getElementById('beh-loading-txt').textContent = T[lang].loading;
+  makeChips(null, s.types, 'beh-type', true);
+  makeChips(null, s.ctxs, 'beh-ctx', true);
+  makeChips(null, s.ints, 'beh-int', true);
+  makeChips(null, s.causes, 'beh-cause', true);
+  makeChips(null, s.reacts, 'beh-react', true);
+  makeChips('beh-act-chips', s.acts, 'beh-act', false);
+}
+
+function renderMeds() {
+  const s = T[lang].meds;
+  document.getElementById('med-title').textContent = s.title;
+  document.getElementById('med-desc').textContent = s.desc;
+  document.getElementById('med-priv').textContent = s.priv;
+  document.getElementById('med-room-lbl').textContent = s.roomLbl;
+  document.getElementById('med-kamer').placeholder = s.roomPh;
+  document.getElementById('med-reason-lbl').textContent = s.reasonLbl;
+  document.getElementById('med-change-lbl').textContent = s.changeLbl;
+  document.getElementById('med-name-lbl').textContent = s.nameLbl;
+  document.getElementById('med-name').placeholder = s.namePh;
+  document.getElementById('med-dose').placeholder = s.dosePh;
+  document.getElementById('med-freq-lbl').textContent = s.freqLbl;
+  document.getElementById('med-dur-lbl').textContent = s.durLbl;
+  document.getElementById('med-fup-lbl').textContent = s.fupLbl;
+  document.getElementById('med-notes-lbl').textContent = s.notesLbl;
+  document.getElementById('med-notes').placeholder = s.notesPh;
+  document.getElementById('med-btn').textContent = T[lang].genBtn;
+  document.getElementById('med-loading-txt').textContent = T[lang].loading;
+  makeChips(null, s.reasons, 'med-reason', true);
+  makeChips(null, s.changes, 'med-change', true);
+  makeChips(null, s.freqs, 'med-freq', true);
+  makeChips(null, s.durs, 'med-dur', true);
+  makeChips(null, s.fups, 'med-fup', true);
+}
+
+// ─── RENDER COMM ───
+function renderComm() {
+  const s = T[lang].comm;
+  document.getElementById('comm-title').textContent = s.title;
+  document.getElementById('comm-desc').textContent = s.desc;
+  document.getElementById('comm-priv').textContent = s.priv;
+  document.getElementById('comm-room-lbl').textContent = s.roomLbl;
+  document.getElementById('comm-kamer').placeholder = s.roomPh;
+  document.getElementById('comm-type-lbl').textContent = s.typeLbl;
+  document.getElementById('comm-symp-lbl').textContent = s.symptomsLbl;
+  document.getElementById('comm-dec-lbl').textContent = s.decisionLbl;
+  document.getElementById('comm-act-lbl').textContent = s.actionLbl;
+  document.getElementById('comm-med-lbl').textContent = s.medLbl;
+  document.getElementById('comm-med-lbl2').textContent = s.medLbl;
+  document.getElementById('comm-med-name').placeholder = s.medNamePh;
+  document.getElementById('comm-med-dose').placeholder = s.medDosePh;
+  document.getElementById('comm-lab-sub-lbl').textContent = s.labSubjectLbl;
+  document.getElementById('comm-lab-detail').placeholder = s.labDetailPh;
+  document.getElementById('comm-lab-dec-lbl').textContent = s.labDecisionLbl;
+  document.getElementById('comm-lab-med-name').placeholder = s.medNamePh;
+  document.getElementById('comm-lab-med-dose').placeholder = s.medDosePh;
+  document.getElementById('comm-adm-reason-lbl').textContent = s.admReasonLbl;
+  document.getElementById('comm-adm-hosp-lbl').textContent = s.admHospitalLbl;
+  document.getElementById('comm-adm-hosp').placeholder = s.admHospitalPh;
+  document.getElementById('comm-adm-by-lbl').textContent = s.admByLbl;
+  document.getElementById('comm-adm-fam-lbl').textContent = s.admFamLbl;
+  document.getElementById('comm-adm-fam-yes').textContent = s.admFamYes;
+  document.getElementById('comm-adm-fam-no').textContent = s.admFamNo;
+  document.getElementById('comm-adm-items-lbl').textContent = s.admItemsLbl;
+  document.getElementById('comm-back-reason-lbl').textContent = s.backReasonLbl;
+  document.getElementById('comm-back-dec-lbl').textContent = s.backDecisionLbl;
+  document.getElementById('comm-back-med').placeholder = s.backMedPh;
+  document.getElementById('comm-back-fup').placeholder = s.backFupPh;
+  document.getElementById('comm-appr-reason-lbl').textContent = s.approvalReasonLbl;
+  document.getElementById('comm-appr-ans-lbl').textContent = s.approvalAnswerLbl;
+  document.getElementById('comm-appr-act-lbl').textContent = s.approvalActionLbl;
+  document.getElementById('comm-pass-lbl').textContent = s.passLbl;
+  document.getElementById('comm-pass-ctx-lbl').textContent = s.passContextLbl;
+  document.getElementById('comm-pass-detail').placeholder = s.passDetailPh;
+  document.getElementById('comm-other-type-lbl').textContent = s.otherTypeLbl;
+  document.getElementById('comm-other-desc-lbl').textContent = s.otherDescLbl;
+  document.getElementById('comm-other-desc').placeholder = s.otherDescPh;
+  document.getElementById('comm-by-lbl').textContent = s.byLbl;
+  document.getElementById('comm-notes-lbl').textContent = s.notesLbl;
+  document.getElementById('comm-notes').placeholder = s.notesPh;
+  document.getElementById('comm-btn').textContent = s.genBtn;
+  document.getElementById('comm-loading-txt').textContent = T[lang].loading;
+
+  // Type chips
+  const tc = document.getElementById('comm-type-chips');
+  tc.innerHTML = '';
+  const scMap = ['doctor','lab','adm','back','approval','pass','other'];
+  s.types.forEach((type, i) => {
+    const b = document.createElement('button');
+    b.className = 'chip';
+    b.textContent = type;
+    b.onclick = () => {
+      tc.querySelectorAll('.chip').forEach(c => c.classList.remove('sel'));
+      b.classList.add('sel');
+      document.querySelectorAll('#page-comm .scenario').forEach(sc => sc.classList.remove('act'));
+      const sc = document.getElementById('comm-sc-' + scMap[i]);
+      if (sc) sc.classList.add('act');
+      commType = type;
+      refreshBtns();
+    };
+    tc.appendChild(b);
+  });
+
+  makeChips('comm-symp-chips', s.symptoms, 'comm-symp', false);
+  makeChips('comm-dec-chips', s.decisions, 'comm-dec', false);
+  makeChips(null, s.actions, 'comm-action', false);
+  makeChips(null, s.freqs, 'comm-med-freq', true);
+  makeChips(null, s.labSubjects, 'comm-lab-sub', true);
+  makeChips('comm-lab-dec-chips', s.labDecisions, 'comm-lab-dec', false);
+  makeChips(null, s.freqs, 'comm-lab-med-freq', true);
+  makeChips('comm-adm-reason-chips', s.admReasons, 'comm-adm-reason', false);
+  makeChips(null, s.admBys, 'comm-adm-by', true);
+  makeChips('comm-adm-items-chips', s.admItems, 'comm-adm-items', false);
+  makeChips(null, s.backReasons, 'comm-back-reason', true);
+  makeChips('comm-back-dec-chips', s.backDecisions, 'comm-back-dec', false);
+  makeChips(null, s.approvalReasons, 'comm-appr-reason', true);
+  makeChips(null, s.approvalAnswers, 'comm-appr-ans', true);
+  makeChips('comm-appr-act-chips', s.approvalActions, 'comm-appr-act', false);
+  makeChips('comm-pass-chips', s.passItems, 'comm-pass', false);
+  makeChips(null, s.passContexts, 'comm-pass-ctx', true);
+  makeChips(null, s.otherTypes, 'comm-other-type', true);
+  makeChips(null, s.bys, 'comm-by', true);
+}
+
+function selectFam(val) {
+  commFam = val;
+  const s = T[lang].comm;
+  const yes = document.getElementById('comm-adm-fam-yes');
+  const no = document.getElementById('comm-adm-fam-no');
+  yes.classList.toggle('sel', val === 'yes');
+  no.classList.toggle('sel', val === 'no');
+}
+
+// ─── NAVIGATION ───
+function openModule(mod) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + mod).classList.add('active');
+  document.getElementById('back-btn').classList.add('visible');
+  currentPage = mod;
+  window.scrollTo(0,0);
+}
+function goBack() {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-home').classList.add('active');
+  document.getElementById('back-btn').classList.remove('visible');
+  currentPage = 'home';
+}
+
+// ─── REFRESH BUTTONS ───
+function refreshBtns() {
+  const hasCurrentPatient = !!getChips('sh-status');
+  const hasAnyPatient = patients.length > 0 || hasCurrentPatient;
+  const addBtn = document.getElementById('sh-add-btn');
+  if (addBtn) addBtn.disabled = !hasCurrentPatient;
+  document.getElementById('sh-btn').disabled = !hasAnyPatient;
+  document.getElementById('comm-btn').disabled = !commType;
+  document.getElementById('inc-btn').disabled = !incidentType;
+  document.getElementById('wnd-btn').disabled = !getChips('wnd-type') || !getChips('wnd-loc');
+  document.getElementById('beh-btn').disabled = !getChips('beh-type') || !getChips('beh-ctx');
+  document.getElementById('med-btn').disabled = !getChips('med-change') || !(document.getElementById('med-name')?.value.trim());
+}
+
+// ─── MULTI-PATIENT SHIFT ───
+function getPatientData() {
+  const s = T[lang].shift;
+  return {
+    room: document.getElementById('sh-kamer').value.trim(),
+    status: getChips('sh-status'),
+    obs: getChips('sh-obs'),
+    painLoc: document.getElementById('sh-pain-loc').value.trim(),
+    rr: document.getElementById('sh-rr').value.trim(),
+    hf: document.getElementById('sh-hf').value.trim(),
+    sat: document.getElementById('sh-sat').value.trim(),
+    temp: document.getElementById('sh-temp').value.trim(),
+    glyc: document.getElementById('sh-glyc').value.trim(),
+    act: getChips('sh-act'),
+    med: document.getElementById('sh-med-detail').value.trim(),
+    urine: document.getElementById('sh-urine-detail').value.trim(),
+    fup: getChips('sh-fup'),
+    notes: document.getElementById('sh-notes').value.trim(),
+  };
+}
+
+function clearPatientForm() {
+  document.getElementById('sh-kamer').value = '';
+  document.getElementById('sh-pain-loc').value = '';
+  document.getElementById('sh-rr').value = '';
+  document.getElementById('sh-hf').value = '';
+  document.getElementById('sh-sat').value = '';
+  document.getElementById('sh-temp').value = '';
+  document.getElementById('sh-glyc').value = '';
+  document.getElementById('sh-med-detail').value = '';
+  document.getElementById('sh-urine-detail').value = '';
+  document.getElementById('sh-notes').value = '';
+  document.getElementById('sh-pain-wrap').style.display = 'none';
+  document.getElementById('sh-params-wrap').style.display = 'none';
+  document.getElementById('sh-glyc-wrap').style.display = 'none';
+  document.getElementById('sh-med-wrap').style.display = 'none';
+  document.getElementById('sh-urine-wrap').style.display = 'none';
+  ['sh-status','sh-obs','sh-act','sh-fup'].forEach(key => {
+    multiSel[key] = new Set();
+    document.querySelectorAll(`#sh-${key.replace('sh-','')}-chips .chip, #page-shift .chips .chip`).forEach(c => c.classList.remove('sel'));
+  });
+  // Reset all chips in shift page
+  document.querySelectorAll('#page-shift .chip').forEach(c => c.classList.remove('sel'));
+  Object.keys(multiSel).filter(k => k.startsWith('sh-')).forEach(k => multiSel[k] = new Set());
+  refreshBtns();
+}
+
+function savePatients() {
+  try { localStorage.setItem('maya-patients', JSON.stringify(patients)); } catch(e) {}
+}
+
+function loadSavedPatients() {
+  try {
+    const saved = localStorage.getItem('maya-patients');
+    if (saved) {
+      patients = JSON.parse(saved);
+      if (patients.length > 0) {
+        renderPatientList();
+        document.getElementById('sh-patient-list').style.display = 'block';
+      }
+    }
+  } catch(e) {}
+}
+
+function addPatient() {
+  const data = getPatientData();
+  if (!data.status) return;
+  patients.push(data);
+  savePatients();
+  renderPatientList();
+  clearPatientForm();
+  document.getElementById('sh-patient-list').style.display = 'block';
+  refreshBtns();
+}
+
+function removePatient(i) {
+  patients.splice(i, 1);
+  savePatients();
+  renderPatientList();
+  if (patients.length === 0) document.getElementById('sh-patient-list').style.display = 'none';
+  refreshBtns();
+}
+
+function renderPatientList() {
+  const el = document.getElementById('sh-patient-cards');
+  el.innerHTML = '';
+  patients.forEach((p, i) => {
+    const card = document.createElement('div');
+    card.style.cssText = 'background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:10px;padding:10px 14px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;';
+    const info = document.createElement('div');
+    info.style.cssText = 'font-size:0.85rem;color:var(--text);flex:1;';
+    const room = p.room || (lang==='nl'?'Geen kamer':'No room');
+    const status = p.status || '–';
+    info.innerHTML = '<strong style="color:var(--text3);">' + room + '<\/strong> · ' + status;
+    if (p.obs) { info.innerHTML += '<br><span style="font-size:0.75rem;color:var(--text2);">' + p.obs + '<\/span>'; }
+    const del = document.createElement('button');
+    del.textContent = '✕';
+    del.style.cssText = 'background:none;border:none;color:var(--text2);cursor:pointer;font-size:1rem;padding:0 4px;margin-left:10px;';
+    del.onclick = () => removePatient(i);
+    card.appendChild(info);
+    card.appendChild(del);
+    el.appendChild(card);
+  });
+}
+
+function buildMultiPatientPrompt() {
+  const isNl = lang === 'nl';
+  const isFr = lang === 'fr';
+
+  const allData = patients.map((p, i) => {
+    const params = [p.rr&&'BP '+p.rr, p.hf&&'HR '+p.hf, p.sat&&'SpO2 '+p.sat, p.temp&&'Temp '+p.temp].filter(Boolean).join(', ');
+    return `Patient ${i+1}: ${isNl?'Kamer':isFr?'Chambre':'Room'}: ${p.room||'–'} | ${isNl?'Toestand':isFr?'État':'Condition'}: ${p.status||'–'}
+${isNl?'Observaties':isFr?'Observations':'Observations'}: ${p.obs||'–'}${p.painLoc?' — '+p.painLoc:''}${params?' | Vitals: '+params:''}${p.glyc?' | Glucose: '+p.glyc:''}
+${isNl?'Acties':isFr?'Actions':'Actions'}: ${p.act||'–'}${p.med?' — '+p.med:''}${p.urine?' — urine: '+p.urine:''}
+${isNl?'Opvolging':isFr?'Suivi':'Follow-up'}: ${p.fup||'–'}
+${isNl?'Extra':isFr?'Extra':'Extra'}: ${p.notes||'–'}`;
+  }).join('\n\n');
+
+  if (isNl) return `Je bent een ervaren verpleegkundige. Schrijf een professionele shift briefing voor ALLE onderstaande patiënten/bewoners.
+
+STIJL: Per patiënt 1-3 zinnen. Beginnen met kamernummer. Geen AI-taal. Geen opsomming met bullets.
+VERBODEN: "in het zorgdossier", "werd geregistreerd", "verdere observatie voorzien"
+Als een bewoner niets bijzonders heeft: schrijf kort "Kamer X rustig, geen bijzonderheden."
+
+VOORBEELD OUTPUT:
+Kamer 5 meer verward met urinewegklachten. Urine positief, staal klaar voor labo. Arts gebeld.
+Kamer 8 rustig, geen bijzonderheden.
+Kamer 12 gevallen in badkamer. Geen letsel. Arts verwittigd, familie gebeld.
+
+PATIËNTEN:
+${allData}
+
+Schrijf de volledige shift briefing, elke patiënt op een nieuwe alinea.`;
+
+  if (isFr) return `Vous êtes infirmier expérimenté. Rédigez un rapport de garde professionnel pour TOUS les patients ci-dessous.
+
+STYLE: 1-3 phrases par patient. Commencer par le numéro de chambre. Pas de langage IA.
+Un patient sans incident: "Chambre X calme, rien à signaler."
+
+PATIENTS:
+${allData}
+
+Rédigez le rapport complet, un paragraphe par patient.`;
+
+  return `You are an experienced nurse. Write a professional shift handover for ALL patients below.
+
+STYLE: 1-3 sentences per patient. Start with room number. No AI language.
+If nothing notable: "Room X — calm, nothing to report."
+
+PATIENTS:
+${allData}
+
+Write the full handover, one paragraph per patient.`;
+}
+
+// ─── API ───
+async function callAPI(prompt, system, maxTokens) {
+  const body = { messages:[{role:'user',content:prompt}], max_tokens: maxTokens||600 };
+  if (system) body.system = system;
+  const res = await fetch('/api/generate', {
+    method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(JSON.stringify(data.error)||'API error');
+  return data.content?.[0]?.text || '';
+}
+
+// ─── PROMPTS ───
+function buildPrompt(mod) {
+  const isNl = lang === 'nl';
+  const isFr = lang === 'fr';
+  const langInstr = isNl ? 'Schrijf in het Nederlands.' : isFr ? 'Répondez en français.' : 'Write in English.';
+
+  if (mod === 'comm') {
+    const s = T[lang].comm;
+    const room = document.getElementById('comm-kamer').value.trim() || '–';
+    const type = commType || '–';
+    const symp = getChips('comm-symp');
+    const sympDetail = document.getElementById('comm-symp-detail').value.trim();
+    const dec = getChips('comm-dec');
+    const act = getChips('comm-action');
+    const medName = document.getElementById('comm-med-name').value.trim();
+    const medDose = document.getElementById('comm-med-dose').value.trim();
+    const medFreq = getChips('comm-med-freq');
+    const labSub = getChips('comm-lab-sub');
+    const labDetail = document.getElementById('comm-lab-detail').value.trim();
+    const labDec = getChips('comm-lab-dec');
+    const labMedName = document.getElementById('comm-lab-med-name').value.trim();
+    const labMedDose = document.getElementById('comm-lab-med-dose').value.trim();
+    const labMedFreq = getChips('comm-lab-med-freq');
+    const admReason = getChips('comm-adm-reason');
+    const admHosp = document.getElementById('comm-adm-hosp').value.trim();
+    const admBy = getChips('comm-adm-by');
+    const admFam = commFam === 'yes' ? (lang==='nl'?'ja':lang==='fr'?'oui':'yes') : commFam === 'no' ? (lang==='nl'?'nog niet':lang==='fr'?'pas encore':'not yet') : '–';
+    const admItems = getChips('comm-adm-items');
+    const backReason = getChips('comm-back-reason');
+    const backDec = getChips('comm-back-dec');
+    const backMed = document.getElementById('comm-back-med').value.trim();
+    const backFup = document.getElementById('comm-back-fup').value.trim();
+    const apprReason = getChips('comm-appr-reason');
+    const apprAns = getChips('comm-appr-ans');
+    const apprAct = getChips('comm-appr-act');
+    const passItems = getChips('comm-pass');
+    const passCtx = getChips('comm-pass-ctx');
+    const passDetail = document.getElementById('comm-pass-detail').value.trim();
+    const otherType = getChips('comm-other-type');
+    const otherDesc = document.getElementById('comm-other-desc').value.trim();
+    const by = getChips('comm-by');
+    const notes = document.getElementById('comm-notes').value.trim();
+
+    const isNlC = lang === 'nl';
+    const isFrC = lang === 'fr';
+
+    if (isNlC) return `Je bent een ervaren verpleegkundige in een Belgisch WZC. Schrijf een korte professionele communicatienota. Max 2-3 zinnen. Geen "ik". Feitelijk en direct.
+
+VERBODEN: "in het zorgdossier", "werd geregistreerd", "verdere observatie voorzien"
+
+VOORBEELDEN:
+Arts gebeld: "Huisarts gebeld wegens koorts en verwardheid. Arts komt morgen langs, Augmentin 875mg 3x/dag opgestart."
+Labo: "Bloedresultaten besproken met arts. CRP verhoogd, antibiotica opgestart."
+Opname: "Bewoner opgenomen in UZ Leuven wegens val. Identiteitskaart en medicatielijst meegegeven. Familie verwittigd."
+Terug: "Bewoner terug na operatie. Nieuwe medicatie: Eliquis opgestart. Controle gepland."
+Overlijden: "Bewoner rustig en vredig overleden. Wachtarts ter plaatse voor vaststelling. Familie verwittigd en aanwezig."
+
+GEGEVENS:
+Kamer: ${room} | Type: ${type}
+Symptomen: ${symp||'–'}${sympDetail?' ('+sympDetail+')':''}
+Beslissing: ${dec||'–'}
+Actie: ${act||'–'}${medName?' | Medicatie: '+medName+' '+medDose+' '+medFreq:''}
+Labo: ${labSub||'–'}${labDetail?' ('+labDetail+')':''} | Beleid: ${labDec||'–'}${labMedName?' | Medicatie: '+labMedName+' '+labMedDose+' '+labMedFreq:''}
+Opname: Reden: ${admReason||'–'} | Ziekenhuis: ${admHosp||'–'} | Beslist door: ${admBy||'–'} | Familie: ${admFam} | Meegenomen: ${admItems||'–'}
+Terug: Reden: ${backReason||'–'} | Beslissing: ${backDec||'–'} | Medicatie: ${backMed||'–'} | Opvolging: ${backFup||'–'}
+Goedkeuring: ${apprReason||'–'} | Antwoord: ${apprAns||'–'} | Actie: ${apprAct||'–'}
+Overlijden: ${passItems||'–'} | Context: ${passCtx||'–'}${passDetail?' | '+passDetail:''}
+Andere: ${otherType||'–'} | ${otherDesc||'–'}
+${by?'Doorgegeven door: '+by:''} | Extra: ${notes||'–'}
+
+Schrijf alleen de nota.`;
+
+    if (isFrC) return `Vous êtes infirmier expérimenté. Rédigez une note de communication courte. Max 2-3 phrases. Jamais "je". Factuel et direct.
+
+DONNÉES:
+Chambre: ${room} | Type: ${type}
+Symptômes: ${symp||'–'}${sympDetail?' ('+sympDetail+')':''}
+Décision: ${dec||'–'} | Action: ${act||'–'}${medName?' | Médicament: '+medName+' '+medDose+' '+medFreq:''}
+Labo: ${labSub||'–'}${labDetail?' ('+labDetail+')':''} | Politique: ${labDec||'–'}${labMedName?' | Médicament: '+labMedName+' '+labMedDose+' '+labMedFreq:''}
+Admission: Raison: ${admReason||'–'} | Hôpital: ${admHosp||'–'} | Par: ${admBy||'–'} | Famille: ${admFam} | Emporté: ${admItems||'–'}
+Retour: Raison: ${backReason||'–'} | Décision: ${backDec||'–'} | Médicament: ${backMed||'–'} | Suivi: ${backFup||'–'}
+Approbation: ${apprReason||'–'} | Réponse: ${apprAns||'–'} | Action: ${apprAct||'–'}
+Décès: ${passItems||'–'} | Contexte: ${passCtx||'–'}${passDetail?' | '+passDetail:''}
+Autre: ${otherType||'–'} | ${otherDesc||'–'}
+Extra: ${notes||'–'}
+
+Rédigez seulement la note.`;
+
+    return `You are an experienced nurse. Write a short professional communication note. Max 2-3 sentences. Never use "I". Factual and direct.
+
+EXAMPLES:
+Doctor: "GP contacted for fever and confusion. Doctor visiting tomorrow, Augmentin 875mg 3x/day started."
+Lab: "Blood results discussed with GP. CRP elevated, antibiotics started."
+Admission: "Patient admitted to hospital due to fall. ID card and medication list sent along. Family notified."
+Passing away: "Patient passed away peacefully. On-call doctor confirmed. Family notified and present."
+
+DATA:
+Room: ${room} | Type: ${type}
+Symptoms: ${symp||'–'}${sympDetail?' ('+sympDetail+')':''}
+Decision: ${dec||'–'} | Action: ${act||'–'}${medName?' | Medication: '+medName+' '+medDose+' '+medFreq:''}
+Lab: ${labSub||'–'}${labDetail?' ('+labDetail+')':''} | Policy: ${labDec||'–'}${labMedName?' | Medication: '+labMedName+' '+labMedDose+' '+labMedFreq:''}
+Admission: Reason: ${admReason||'–'} | Hospital: ${admHosp||'–'} | By: ${admBy||'–'} | Family: ${admFam} | Items: ${admItems||'–'}
+Back: Reason: ${backReason||'–'} | Decision: ${backDec||'–'} | Medication: ${backMed||'–'} | Follow-up: ${backFup||'–'}
+Approval: ${apprReason||'–'} | Answer: ${apprAns||'–'} | Action: ${apprAct||'–'}
+Passing: ${passItems||'–'} | Context: ${passCtx||'–'}${passDetail?' | '+passDetail:''}
+Other: ${otherType||'–'} | ${otherDesc||'–'}
+Extra: ${notes||'–'}
+
+Write only the note.`;
+  }
+
+  if (mod === 'shift') {
+    // Als er meerdere patiënten zijn, gebruik multi-patient prompt
+    if (patients.length > 0) {
+      // Voeg huidige patiënt ook toe als die ingevuld is
+      const current = getPatientData();
+      if (current.status) patients.push(current);
+      return buildMultiPatientPrompt();
+    }
+    const s = T[lang].shift;
+    const now = new Date();
+    const h = now.getHours();
+    const timeStr = now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+    const autoShift = lang==='nl'
+      ? (h>=7&&h<15?'Dagdienst':h>=15&&h<22?'Avonddienst':'Nachtdienst')
+      : lang==='fr'
+      ? (h>=7&&h<15?'Garde de jour':h>=15&&h<22?'Garde du soir':'Garde de nuit')
+      : (h>=7&&h<15?'Day shift':h>=15&&h<22?'Evening shift':'Night shift');
+    const room = document.getElementById('sh-kamer').value.trim() || '–';
+    const status = getChips('sh-status');
+    const obs = getChips('sh-obs');
+    const painLoc = document.getElementById('sh-pain-loc').value.trim();
+    const rr = document.getElementById('sh-rr').value.trim();
+    const hf = document.getElementById('sh-hf').value.trim();
+    const sat = document.getElementById('sh-sat').value.trim();
+    const temp = document.getElementById('sh-temp').value.trim();
+    const params = [rr&&'BP '+rr, hf&&'HR '+hf, sat&&'SpO2 '+sat, temp&&'Temp '+temp].filter(Boolean).join(', ');
+    const glyc = document.getElementById('sh-glyc').value.trim();
+    const act = getChips('sh-act');
+    const med = document.getElementById('sh-med-detail').value.trim();
+    const urine = document.getElementById('sh-urine-detail').value.trim();
+    const fup = getChips('sh-fup');
+    const notes = document.getElementById('sh-notes').value.trim();
+
+    if (isNl) return `Je bent een ervaren verpleegkundige in een Belgisch WZC. Schrijf een korte, natuurlijke shift briefing zoals een overdracht tussen collega's.
+
+STIJL: Maximaal 2 tot 4 korte zinnen. Geen titel. Geen opsomming. Geen AI-taal.
+REGELS: Vermeld ALLEEN wat expliciet ingevuld is. Verzin NOOIT details.
+Shift rustig zonder bijzonderheden: schrijf enkel "Shift rustig verlopen."
+VERBODEN: "verdere observatie voorzien", "in het zorgdossier", "werd geregistreerd"
+
+VOORBEELDEN:
+"Nachtdienst rustig verlopen."
+"Kamer 5 meer verward met urinewegklachten. Urine positief, staal klaar voor labo. Arts gebeld."
+"Kamer 2 misselijk. Parameters afwijkend. Litican 50mg gegeven."
+
+GEGEVENS:
+Kamer: ${room} | Toestand: ${status}
+Observaties: ${obs}${painLoc?' — pijn ter hoogte van '+painLoc:''}${params?' | Parameters: '+params:''}${glyc?' | Glycemie: '+glyc:''}
+Acties: ${act}${med?' — '+med:''}${urine?' — urine: '+urine:''}
+Opvolging: ${fup}
+Extra: ${notes||'–'}
+
+Schrijf alleen de shift briefing.`;
+
+    return `You are an experienced nurse writing a professional shift handover report.
+
+STYLE: Maximum 2-4 short sentences. No title. No bullet points. Natural nursing language.
+RULES: Only include what was explicitly provided. Never invent details.
+If nothing notable: write only "${autoShift} was uneventful."
+FORBIDDEN: "further observation planned", "documented accordingly", "as per protocol"
+
+EXAMPLES:
+"Night shift was uneventful."
+"Room 5 — increased confusion and urinary symptoms. Urine positive, sample prepared for lab. Doctor notified."
+"Room 2 — nauseous. Vitals abnormal. Paracetamol 1g given."
+
+DATA:
+Shift: ${autoShift} | Time: ${timeStr}
+Room: ${room} | Condition: ${status}
+Observations: ${obs}${painLoc?' — pain at '+painLoc:''}${params?' | Vitals: '+params:''}${glyc?' | Blood glucose: '+glyc:''}
+Actions: ${act}${med?' — '+med:''}${urine?' — urine: '+urine:''}
+Follow-up: ${fup}
+Extra: ${notes||'–'}
+
+Write only the shift briefing.`;
+  }
+
+  if (mod === 'incident') {
+    const room = document.getElementById('inc-kamer').value.trim() || '–';
+    const type = incidentType || '–';
+    const time = document.getElementById('inc-time')?.value || document.getElementById('inc-time-lbl')?.value || '';
+    const loc = getChips('inc-loc');
+    const found = getChips('inc-found');
+    const head = getChips('inc-head');
+    const injury = getChips('inc-injury');
+    const painLoc = document.getElementById('inc-pain-loc').value.trim();
+    const rr = document.getElementById('inc-rr').value.trim();
+    const hf = document.getElementById('inc-hf').value.trim();
+    const sat = document.getElementById('inc-sat').value.trim();
+    const temp = document.getElementById('inc-temp').value.trim();
+    const params = [rr&&'BP '+rr,hf&&'HR '+hf,sat&&'SpO2 '+sat,temp&&'Temp '+temp].filter(Boolean).join(', ');
+    const agrType = getChips('inc-agr-type');
+    const agrCause = getChips('inc-agr-cause');
+    const agrInj = getChips('inc-agr-inj');
+    const wandFound = getChips('inc-wand-found');
+    const wandCond = getChips('inc-wand-cond');
+    const medType = getChips('inc-med-type');
+    const medName = document.getElementById('inc-med-name').value.trim();
+    const actions = getChips('inc-act');
+    const notes = document.getElementById('inc-notes').value.trim();
+
+    const base = isNl
+      ? `Je bent een ervaren verpleegkundige. Schrijf een korte, feitelijke incidentnotitie. Max 3 zinnen. Nooit "ik". Begin direct met de feiten. Tijdstip verwerken in de zin indien opgegeven. Verzin NOOIT details.\n\nVOORBEELDEN:\nVal: "Om 14:30 gevonden op de grond in de badkamer. Pijn ter hoogte van de linkerheup, geen hoofdimpact. Arts verwittigd."\nAgressie: "Om 22:58 verbale agressie tijdens verzorging. Bewoner gerustgesteld, situatie de-geëscaleerd."\n`
+      : `You are an experienced nurse. Write a brief, factual incident note. Max 3 sentences. Never use "I". Start directly with the facts. Include time if provided. Never invent details.\n\nEXAMPLES:\nFall: "At 14:30, found on the floor in the bathroom. Pain at left hip, no head impact. Doctor notified."\nAggression: "At 22:58, verbal aggression during care. Patient reassured, situation de-escalated."\n`;
+
+    return `${base}
+${langInstr}
+
+DATA:
+Room: ${room} | Type: ${type}
+Location: ${loc||'–'} | Time: ${time||'–'} | Discovered: ${found||'–'}
+Head impact: ${head||'–'} | Injury: ${injury||'–'}${painLoc?' | Pain at: '+painLoc:''}
+Vitals: ${params||'–'}
+Aggression type: ${agrType||'–'} | Trigger: ${agrCause||'–'} | Injury: ${agrInj||'–'}
+Wandering — found: ${wandFound||'–'} | Condition: ${wandCond||'–'}
+Med error: ${medType||'–'} | Medication: ${medName||'–'}
+Actions: ${actions||'–'}
+Notes: ${notes||'–'}`;
+  }
+
+  if (mod === 'wound') {
+    const room = document.getElementById('wnd-kamer').value.trim() || '–';
+    return `${isNl?'Je bent een ervaren verpleegkundige. Schrijf een beknopte wondnotitie. Max 3 zinnen. Feitelijk.':'You are an experienced nurse. Write a concise wound care note. Max 3 sentences. Factual.'}
+${langInstr}
+
+DATA:
+Room: ${room} | Type: ${getChips('wnd-type')} | Location: ${getChips('wnd-loc')}
+Evolution: ${getChips('wnd-evol')||'–'} | Appearance: ${getChips('wnd-asp')||'–'}
+Care: ${getChips('wnd-care')||'–'} | Follow-up: ${getChips('wnd-fup')||'–'}
+Notes: ${document.getElementById('wnd-notes').value.trim()||'–'}`;
+  }
+
+  if (mod === 'behav') {
+    const room = document.getElementById('beh-kamer').value.trim() || '–';
+    return `${isNl?'Je bent een verpleegkundige. Schrijf een feitelijke gedragsnotitie. Neutraal, geen oordeel. Max 3 zinnen.':'You are a nurse. Write a factual behaviour observation note. Neutral, no judgment. Max 3 sentences.'}
+${langInstr}
+
+DATA:
+Room: ${room} | Behaviour: ${getChips('beh-type')} | Context: ${getChips('beh-ctx')}
+Intensity: ${getChips('beh-int')||'–'} | Trigger: ${getChips('beh-cause')||'–'}
+Response: ${getChips('beh-react')||'–'} | Actions: ${getChips('beh-act')||'–'}
+Notes: ${document.getElementById('beh-notes').value.trim()||'–'}`;
+  }
+
+  if (mod === 'meds') {
+    const room = document.getElementById('med-kamer').value.trim() || '–';
+    const name = document.getElementById('med-name').value.trim();
+    const dose = document.getElementById('med-dose').value.trim();
+    return `${isNl?'Je bent een verpleegkundige. Schrijf een beknopte medicatienota. 1-2 zinnen. Naam + dosis + frequentie correct. Nooit "ik".':'You are a nurse. Write a concise medication note. 1-2 sentences. Name + dose + frequency correct. Never use "I".'}
+${langInstr}
+
+${isNl?'VOORBEELDEN:\n"Furadantine 50mg 3x/dag opgestart wegens infectie, 7 dagen. Effect verder opvolgen."\n"Haldol 5 druppels 2x/dag opgestart wegens onrust."':'EXAMPLES:\n"Furadantine 50mg 3x/day started for infection, 7 days. Monitor effect."\n"Haloperidol 5 drops 2x/day started for agitation."'}
+
+DATA:
+Room: ${room} | Reason: ${getChips('med-reason')||'–'} | Change: ${getChips('med-change')||'–'}
+Medication: ${name} ${dose} | Frequency: ${getChips('med-freq')||'–'} | Duration: ${getChips('med-dur')||'–'}
+Follow-up: ${getChips('med-fup')||'–'} | Notes: ${document.getElementById('med-notes').value.trim()||'–'}`;
+  }
+}
+
+// ─── GENERATE ───
+async function generate(mod) {
+  const ids = {shift:'sh',comm:'comm',incident:'inc',wound:'wnd',behav:'beh',meds:'med'};
+  const p = ids[mod];
+  const loader = document.getElementById(p+'-loader');
+  const err = document.getElementById(p+'-err');
+  const btn = document.getElementById(p+'-btn');
+  loader.classList.add('vis');
+  err.classList.remove('vis');
+  btn.disabled = true;
+  try {
+    const prompt = buildPrompt(mod);
+    const result = await callAPI(prompt, null, mod === 'shift' && patients.length > 0 ? 1000 : 600);
+    if (mod === 'shift') { patients = []; savePatients(); document.getElementById('sh-patient-list').style.display='none'; renderPatientList(); }
+    showResult(mod, result);
+  } catch(e) {
+    const demo = DEMO_FALLBACK[lang] || DEMO_FALLBACK.en;
+    showResult(mod, demo.prefix + (demo[mod] || demo.generic), true);
+  } finally {
+    loader.classList.remove('vis');
+    refreshBtns();
+  }
+}
+
+function showResult(mod, text, isDemo) {
+  const titles = {shift:T[lang].shift.title, comm:T[lang].comm.title, incident:T[lang].incident.title, wound:T[lang].wound.title, behav:T[lang].behav.title, meds:T[lang].meds.title};
+  document.getElementById('res-modal-title').textContent = titles[mod] || 'Report';
+  document.getElementById('res-modal-text').value = text;
+  document.getElementById('res-modal').style.display = 'flex';
+  if (isDemo) return; // demo telt niet mee voor geschiedenis of tijd
+  // Sla op in geschiedenis
+  try {
+    const hist = JSON.parse(localStorage.getItem('maya-history') || '[]');
+    hist.unshift({ mod, title: titles[mod] || mod, text, time: new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) });
+    localStorage.setItem('maya-history', JSON.stringify(hist.slice(0, 5)));
+    updateHistBtn();
+  } catch(e) {}
+  // Voeg tijd toe — gemiddeld 8 minuten bespaard per rapport
+  addTimeSaved(8);
+}
+
+let copyTimeout;
+function copyRes() {
+  const text = document.getElementById('res-modal-text').value;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('res-copy-btn');
+    btn.textContent = '✓ ' + (lang==='nl'?'Gekopieerd!':lang==='fr'?'Copié!':'Copied!');
+    clearTimeout(copyTimeout);
+    copyTimeout = setTimeout(() => { btn.textContent = T[lang].resCopy; }, 2000);
+  });
+}
+
+// ─── QUICK NOTE ───
+function openQnModal() { document.getElementById('qn-modal').style.display = 'flex'; }
+function closeQnModal() { document.getElementById('qn-modal').style.display = 'none'; }
+async function submitQn() {
+  const room = document.getElementById('qn-kamer').value.trim();
+  const text = document.getElementById('qn-text').value.trim();
+  if (!text) return;
+  closeQnModal();
+  document.getElementById('res-modal-title').textContent = T[lang].qnTitle;
+  document.getElementById('res-modal-text').value = lang==='nl'?'Genereren...':lang==='fr'?'Génération...':'Generating...';
+  document.getElementById('res-modal').style.display = 'flex';
+  try {
+    const prompt = lang==='nl'
+      ? `Je bent een ervaren verpleegkundige in een WZC. Schrijf een korte professionele notitie. Max 3 zinnen. Nooit "ik".\nKamer: ${room||'–'}\nInhoud: ${text}`
+      : lang==='fr'
+      ? `Vous êtes infirmier expérimenté. Rédigez une note professionnelle courte. Max 3 phrases. Jamais "je".\nChambre: ${room||'–'}\nContenu: ${text}`
+      : `You are an experienced nurse. Write a short professional note. Max 3 sentences. Never use "I".\nRoom: ${room||'–'}\nContent: ${text}`;
+    const result = await callAPI(prompt);
+    document.getElementById('res-modal-text').value = result;
+  } catch(e) {
+    const demo = DEMO_FALLBACK[lang] || DEMO_FALLBACK.en;
+    document.getElementById('res-modal-text').value = demo.prefix + demo.generic;
+  }
+}
+
+// ─── SUPPORT ───
+function initSupportGreeting() {
+  const chat = document.getElementById('support-chat');
+  if (!chat) return;
+  chat.innerHTML = '';
+  supportHistory = [];
+  addChatMsg('maya', T[lang].support.greeting);
+}
+function addChatMsg(role, text) {
+  const chat = document.getElementById('support-chat');
+  const wrap = document.createElement('div');
+  wrap.className = 'chat-msg ' + role;
+  const bubble = document.createElement('div');
+  bubble.className = 'chat-bubble';
+  bubble.textContent = text;
+  wrap.appendChild(bubble);
+  chat.appendChild(wrap);
+  chat.scrollTop = chat.scrollHeight;
+}
+async function sendSupport() {
+  const inp = document.getElementById('sup-input');
+  const text = inp.value.trim();
+  if (!text) return;
+  inp.value = '';
+  addChatMsg('user', text);
+  supportHistory.push({role:'user', content:text});
+  const system = lang==='nl'
+    ? `Je bent Maya, een warme AI-collega voor verpleegkundigen. Luister eerst. Valideer gevoelens. Stel één zachte vraag tegelijk. Max 4 zinnen. Als crisis: verwijs naar professionele hulp. Antwoord in het Nederlands.`
+    : lang==='fr'
+    ? `Vous êtes Maya, une collègue IA bienveillante pour les infirmiers. Écoutez d'abord. Validez les émotions. Une question douce à la fois. Max 4 phrases. En cas de crise: orientez vers un professionnel. Répondez en français.`
+    : `You are Maya, a warm AI companion for nurses. Listen first. Validate feelings. Ask one gentle question at a time. Max 4 sentences. If crisis: gently suggest professional support. Respond in English.`;
+  try {
+    const res = await fetch('/api/generate', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({messages:supportHistory, system, max_tokens:400})
+    });
+    const data = await res.json();
+    const reply = data.content?.[0]?.text || '...';
+    supportHistory.push({role:'assistant', content:reply});
+    addChatMsg('maya', reply);
+  } catch(e) {
+    addChatMsg('maya', lang==='nl'?'Verbindingsfout. Probeer opnieuw.':'Connection error. Please try again.');
+  }
+}
+
+// ─── LEARN ───
+function selectLearnTopic(topic, btn) {
+  document.getElementById('learn-topic-chips').querySelectorAll('.chip').forEach(c => c.classList.remove('sel'));
+  btn.classList.add('sel');
+  currentLearnTopic = topic;
+  learnTopic = topic;
+  loadTip();
+  loadQuiz();
+  // Reset scenario
+  document.getElementById('scenario-box').style.display = 'block';
+  document.getElementById('scenario-situation').style.display = 'none';
+  document.getElementById('scenario-answer-wrap').style.display = 'none';
+  document.getElementById('scenario-feedback-wrap').style.display = 'none';
+  document.getElementById('scenario-loader').style.display = 'none';
+  const startBtn = document.getElementById('scenario-start-btn');
+  if (startBtn) { startBtn.style.display = 'block'; startBtn.textContent = T[lang].learn.scenarioStart; }
+  initScenarioUI();
+}
+async function loadTip() {
+  if (!currentLearnTopic) return;
+  document.getElementById('tip-box').style.display = 'block';
+  document.getElementById('tip-text').textContent = lang==='nl'?'Laden...':lang==='fr'?'Chargement...':'Loading...';
+  try {
+    const p = lang==='nl'
+      ? `Genereer ÉÉN praktische verpleegkundige tip. Onderwerp: ${currentLearnTopic}. Formaat: emoji + vetgedrukte titel op lijn 1, dan 2-3 praktische zinnen. Max 60 woorden. Direct bruikbaar. Taal: Nederlands.`
+      : lang==='fr'
+      ? `Générez UN conseil infirmier pratique. Sujet: ${currentLearnTopic}. Format: emoji + titre en gras ligne 1, puis 2-3 phrases pratiques. Max 60 mots. Directement utile. Langue: français.`
+      : `Generate ONE practical nursing tip. Topic: ${currentLearnTopic}. Format: emoji + bold title on line 1, then 2-3 practical sentences. Max 60 words. Immediately useful at the bedside. Language: English.`;
+    const result = await callAPI(p, null, 200);
+    document.getElementById('tip-text').textContent = result;
+  } catch(e) {
+    document.getElementById('tip-text').textContent = 'Error loading tip.';
+  }
+}
+async function loadQuiz() {
+  if (!currentLearnTopic) return;
+  document.getElementById('quiz-box').style.display = 'block';
+  document.getElementById('quiz-q').textContent = lang==='nl'?'Laden...':lang==='fr'?'Chargement...':'Loading...';
+  document.getElementById('quiz-opts').innerHTML = '';
+  document.getElementById('quiz-expl').style.display = 'none';
+  document.getElementById('quiz-next-btn').style.display = 'none';
+  try {
+    const p = lang==='nl'
+      ? `Genereer ÉÉN multiple choice vraag. Onderwerp: ${currentLearnTopic}. Antwoord ALLEEN in geldige JSON zonder markdown: {"questionText":"...","options":["...","...","...","..."],"correctIndex":0,"explanation":"max 30 woorden"}. Taal: Nederlands.`
+      : lang==='fr'
+      ? `Générez UNE question QCM. Sujet: ${currentLearnTopic}. Répondez UNIQUEMENT en JSON valide sans markdown: {"questionText":"...","options":["...","...","...","..."],"correctIndex":0,"explanation":"max 30 mots"}. Langue: français.`
+      : `Generate ONE multiple choice question. Topic: ${currentLearnTopic}. Return ONLY valid JSON without markdown: {"questionText":"...","options":["...","...","...","..."],"correctIndex":0,"explanation":"max 30 words"}. Language: English.`;
+    const raw = await callAPI(p, null, 400);
+    const q = JSON.parse(raw.replace(/```json|```/g,'').trim());
+    renderQuiz(q);
+  } catch(e) {
+    document.getElementById('quiz-q').textContent = 'Could not load quiz. Try another topic.';
+  }
+}
+function renderQuiz(q) {
+  document.getElementById('quiz-q').textContent = q.questionText;
+  const opts = document.getElementById('quiz-opts');
+  opts.innerHTML = '';
+  q.options.forEach((opt,i) => {
+    const b = document.createElement('button');
+    b.className = 'quiz-opt';
+    b.textContent = ['A','B','C','D'][i] + '. ' + opt;
+    b.onclick = () => answerQuiz(i, q);
+    opts.appendChild(b);
+  });
+}
+function answerQuiz(idx, q) {
+  const btns = document.querySelectorAll('.quiz-opt');
+  btns.forEach(b => b.onclick = null);
+  btns[q.correctIndex].classList.add('correct');
+  if (idx !== q.correctIndex) btns[idx].classList.add('wrong');
+  quizTotal++;
+  if (idx === q.correctIndex) quizScore++;
+  document.getElementById('quiz-score').textContent = `${quizScore}/${quizTotal} (${Math.round(quizScore/quizTotal*100)}%)`;
+  const expl = document.getElementById('quiz-expl');
+  expl.textContent = '💡 ' + q.explanation;
+  expl.style.display = 'block';
+  document.getElementById('quiz-next-btn').style.display = 'block';
+  document.getElementById('quiz-next-btn').textContent = T[lang].learn.quizNext;
+}
+
+// ─── SCENARIOS ───
+function initScenarioUI() {
+  const s = T[lang].learn;
+  if (!s.scenarioLbl) return;
+  const lbl = document.getElementById('scenario-lbl');
+  if (lbl) lbl.textContent = s.scenarioLbl;
+  const startBtn = document.getElementById('scenario-start-btn');
+  if (startBtn) startBtn.textContent = s.scenarioStart;
+  const submitBtn = document.getElementById('scenario-submit-btn');
+  if (submitBtn) submitBtn.textContent = s.scenarioSubmit;
+  const nextBtn = document.getElementById('scenario-next-btn');
+  if (nextBtn) nextBtn.textContent = s.scenarioNext;
+  const answerEl = document.getElementById('scenario-answer');
+  if (answerEl) answerEl.placeholder = s.scenarioPlaceholder;
+  const feedbackLbl = document.getElementById('scenario-feedback-lbl');
+  if (feedbackLbl) feedbackLbl.textContent = s.scenarioFeedbackLbl;
+  const loadingTxt = document.getElementById('scenario-loading-txt');
+  if (loadingTxt) loadingTxt.textContent = T[lang].loading;
+
+  // Level chips
+  const levelEl = document.getElementById('scenario-level-chips');
+  if (!levelEl) return;
+  levelEl.innerHTML = '';
+  (s.scenarioLevels || []).forEach((lv, i) => {
+    const lvMap = ['beginner','intermediate','advanced'];
+    const b = document.createElement('button');
+    b.style.cssText = "padding:4px 10px;border-radius:14px;border:1px solid;font-size:0.72rem;font-weight:600;cursor:pointer;transition:all 0.15s;";
+    const isSelected = scenarioLevel === lvMap[i];
+    b.style.background = isSelected ? 'rgba(52,211,153,0.2)' : 'rgba(255,255,255,0.06)';
+    b.style.borderColor = isSelected ? '#34d399' : 'rgba(255,255,255,0.15)';
+    b.style.color = isSelected ? '#34d399' : 'rgba(224,242,241,0.6)';
+    b.textContent = lv;
+    b.onclick = () => {
+      scenarioLevel = lvMap[i];
+      initScenarioUI();
+    };
+    levelEl.appendChild(b);
+  });
+}
+
+async function loadScenario() {
+  if (!currentLearnTopic) return;
+  document.getElementById('scenario-box').style.display = 'block';
+  document.getElementById('scenario-situation').style.display = 'none';
+  document.getElementById('scenario-answer-wrap').style.display = 'none';
+  document.getElementById('scenario-feedback-wrap').style.display = 'none';
+  document.getElementById('scenario-answer').value = '';
+  const loader = document.getElementById('scenario-loader');
+  loader.style.display = 'flex';
+
+  const levelMap = {
+    beginner: lang==='nl'?'beginner (1e jaar student)':lang==='fr'?'débutant (1ère année)':'beginner (1st year student)',
+    intermediate: lang==='nl'?'gevorderd (2e-3e jaar student)':lang==='fr'?'intermédiaire (2ème-3ème année)':'intermediate (2nd-3rd year student)',
+    advanced: lang==='nl'?'stage-klaar (laatste jaar)':lang==='fr'?'avancé (dernière année)':'advanced (final year / ready for placement)',
+  };
+
+  const prompt = lang === 'nl'
+    ? `Je bent een ervaren verpleegkundige die een student begeleidt. Schrijf ÉÉN realistisch oefen-scenario voor een verpleegkundige student.
+
+Niveau: ${levelMap[scenarioLevel]}
+Onderwerp: ${currentLearnTopic}
+Setting: WZC / zorgomgeving
+
+Formaat:
+- Begin met "🏥 Situatie:" gevolgd door een concrete, realistische beschrijving (3-4 zinnen)
+- De situatie moet specifiek genoeg zijn (kamernummer, tijdstip, symptomen) maar geen naam gebruiken
+- Eindig met een duidelijke vraag: "Wat doe jij als verpleegkundige?"
+- Pas de complexiteit aan het niveau aan
+
+Schrijf alleen het scenario. Geen antwoord of hints.`
+    : lang === 'fr'
+    ? `Vous êtes une infirmière expérimentée guidant un étudiant. Écrivez UN scénario pratique réaliste.
+
+Niveau: ${levelMap[scenarioLevel]}
+Sujet: ${currentLearnTopic}
+
+Format:
+- Commencez par "🏥 Situation:" suivi d'une description concrète (3-4 phrases)
+- Terminez par: "Que faites-vous en tant qu'infirmier(ère)?"
+- Adaptez la complexité au niveau
+
+Écrivez uniquement le scénario. Pas de réponse ou d'indices.`
+    : `You are an experienced nurse guiding a student. Write ONE realistic practice scenario.
+
+Level: ${levelMap[scenarioLevel]}
+Topic: ${currentLearnTopic}
+Setting: Care home / nursing ward
+
+Format:
+- Start with "🏥 Situation:" followed by a concrete realistic description (3-4 sentences)
+- Include specific details (room number, time, symptoms) but no real names
+- End with a clear question: "What do you do as the nurse?"
+- Match complexity to the level
+
+Write only the scenario. No answer or hints.`;
+
+  try {
+    const result = await callAPI(prompt, null, 400);
+    currentScenario = result;
+    const sitEl = document.getElementById('scenario-situation');
+    sitEl.textContent = result;
+    sitEl.style.display = 'block';
+    loader.style.display = 'none';
+    document.getElementById('scenario-start-btn').style.display = 'none';
+    document.getElementById('scenario-answer-wrap').style.display = 'block';
+  } catch(e) {
+    loader.style.display = 'none';
+    document.getElementById('scenario-situation').textContent = 'Could not load scenario. Try again.';
+    document.getElementById('scenario-situation').style.display = 'block';
+  }
+}
+
+async function submitScenario() {
+  const answer = document.getElementById('scenario-answer').value.trim();
+  if (!answer || !currentScenario) return;
+  document.getElementById('scenario-answer-wrap').style.display = 'none';
+  const loader = document.getElementById('scenario-loader');
+  loader.style.display = 'flex';
+
+  const prompt = lang === 'nl'
+    ? `Je bent een ervaren verpleegkundige die feedback geeft aan een student.
+
+SCENARIO:
+${currentScenario}
+
+ANTWOORD VAN DE STUDENT:
+${answer}
+
+Geef constructieve feedback in 3 delen:
+✅ Wat goed was (1-2 punten)
+💡 Wat de student vergat of beter had kunnen doen (1-2 punten)
+⭐ Wat een ervaren verpleegkundige zou doen (1-2 punten)
+
+Toon van feedback: warm, bemoedigend, constructief. Max 150 woorden.`
+    : lang === 'fr'
+    ? `Vous êtes une infirmière expérimentée donnant un retour à un étudiant.
+
+SCÉNARIO:
+${currentScenario}
+
+RÉPONSE DE L'ÉTUDIANT:
+${answer}
+
+Donnez un retour constructif en 3 parties:
+✅ Ce qui était bien (1-2 points)
+💡 Ce qui manquait ou aurait pu être mieux (1-2 points)
+⭐ Ce qu'une infirmière expérimentée ferait (1-2 points)
+
+Ton: chaleureux, encourageant. Max 150 mots.`
+    : `You are an experienced nurse giving feedback to a student.
+
+SCENARIO:
+${currentScenario}
+
+STUDENT'S RESPONSE:
+${answer}
+
+Give constructive feedback in 3 parts:
+✅ What was good (1-2 points)
+💡 What was missing or could be improved (1-2 points)
+⭐ What an experienced nurse would do (1-2 points)
+
+Tone: warm, encouraging, constructive. Max 150 words.`;
+
+  try {
+    const result = await callAPI(prompt, null, 500);
+    loader.style.display = 'none';
+    document.getElementById('scenario-feedback').textContent = result;
+    document.getElementById('scenario-feedback-wrap').style.display = 'block';
+    document.getElementById('scenario-start-btn').style.display = 'block';
+    document.getElementById('scenario-start-btn').textContent = T[lang].learn.scenarioNext || 'Next scenario';
+  } catch(e) {
+    loader.style.display = 'none';
+    document.getElementById('scenario-feedback').textContent = 'Error loading feedback. Try again.';
+    document.getElementById('scenario-feedback-wrap').style.display = 'block';
+  }
+}
+
+// ─── TASKS MODULE ───
+
+function renderTasksPage() {
+  const t = TASKS_T[lang] || TASKS_T.en;
+  const el = id => document.getElementById(id);
+  if (el('tasks-title')) el('tasks-title').textContent = t.title;
+  if (el('tasks-desc')) el('tasks-desc').textContent = t.desc;
+  if (el('tasks-add-lbl')) el('tasks-add-lbl').textContent = t.addLbl;
+  if (el('task-input')) el('task-input').placeholder = t.addPh;
+  if (el('tf-all')) el('tf-all').textContent = t.filterAll;
+  if (el('tf-urgent')) el('tf-urgent').textContent = t.filterUrgent;
+  if (el('tf-done')) el('tf-done').textContent = t.filterDone;
+  if (el('task-empty')) el('task-empty').textContent = t.empty;
+  if (el('task-clear-btn')) el('task-clear-btn').textContent = t.clearDone;
+
+  // Quick chips
+  const qc = el('task-quick-chips');
+  if (qc) {
+    qc.innerHTML = '';
+    t.quick.forEach(q => {
+      const b = document.createElement('button');
+      b.textContent = q;
+      b.style.cssText = 'padding:5px 11px;border-radius:20px;border:1px solid rgba(251,191,36,0.25);background:rgba(251,191,36,0.07);color:rgba(251,191,36,0.8);font-size:0.75rem;cursor:pointer;font-family:sans-serif;';
+      b.onclick = () => { const inp = el('task-input'); if(inp){inp.value=q;inp.focus();} };
+      qc.appendChild(b);
+    });
+  }
+  renderTaskList();
+}
+
+function setTaskFilter(f) {
+  taskFilter = f;
+  const colors = {all:'#fbbf24', urgent:'#f87171', done:'#34d399'};
+  const ids = {all:'tf-all', urgent:'tf-urgent', done:'tf-done'};
+  Object.entries(ids).forEach(([key, btnId]) => {
+    const btn = document.getElementById(btnId);
+    if (!btn) return;
+    const isActive = key === f;
+    btn.style.opacity = isActive ? '1' : '0.45';
+    btn.style.fontWeight = isActive ? '700' : '500';
+  });
+  renderTaskList();
+}
+
+function addTask() {
+  const inp = document.getElementById('task-input');
+  if (!inp) return;
+  const text = inp.value.trim();
+  if (!text) return;
+  tasks.unshift({ id: Date.now(), text, done: false, urgent: false });
+  saveTasks();
+  inp.value = '';
+  renderTaskList();
+  const clearBtn = document.getElementById('task-clear-btn');
+  if (clearBtn) clearBtn.style.display = 'block';
+}
+
+function toggleTask(id) {
+  const t = tasks.find(t => t.id === id);
+  if (t) { t.done = !t.done; saveTasks(); renderTaskList(); }
+}
+
+function toggleUrgent(id) {
+  const t = tasks.find(t => t.id === id);
+  if (t) { t.urgent = !t.urgent; saveTasks(); renderTaskList(); }
+}
+
+function deleteTask(id) {
+  tasks = tasks.filter(t => t.id !== id);
+  saveTasks();
+  renderTaskList();
+}
+
+function clearDoneTasks() {
+  tasks = tasks.filter(t => !t.done);
+  saveTasks();
+  renderTaskList();
+}
+
+function renderTaskList() {
+  const list = document.getElementById('task-list');
+  const empty = document.getElementById('task-empty');
+  const clearBtn = document.getElementById('task-clear-btn');
+  if (!list) return;
+  list.innerHTML = '';
+
+  let filtered = tasks;
+  if (taskFilter === 'urgent') filtered = tasks.filter(t => t.urgent && !t.done);
+  if (taskFilter === 'done') filtered = tasks.filter(t => t.done);
+
+  const hasDone = tasks.some(t => t.done);
+  if (clearBtn) clearBtn.style.display = hasDone ? 'block' : 'none';
+
+  if (filtered.length === 0) {
+    if (empty) empty.style.display = 'block';
+    return;
+  }
+  if (empty) empty.style.display = 'none';
+
+  // Urgente taken eerst
+  const sorted = [...filtered].sort((a,b) => {
+    if (a.urgent && !b.urgent) return -1;
+    if (!a.urgent && b.urgent) return 1;
+    return 0;
+  });
+
+  sorted.forEach(task => {
+    const row = document.createElement('div');
+    const borderColor = task.urgent && !task.done ? 'rgba(248,113,113,0.35)' : task.done ? 'rgba(52,211,153,0.2)' : 'rgba(251,191,36,0.2)';
+    const bgColor = task.urgent && !task.done ? 'rgba(248,113,113,0.06)' : 'rgba(255,255,255,0.04)';
+    row.style.cssText = 'display:flex;align-items:center;gap:10px;background:' + bgColor + ';border:1px solid ' + borderColor + ';border-radius:11px;padding:11px 13px;transition:all 0.2s;animation:fadeUp 0.2s ease;';
+
+    // Check knop
+    const check = document.createElement('button');
+    const checkColor = task.done ? '#34d399' : task.urgent ? '#f87171' : '#fbbf24';
+    check.style.cssText = 'width:24px;height:24px;border-radius:50%;border:2px solid ' + checkColor + ';background:' + (task.done ? checkColor : 'transparent') + ';cursor:pointer;flex-shrink:0;font-size:0.72rem;color:#fff;display:flex;align-items:center;justify-content:center;transition:all 0.2s;';
+    check.textContent = task.done ? '✓' : '';
+    check.onclick = () => toggleTask(task.id);
+
+    // Tekst
+    const textEl = document.createElement('span');
+    textEl.style.cssText = 'flex:1;font-size:0.88rem;color:' + (task.done ? 'rgba(148,163,184,0.45)' : 'var(--text)') + ';text-decoration:' + (task.done ? 'line-through' : 'none') + ';line-height:1.45;';
+    textEl.textContent = task.text;
+
+    // Urgent knop
+    if (!task.done) {
+      const urgBtn = document.createElement('button');
+      urgBtn.style.cssText = 'background:none;border:none;cursor:pointer;font-size:0.85rem;opacity:' + (task.urgent ? '1' : '0.3') + ';padding:0 2px;';
+      urgBtn.textContent = '🔴';
+      urgBtn.title = (TASKS_T[lang]||TASKS_T.en).markUrgent;
+      urgBtn.onclick = () => toggleUrgent(task.id);
+      row.appendChild(check);
+      row.appendChild(textEl);
+      row.appendChild(urgBtn);
+    } else {
+      row.appendChild(check);
+      row.appendChild(textEl);
+    }
+
+    // Verwijder
+    const del = document.createElement('button');
+    del.style.cssText = 'background:none;border:none;color:rgba(148,163,184,0.3);cursor:pointer;font-size:0.95rem;padding:0 2px;';
+    del.textContent = '✕';
+    del.onclick = () => deleteTask(task.id);
+    row.appendChild(del);
+
+    list.appendChild(row);
+  });
+}
+
+// ─── BURNOUT IN SUPPORT ───
+
+function setSupportTab(tab) {
+  supTab = tab;
+  const chatBtn = document.getElementById('sup-tab-chat');
+  const burnBtn = document.getElementById('sup-tab-burnout');
+  const chatSec = document.getElementById('sup-chat-section');
+  const burnSec = document.getElementById('sup-burnout-section');
+  if (!chatBtn) return;
+
+  const activeStyle = 'flex:1;padding:10px;border-radius:10px;border:1.5px solid rgba(244,114,182,0.5);background:rgba(244,114,182,0.15);color:#f472b6;font-weight:700;cursor:pointer;';
+  const inactiveStyle = 'flex:1;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);color:var(--text2);font-weight:600;cursor:pointer;';
+
+  if (tab === 'chat') {
+    chatBtn.setAttribute('style', activeStyle);
+    burnBtn.setAttribute('style', inactiveStyle);
+    chatSec.style.display = 'block';
+    burnSec.style.display = 'none';
+  } else {
+    chatBtn.setAttribute('style', inactiveStyle);
+    burnBtn.setAttribute('style', activeStyle);
+    chatSec.style.display = 'none';
+    burnSec.style.display = 'block';
+  }
+}
+
+
+function renderBurnoutSection() {
+  const b = BURNOUT_T[lang] || BURNOUT_T.en;
+  const el = id => document.getElementById(id);
+  const tabChat = el('sup-tab-chat');
+  const tabBurnout = el('sup-tab-burnout');
+  if (tabChat) tabChat.textContent = b.tabChat;
+  if (tabBurnout) tabBurnout.textContent = b.tabBurnout;
+  if (el('sup-burnout-intro')) el('sup-burnout-intro').textContent = b.intro;
+  if (el('sup-e-lbl')) el('sup-e-lbl').textContent = b.eLbl;
+  if (el('sup-f-lbl')) el('sup-f-lbl').textContent = b.fLbl;
+  if (el('sup-w-lbl')) el('sup-w-lbl').textContent = b.wLbl;
+  if (el('sup-burnout-btn')) el('sup-burnout-btn').textContent = b.btn;
+
+  function makeRadio(containerId, items, selected, setter) {
+    const c = el(containerId);
+    if (!c) return;
+    c.innerHTML = '';
+    items.forEach((item, i) => {
+      const btn = document.createElement('button');
+      const isSel = selected === i;
+      btn.style.cssText = 'padding:10px 14px;border-radius:10px;border:1px solid ' + (isSel?'rgba(244,114,182,0.5)':'rgba(255,255,255,0.12)') + ';background:' + (isSel?'rgba(244,114,182,0.12)':'rgba(255,255,255,0.04)') + ';color:' + (isSel?'#f472b6':'rgba(224,242,241,0.75)') + ';font-family:sans-serif;font-size:0.87rem;text-align:left;cursor:pointer;width:100%;transition:all 0.15s;font-weight:' + (isSel?'600':'400') + ';';
+      btn.textContent = item;
+      btn.onclick = () => { setter(i); renderBurnoutSection(); };
+      c.appendChild(btn);
+    });
+  }
+
+  makeRadio('sup-energy-list', b.energy, burnEnergy, v => { burnEnergy = v; });
+  makeRadio('sup-feel-list', b.feel, burnFeel, v => { burnFeel = v; });
+  makeRadio('sup-work-list', b.work, burnWork, v => { burnWork = v; });
+
+  const btn = el('sup-burnout-btn');
+  if (btn) btn.disabled = (burnEnergy === null || burnFeel === null || burnWork === null);
+}
+
+async function generateBurnoutAdvice() {
+  const b = BURNOUT_T[lang] || BURNOUT_T.en;
+  const energy = b.energy[burnEnergy] || '';
+  const feel = b.feel[burnFeel] || '';
+  const work = b.work[burnWork] || '';
+  const loader = document.getElementById('sup-burnout-loader');
+  const result = document.getElementById('sup-burnout-result');
+  const btn = document.getElementById('sup-burnout-btn');
+  if (loader) loader.style.display = 'flex';
+  if (result) result.style.display = 'none';
+  if (btn) btn.disabled = true;
+
+  const prompt = lang === 'nl'
+    ? `Je bent Maya, een warme AI-collega voor verpleegkundigen. Deze verpleegkundige heeft een burnout check-in gedaan:
+- Energie: ${energy}
+- Emotioneel: ${feel}  
+- Werkdruk: ${work}
+
+Schrijf een warm, persoonlijk antwoord van max 4 zinnen:
+1. Erken hoe ze zich voelt — oprecht, geen toxic positivity
+2. Geef 1 concrete, haalbare tip voor vandaag of vanavond
+3. Eindig met een warme bemoediging
+
+Geen bullet points. Spreek haar direct aan als "jij". Klink als een echte collega die begrijpt hoe zwaar zorgwerk is.`
+    : lang === 'fr'
+    ? `Vous êtes Maya. Bilan burnout: Énergie: ${energy}, Émotions: ${feel}, Charge: ${work}. Répondez chaleureusement en 4 phrases max. Reconnaissez les émotions, donnez 1 conseil pratique, terminez avec encouragement. Pas de listes. Parlez directement.`
+    : `You are Maya, a warm AI companion for nurses. Burnout check-in: Energy: ${energy}, Emotional: ${feel}, Workload: ${work}. Write a warm personal response in max 4 sentences. Acknowledge how they feel (no toxic positivity), give 1 practical tip for today, end encouragingly. No bullet points. Speak directly as "you". Sound like a real colleague.`;
+
+  try {
+    const text = await callAPI(prompt, null, 350);
+    if (result) { result.textContent = text; result.style.display = 'block'; }
+  } catch(e) {
+    if (result) { result.textContent = lang==='nl'?'Verbindingsfout. Probeer opnieuw.':'Connection error. Try again.'; result.style.display = 'block'; }
+  }
+  if (loader) loader.style.display = 'none';
+  if (btn) btn.disabled = false;
+}
+
+// ─── QUIET SHIFT ───
+async function generateQuietShift() {
+  const btn = document.getElementById('sh-quiet-btn');
+  const origText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = lang==='nl'?'Genereren...':lang==='fr'?'Génération...':'Generating...';
+
+  const h = new Date().getHours();
+  const shiftName = lang === 'nl'
+    ? (h>=7&&h<15?'Dagdienst':h>=15&&h<22?'Avonddienst':'Nachtdienst')
+    : lang === 'fr'
+    ? (h>=7&&h<15?'La garde de jour':h>=15&&h<22?'La garde du soir':'La garde de nuit')
+    : (h>=7&&h<15?'Day shift':h>=15&&h<22?'Evening shift':'Night shift');
+
+  const prompt = lang === 'nl'
+    ? `Schrijf één zin: "${shiftName} rustig verlopen, geen bijzonderheden." Schrijf alleen die zin.`
+    : lang === 'fr'
+    ? `Écrivez une seule phrase: "${shiftName} s'est déroulée calmement, rien à signaler." Écrivez uniquement cette phrase.`
+    : `Write one sentence: "${shiftName} was uneventful, nothing to report." Write only that sentence.`;
+
+  try {
+    const result = await callAPI(prompt, null, 100);
+    showResult('shift', result.trim());
+  } catch(e) {
+    // Fallback zonder API
+    const fallback = lang==='nl'?`${shiftName} rustig verlopen, geen bijzonderheden.`
+      :lang==='fr'?`${shiftName} s'est déroulée calmement, rien à signaler.`
+      :`${shiftName} was uneventful, nothing to report.`;
+    showResult('shift', fallback);
+  }
+  btn.disabled = false;
+  btn.textContent = origText;
+}
+
+// ─── TIME SAVED ───
+function loadTimeSaved() {
+  try { timeSaved = parseInt(localStorage.getItem('maya-time-saved') || '0'); } catch(e) {}
+  renderTimeSaved();
+}
+
+function addTimeSaved(minutes) {
+  timeSaved += minutes;
+  try { localStorage.setItem('maya-time-saved', String(timeSaved)); } catch(e) {}
+  renderTimeSaved();
+}
+
+function renderTimeSaved() {
+  const bar = document.getElementById('time-saved-bar');
+  const lbl = document.getElementById('time-saved-label');
+  const val = document.getElementById('time-saved-value');
+  if (!bar || !lbl || !val) return;
+
+  if (timeSaved === 0) { bar.style.display = 'none'; return; }
+  bar.style.display = 'flex';
+
+  const hours = Math.floor(timeSaved / 60);
+  const mins = timeSaved % 60;
+  const timeStr = hours > 0
+    ? (hours + (lang==='nl'?'u ':lang==='fr'?'h ':' h ') + (mins > 0 ? mins + (lang==='nl'?'min':'min') : ''))
+    : mins + (lang==='nl'?' minuten':lang==='fr'?' minutes':' minutes');
+
+  lbl.textContent = lang==='nl'?'Tijd bespaard met Maya':lang==='fr'?'Temps gagné avec Maya':'Time saved with Maya';
+  val.textContent = '⏱️ ' + timeStr + (lang==='nl'?' teruggegeven aan je patiënten':lang==='fr'?' rendu à vos patients':' given back to your patients');
+}
+
+// ─── HISTORY ───
+function openHistory() {
+  try {
+    const hist = JSON.parse(localStorage.getItem('maya-history') || '[]');
+    const list = document.getElementById('hist-list');
+    const titleEl = document.getElementById('hist-title');
+    const closeBtn = document.getElementById('hist-close-btn');
+    if (titleEl) titleEl.textContent = lang==='nl'?'Recente rapporten':lang==='fr'?'Rapports recents':'Recent reports';
+    if (closeBtn) closeBtn.textContent = lang==='nl'?'Sluiten':lang==='fr'?'Fermer':'Close';
+    if (!list) return;
+    list.innerHTML = '';
+    if (hist.length === 0) {
+      const empty = document.createElement('div');
+      empty.style.cssText = 'color:var(--text2);font-size:0.85rem;text-align:center;padding:20px;';
+      empty.textContent = lang==='nl'?'Nog geen rapporten':lang==='fr'?'Pas encore de rapports':'No reports yet';
+      list.appendChild(empty);
+    } else {
+      hist.forEach(function(item, idx2) {
+        const card = document.createElement('div');
+        card.style.cssText = 'background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.14);border-radius:10px;padding:12px;margin-bottom:8px;';
+        const header = document.createElement('div');
+        header.style.cssText = 'display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;';
+        const titleSpan = document.createElement('span');
+        titleSpan.style.cssText = 'font-size:0.8rem;font-weight:600;color:var(--text3);';
+        titleSpan.textContent = item.title || 'Report';
+        const timeSpan = document.createElement('span');
+        timeSpan.style.cssText = 'font-size:0.72rem;color:var(--text2);';
+        timeSpan.textContent = item.time || '';
+        header.appendChild(titleSpan);
+        header.appendChild(timeSpan);
+        const preview = document.createElement('div');
+        preview.style.cssText = 'font-size:0.82rem;color:var(--text);line-height:1.6;max-height:80px;overflow:hidden;margin-bottom:8px;';
+        preview.textContent = (item.text||'').substring(0,200) + ((item.text||'').length>200?'...':'');
+        const openBtn = document.createElement('button');
+        openBtn.style.cssText = 'padding:5px 12px;border-radius:8px;border:1px solid rgba(13,145,159,0.3);background:transparent;color:var(--text3);font-size:0.75rem;cursor:pointer;';
+        openBtn.textContent = lang==='nl'?'Openen':lang==='fr'?'Ouvrir':'Open';
+        openBtn.onclick = (function(n) { return function() { reuseReport(n); }; })(idx2);
+        card.appendChild(header);
+        card.appendChild(preview);
+        card.appendChild(openBtn);
+        list.appendChild(card);
+      });
+    }
+    document.getElementById('hist-modal').style.display = 'flex';
+  } catch(e) {}
+}
+
+function reuseReport(i) {
+  try {
+    const hist = JSON.parse(localStorage.getItem('maya-history') || '[]');
+    const item = hist[i];
+    if (item) {
+      document.getElementById('hist-modal').style.display = 'none';
+      document.getElementById('res-modal-title').textContent = item.title || 'Report';
+      document.getElementById('res-modal-text').value = item.text || '';
+      document.getElementById('res-modal').style.display = 'flex';
+    }
+  } catch(e) {}
+}
+
+function updateHistBtn() {
+  try {
+    const hist = JSON.parse(localStorage.getItem('maya-history') || '[]');
+    const btn = document.getElementById('hist-btn');
+    if (btn) btn.style.display = hist.length > 0 ? 'block' : 'none';
+  } catch(e) {}
+}
+
+// ─── PWA ───
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  });
+}
+
+// Install prompt
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  const banner = document.getElementById('install-banner');
+  if (banner) banner.style.display = 'flex';
+});
+
+function installApp() {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(() => {
+      deferredPrompt = null;
+      const banner = document.getElementById('install-banner');
+      if (banner) banner.style.display = 'none';
+    });
+  }
+}
+
+// ─── VOICE ───
+let voiceBtn = null;
+let voiceTargetId = null;
+let voiceSilenceTimer = null;
+
+function stopVoice() {
+  if (voiceRec) { try { voiceRec.stop(); } catch(e) {} voiceRec = null; }
+  if (voiceBtn) { voiceBtn.classList.remove('rec'); voiceBtn.textContent = '🎤'; }
+  if (voiceSilenceTimer) { clearTimeout(voiceSilenceTimer); voiceSilenceTimer = null; }
+  voiceBtn = null; voiceTargetId = null;
+}
+
+function startVoice(btn, targetId) {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) {
+    const msg = lang==='nl'?'Stemherkenning niet ondersteund in deze browser.':lang==='fr'?'Reconnaissance vocale non supportée.':'Speech recognition not supported in this browser.';
+    alert(msg); return;
+  }
+  voiceBtn = btn; voiceTargetId = targetId;
+  const r = new SR();
+  r.continuous = true;
+  r.interimResults = true;
+  r.lang = lang === 'nl' ? 'nl-BE' : lang === 'fr' ? 'fr-FR' : 'en-US';
+  let finalTranscript = '';
+  let interimTranscript = '';
+
+  r.onstart = () => {
+    btn.classList.add('rec');
+    btn.textContent = '⏹️';
+    // Auto-stop na 30 seconden als fallback
+    voiceSilenceTimer = setTimeout(() => stopVoice(), 30000);
+  };
+
+  r.onresult = e => {
+    // Reset silence timer bij elk resultaat
+    if (voiceSilenceTimer) clearTimeout(voiceSilenceTimer);
+    interimTranscript = '';
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      if (e.results[i].isFinal) {
+        finalTranscript += e.results[i][0].transcript + ' ';
+      } else {
+        interimTranscript += e.results[i][0].transcript;
+      }
+    }
+    const el = document.getElementById(targetId);
+    if (el) {
+      // Toon interim resultaat als placeholder feedback
+      if (interimTranscript) {
+        btn.style.opacity = '0.7';
+      } else {
+        btn.style.opacity = '1';
+      }
+    }
+    // Auto-stop na 2.5 seconden stilte
+    voiceSilenceTimer = setTimeout(() => {
+      const el = document.getElementById(targetId);
+      if (el && finalTranscript.trim()) {
+        el.value = el.value ? el.value.trim() + ' ' + finalTranscript.trim() : finalTranscript.trim();
+        refreshBtns();
+        // Auto-resize textarea
+        if (el.tagName === 'TEXTAREA') { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 150) + 'px'; }
+      }
+      stopVoice();
+    }, 2500);
+  };
+
+  r.onerror = e => {
+    if (e.error !== 'aborted') {
+      const el = document.getElementById(targetId);
+      if (el && finalTranscript.trim()) {
+        el.value = el.value ? el.value.trim() + ' ' + finalTranscript.trim() : finalTranscript.trim();
+        refreshBtns();
+      }
+    }
+    stopVoice();
+  };
+
+  r.onend = () => {
+    // Als er nog interim transcript is, voeg toe
+    const el = document.getElementById(targetId);
+    if (el && finalTranscript.trim() && !el.value.includes(finalTranscript.trim())) {
+      el.value = el.value ? el.value.trim() + ' ' + finalTranscript.trim() : finalTranscript.trim();
+      refreshBtns();
+    }
+    stopVoice();
+  };
+
+  voiceRec = r;
+  try { r.start(); } catch(e) { stopVoice(); }
+}
+
+function toggleVoice(btn, targetId) {
+  if (voiceRec) { stopVoice(); return; }
+  startVoice(btn, targetId);
+}
+</script>
+</body>
+</html>

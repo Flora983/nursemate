@@ -1,0 +1,21 @@
+{
+  "name": "Maya NurseMate",
+  "short_name": "Maya",
+  "description": "AI companion for nurses — shift briefings, incident reports, wound care & more",
+  "start_url": "/app.html",
+  "display": "standalone",
+  "background_color": "#0a111f",
+  "theme_color": "#0a3d4a",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230a3d4a'/><text y='.9em' font-size='80' x='10'>🩺</text></svg>",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["medical", "health", "productivity"],
+  "lang": "en",
+  "dir": "ltr"
+}

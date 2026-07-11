@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maya NurseMate — Your AI colleague for nursing documentation</title>
+<meta name="description" content="Professional nursing documentation in 30 seconds. Shift briefings, incident reports, wound care notes. Built by a nurse, for nurses.">
+<meta name="theme-color" content="#0a3d4a">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --teal:#0d4f5c;--teal-light:#0f8fa0;
+  --bg:#0a111f;--bg2:#0f1f35;
+  --text:#e0f2f1;--text2:#94a3b8;--text3:#7de8f0;
+  --border:rgba(255,255,255,0.12);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;scroll-behavior:smooth;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.wrap{max-width:960px;margin:0 auto;padding:0 20px;}
+
+.nav{display:flex;align-items:center;justify-content:space-between;padding:18px 0;}
+.logo{font-family:'DM Serif Display',serif;font-size:1.4rem;color:#fff;}
+.logo span{color:var(--text3);font-style:italic;}
+.lang-btn{background:rgba(255,255,255,0.1);border:1px solid var(--border);color:#fff;padding:6px 13px;border-radius:18px;font-size:0.78rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;}
+
+.hero{padding:56px 0 44px;text-align:center;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;top:-120px;left:50%;transform:translateX(-50%);width:600px;height:400px;background:radial-gradient(ellipse,rgba(15,143,160,0.18),transparent 70%);pointer-events:none;}
+.hero h1{font-family:'DM Serif Display',serif;font-size:clamp(2rem,6vw,3.2rem);color:#fff;line-height:1.15;margin-bottom:18px;animation:fadeUp 0.5s ease;}
+.hero h1 em{color:var(--text3);}
+.hero p{font-size:1.05rem;color:var(--text2);max-width:540px;margin:0 auto 30px;line-height:1.7;animation:fadeUp 0.6s ease;}
+.cta{display:inline-block;padding:16px 40px;background:linear-gradient(135deg,#0a3d4a,var(--teal-light));color:#fff;border:none;border-radius:14px;font-family:'DM Sans',sans-serif;font-size:1.05rem;font-weight:700;cursor:pointer;text-decoration:none;box-shadow:0 8px 30px rgba(15,143,160,0.4);transition:all 0.25s;animation:fadeUp 0.7s ease;}
+.cta:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(15,143,160,0.55);}
+.cta-sub{font-size:0.8rem;color:var(--text2);margin-top:14px;animation:fadeUp 0.8s ease;}
+
+.stats{display:flex;justify-content:center;gap:40px;padding:36px 0;flex-wrap:wrap;}
+.stat{text-align:center;}
+.stat .num{font-family:'DM Serif Display',serif;font-size:2rem;color:var(--text3);}
+.stat .lbl{font-size:0.8rem;color:var(--text2);margin-top:4px;}
+
+.section{padding:50px 0;}
+.section h2{font-family:'DM Serif Display',serif;font-size:1.8rem;color:#fff;text-align:center;margin-bottom:10px;}
+.section .sub{text-align:center;color:var(--text2);font-size:0.95rem;margin-bottom:36px;max-width:520px;margin-left:auto;margin-right:auto;line-height:1.7;}
+
+.features{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;}
+.feat{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:24px 20px;transition:all 0.25s;}
+.feat:hover{border-color:var(--teal-light);transform:translateY(-3px);}
+.feat .ico{font-size:2rem;margin-bottom:12px;display:block;}
+.feat h3{font-family:'DM Serif Display',serif;font-size:1.05rem;color:var(--text3);margin-bottom:6px;}
+.feat p{font-size:0.85rem;color:var(--text2);line-height:1.65;}
+
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;}
+.step{text-align:center;padding:24px 16px;}
+.step .n{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#0a3d4a,var(--teal-light));color:#fff;font-family:'DM Serif Display',serif;font-size:1.3rem;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;}
+.step h3{font-size:1rem;color:var(--text);margin-bottom:6px;font-weight:600;}
+.step p{font-size:0.85rem;color:var(--text2);line-height:1.6;}
+
+.privacy{background:var(--bg2);border:1px solid rgba(252,211,77,0.25);border-radius:18px;padding:30px 26px;}
+.privacy h2{text-align:left;font-size:1.3rem;margin-bottom:16px;}
+.privacy ul{list-style:none;}
+.privacy li{padding:8px 0;font-size:0.92rem;color:var(--text2);line-height:1.6;display:flex;gap:12px;align-items:flex-start;}
+.privacy li span:first-child{flex-shrink:0;}
+
+.footer-cta{text-align:center;padding:56px 0;}
+.footer-cta h2{font-family:'DM Serif Display',serif;font-size:1.9rem;color:#fff;margin-bottom:24px;}
+.footer{border-top:1px solid var(--border);padding:26px 0;text-align:center;font-size:0.8rem;color:var(--text2);line-height:1.8;}
+.footer a{color:var(--text3);text-decoration:none;}
+
+[data-lang]{display:none;}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <nav class="nav">
+    <div class="logo">Maya <span>NurseMate</span></div>
+    <button class="lang-btn" onclick="cycleLang()">🌐 <span id="lang-display">EN</span></button>
+  </nav>
+</div>
+
+<div data-lang="en">
+  <div class="wrap">
+    <section class="hero">
+      <h1>Your AI <em>colleague</em> for nursing documentation</h1>
+      <p>Shift briefings, incident reports, wound care notes — professionally written in 30 seconds. Built by a nurse with 10+ years in elderly care, for nurses everywhere.</p>
+      <a href="/app.html" class="cta">Start Maya — it&rsquo;s free</a>
+      <div class="cta-sub">No download needed · Works on any phone · EN / NL / FR</div>
+    </section>
+
+    <div class="stats">
+      <div class="stat"><div class="num">30 sec</div><div class="lbl">per report</div></div>
+      <div class="stat"><div class="num">8</div><div class="lbl">clinical modules</div></div>
+      <div class="stat"><div class="num">3</div><div class="lbl">languages</div></div>
+    </div>
+
+    <section class="section">
+      <h2>Everything a shift demands</h2>
+      <div class="sub">Every module speaks nurse — short, factual, ready to paste into your patient record.</div>
+      <div class="features">
+        <div class="feat"><span class="ico">📋</span><h3>Shift Briefing</h3><p>Multi-patient handover in the tone experienced nurses actually use. No AI language.</p></div>
+        <div class="feat"><span class="ico">⚡</span><h3>Quick Communication</h3><p>Doctor contacted, lab results, hospital admission, passing away — one tap per scenario.</p></div>
+        <div class="feat"><span class="ico">⚠️</span><h3>Incident Reports</h3><p>Falls, aggression, wandering, medication errors. Factual and complete.</p></div>
+        <div class="feat"><span class="ico">🩹</span><h3>Wound Care</h3><p>Type, location, evolution, care performed — a clean wound note every time.</p></div>
+        <div class="feat"><span class="ico">🎤</span><h3>Voice Input</h3><p>Speak your note in the hallway. Maya writes the professional version.</p></div>
+        <div class="feat"><span class="ico">💙</span><h3>How are you?</h3><p>A burnout check-in and a colleague who listens. Because nurses need care too.</p></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>How it works</h2>
+      <div class="steps">
+        <div class="step"><div class="n">1</div><h3>Tap what happened</h3><p>Room number, observations, actions — chips instead of typing.</p></div>
+        <div class="step"><div class="n">2</div><h3>Maya writes</h3><p>A professional note in seconds, in the style of your record.</p></div>
+        <div class="step"><div class="n">3</div><h3>Check &amp; paste</h3><p>You verify, you copy, you stay in control. Always.</p></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="privacy">
+        <h2>🔒 Privacy by design</h2>
+        <ul>
+          <li><span>✅</span><span>Room numbers only — never real patient names</span></li>
+          <li><span>✅</span><span>No connection to any hospital or care system</span></li>
+          <li><span>✅</span><span>Nothing is stored on our servers — your notes stay on your device</span></li>
+          <li><span>✅</span><span>You always verify before use — Maya assists, you decide</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="footer-cta">
+      <h2>Give the paperwork to Maya.<br>Give the time back to your patients.</h2>
+      <a href="/app.html" class="cta">Start Maya now</a>
+    </section>
+  </div>
+</div>
+
+<div data-lang="nl">
+  <div class="wrap">
+    <section class="hero">
+      <h1>Jouw AI-<em>collega</em> voor verpleegkundige documentatie</h1>
+      <p>Shift briefings, incidentrapporten, wondzorgnotities — professioneel geschreven in 30 seconden. Gebouwd door een verpleegkundige met 10+ jaar WZC-ervaring, voor verpleegkundigen overal.</p>
+      <a href="/app.html" class="cta">Start Maya — gratis</a>
+      <div class="cta-sub">Geen download nodig · Werkt op elke telefoon · NL / FR / EN</div>
+    </section>
+
+    <div class="stats">
+      <div class="stat"><div class="num">30 sec</div><div class="lbl">per verslag</div></div>
+      <div class="stat"><div class="num">8</div><div class="lbl">klinische modules</div></div>
+      <div class="stat"><div class="num">3</div><div class="lbl">talen</div></div>
+    </div>
+
+    <section class="section">
+      <h2>Alles wat een shift vraagt</h2>
+      <div class="sub">Elke module spreekt verpleegkundige taal — kort, feitelijk, klaar om in het zorgdossier te plakken.</div>
+      <div class="features">
+        <div class="feat"><span class="ico">📋</span><h3>Shift Briefing</h3><p>Multi-patiënt overdracht in de toon die ervaren verpleegkundigen echt gebruiken. Geen AI-taal.</p></div>
+        <div class="feat"><span class="ico">⚡</span><h3>Korte Communicatie</h3><p>Arts gebeld, laboresultaten, opname, overlijden — één tik per scenario.</p></div>
+        <div class="feat"><span class="ico">⚠️</span><h3>Incidentrapporten</h3><p>Val, agressie, dwaling, medicatiefouten. Feitelijk en volledig.</p></div>
+        <div class="feat"><span class="ico">🩹</span><h3>Wondzorg</h3><p>Type, locatie, evolutie, uitgevoerde zorg — elke keer een propere wondnotitie.</p></div>
+        <div class="feat"><span class="ico">🎤</span><h3>Spraakinvoer</h3><p>Spreek je notitie in op de gang. Maya schrijft de professionele versie.</p></div>
+        <div class="feat"><span class="ico">💙</span><h3>Hoe gaat het met jou?</h3><p>Een burnout check-in en een collega die luistert. Want verpleegkundigen verdienen ook zorg.</p></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Zo werkt het</h2>
+      <div class="steps">
+        <div class="step"><div class="n">1</div><h3>Tik aan wat gebeurde</h3><p>Kamernummer, observaties, acties — knoopjes in plaats van typen.</p></div>
+        <div class="step"><div class="n">2</div><h3>Maya schrijft</h3><p>Een professionele notitie in seconden, in de stijl van jouw dossier.</p></div>
+        <div class="step"><div class="n">3</div><h3>Controleer &amp; plak</h3><p>Jij controleert, jij kopieert, jij blijft de baas. Altijd.</p></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="privacy">
+        <h2>🔒 Privacy als uitgangspunt</h2>
+        <ul>
+          <li><span>✅</span><span>Alleen kamernummers — nooit echte namen van bewoners</span></li>
+          <li><span>✅</span><span>Geen koppeling met ziekenhuis- of zorgsystemen</span></li>
+          <li><span>✅</span><span>Niets wordt bewaard op onze servers — jouw notities blijven op jouw toestel</span></li>
+          <li><span>✅</span><span>Jij controleert altijd voor gebruik — Maya helpt, jij beslist</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="footer-cta">
+      <h2>Geef het papierwerk aan Maya.<br>Geef de tijd terug aan je bewoners.</h2>
+      <a href="/app.html" class="cta">Start Maya nu</a>
+    </section>
+  </div>
+</div>
+
+<div data-lang="fr">
+  <div class="wrap">
+    <section class="hero">
+      <h1>Votre <em>collègue IA</em> pour la documentation infirmière</h1>
+      <p>Rapports de garde, incidents, notes de plaies — rédigés professionnellement en 30 secondes. Créé par une infirmière avec 10+ ans en soins aux personnes âgées.</p>
+      <a href="/app.html" class="cta">Démarrer Maya — gratuit</a>
+      <div class="cta-sub">Sans téléchargement · Sur tout téléphone · FR / NL / EN</div>
+    </section>
+
+    <div class="stats">
+      <div class="stat"><div class="num">30 sec</div><div class="lbl">par rapport</div></div>
+      <div class="stat"><div class="num">8</div><div class="lbl">modules cliniques</div></div>
+      <div class="stat"><div class="num">3</div><div class="lbl">langues</div></div>
+    </div>
+
+    <section class="section">
+      <h2>Tout ce qu&rsquo;une garde exige</h2>
+      <div class="sub">Chaque module parle infirmier — court, factuel, prêt à coller dans le dossier.</div>
+      <div class="features">
+        <div class="feat"><span class="ico">📋</span><h3>Rapport de garde</h3><p>Transmission multi-patients dans le ton des infirmiers expérimentés.</p></div>
+        <div class="feat"><span class="ico">⚡</span><h3>Communication rapide</h3><p>Médecin contacté, labo, admission, décès — un geste par scénario.</p></div>
+        <div class="feat"><span class="ico">⚠️</span><h3>Rapports d&rsquo;incident</h3><p>Chutes, agressivité, errance, erreurs médicamenteuses. Factuel et complet.</p></div>
+        <div class="feat"><span class="ico">🩹</span><h3>Soins de plaie</h3><p>Type, localisation, évolution, soins — une note propre à chaque fois.</p></div>
+        <div class="feat"><span class="ico">🎤</span><h3>Saisie vocale</h3><p>Dictez votre note dans le couloir. Maya rédige la version professionnelle.</p></div>
+        <div class="feat"><span class="ico">💙</span><h3>Comment allez-vous?</h3><p>Un bilan burnout et une collègue qui écoute. Les infirmiers méritent aussi des soins.</p></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Comment ça marche</h2>
+      <div class="steps">
+        <div class="step"><div class="n">1</div><h3>Touchez ce qui s&rsquo;est passé</h3><p>Chambre, observations, actions — des puces au lieu de taper.</p></div>
+        <div class="step"><div class="n">2</div><h3>Maya rédige</h3><p>Une note professionnelle en secondes, dans le style de votre dossier.</p></div>
+        <div class="step"><div class="n">3</div><h3>Vérifiez &amp; collez</h3><p>Vous vérifiez, vous copiez, vous gardez le contrôle. Toujours.</p></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="privacy">
+        <h2>🔒 Confidentialité par conception</h2>
+        <ul>
+          <li><span>✅</span><span>Numéros de chambre uniquement — jamais de vrais noms</span></li>
+          <li><span>✅</span><span>Aucune connexion aux systèmes hospitaliers</span></li>
+          <li><span>✅</span><span>Rien n&rsquo;est stocké sur nos serveurs — vos notes restent sur votre appareil</span></li>
+          <li><span>✅</span><span>Vous vérifiez toujours avant utilisation — Maya assiste, vous décidez</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="footer-cta">
+      <h2>Donnez la paperasse à Maya.<br>Rendez le temps à vos patients.</h2>
+      <a href="/app.html" class="cta">Démarrer Maya</a>
+    </section>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="wrap">
+    <div>Maya NurseMate · <span data-ft="en">Built by a nurse, for nurses</span><span data-ft="nl">Gebouwd door een verpleegkundige, voor verpleegkundigen</span><span data-ft="fr">Créé par une infirmière, pour les infirmiers</span> 🩺</div>
+    <div><a href="/app.html" data-ft2="en">Open the app</a><a href="/app.html" data-ft2="nl">Open de app</a><a href="/app.html" data-ft2="fr">Ouvrir l&rsquo;app</a></div>
+  </div>
+</footer>
+
+<script>
+var LANGS = ['en','nl','fr'];
+var curLang = 'en';
+
+function detectLang() {
+  var bl = (navigator.language || 'en').toLowerCase();
+  if (bl.indexOf('nl') === 0) return 'nl';
+  if (bl.indexOf('fr') === 0) return 'fr';
+  return 'en';
+}
+
+function applyLang(l) {
+  curLang = l;
+  var blocks = document.querySelectorAll('[data-lang]');
+  for (var i = 0; i < blocks.length; i++) {
+    blocks[i].style.display = blocks[i].getAttribute('data-lang') === l ? 'block' : 'none';
+  }
+  var fts = document.querySelectorAll('[data-ft]');
+  for (var j = 0; j < fts.length; j++) {
+    fts[j].style.display = fts[j].getAttribute('data-ft') === l ? 'inline' : 'none';
+  }
+  var ft2s = document.querySelectorAll('[data-ft2]');
+  for (var k = 0; k < ft2s.length; k++) {
+    ft2s[k].style.display = ft2s[k].getAttribute('data-ft2') === l ? 'inline' : 'none';
+  }
+  var disp = document.getElementById('lang-display');
+  if (disp) disp.textContent = l.toUpperCase();
+  document.documentElement.lang = l;
+}
+
+function cycleLang() {
+  var idx = LANGS.indexOf(curLang);
+  applyLang(LANGS[(idx + 1) % LANGS.length]);
+}
+
+applyLang(detectLang());
+</script>
+</body>
+</html>
