@@ -42,24 +42,31 @@ html,body{background:var(--bg2);color:var(--text);font-family:'DM Sans',sans-ser
 .page.active{display:block;}
 
 /* DASHBOARD */
-.hero{background:linear-gradient(135deg,#0a3d4a,var(--teal-light));padding:20px 20px 18px;position:relative;overflow:hidden;}
+.hero{background:linear-gradient(135deg,#0a3d4a,var(--teal-light));padding:14px 20px 12px;position:relative;overflow:hidden;}
 .hero::after{content:'';position:absolute;top:-40px;right:-40px;width:130px;height:130px;background:rgba(255,255,255,0.05);border-radius:50%;}
-.hero-title{font-family:'DM Serif Display',serif;font-size:1.75rem;color:#fff;line-height:1.2;margin-bottom:5px;}
+.hero-title{font-family:'DM Serif Display',serif;font-size:1.32rem;color:#fff;line-height:1.28;margin-bottom:4px;}
 .hero-title span{color:#7de8f0;font-style:italic;}
-.hero-sub{font-size:0.83rem;color:rgba(255,255,255,0.78);}
+.hero-sub{font-size:0.78rem;color:rgba(255,255,255,0.75);}
 
-.qn-btn{display:flex;align-items:center;gap:14px;margin:18px 16px 14px;padding:18px 20px;background:linear-gradient(135deg,#0a3d4a,var(--teal-light));border:none;border-radius:16px;color:#fff;font-family:'DM Serif Display',serif;font-size:1.05rem;cursor:pointer;box-shadow:0 6px 22px rgba(13,110,122,0.4);width:calc(100% - 32px);transition:all 0.2s;}
-.qn-btn:hover{opacity:0.92;transform:translateY(-2px);}
+.qn-btn{display:flex;align-items:center;gap:16px;margin:14px 16px 18px;padding:22px 22px;background:linear-gradient(135deg,#0a3d4a,var(--teal-light));border:2px solid rgba(125,232,240,0.35);border-radius:18px;color:#fff;font-family:'DM Serif Display',serif;font-size:1.18rem;cursor:pointer;box-shadow:0 10px 34px rgba(13,110,122,0.5);width:calc(100% - 32px);transition:all 0.2s;position:relative;z-index:2;}
+.qn-btn:hover{opacity:0.95;transform:translateY(-2px);box-shadow:0 12px 38px rgba(13,110,122,0.6);}
+.qn-btn:active{transform:translateY(0);}
+.qn-mic{font-size:2rem;flex-shrink:0;}
+.today-widget{display:flex;gap:10px;margin:0 16px;}
+.today-stat{flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:9px 12px;display:flex;align-items:center;gap:9px;}
+.today-stat-icon{font-size:1.15rem;flex-shrink:0;}
+.today-stat-value{font-family:'DM Serif Display',serif;font-size:1.05rem;color:var(--text3);line-height:1;}
+.today-stat-label{font-size:0.66rem;color:var(--text2);line-height:1.25;}
 .qn-sub{font-family:'DM Sans',sans-serif;font-size:0.76rem;opacity:0.82;margin-top:2px;}
 
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;padding:0 16px 80px;}
-.card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:20px 14px 16px;text-align:center;cursor:pointer;transition:all 0.22s;position:relative;overflow:hidden;}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px 70px;}
+.card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:13px 10px 11px;text-align:center;cursor:pointer;transition:all 0.22s;position:relative;overflow:hidden;}
 .card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--teal),var(--teal-light));opacity:0;transition:opacity 0.2s;}
 .card:hover{border-color:var(--teal-light);transform:translateY(-4px);box-shadow:0 10px 30px rgba(0,0,0,0.4);}
 .card:hover::before{opacity:1;}
-.card .ico{font-size:2.2rem;display:block;margin-bottom:8px;}
-.card .cn{font-family:'DM Serif Display',serif;font-size:0.95rem;color:var(--text3);margin-bottom:3px;}
-.card .cd{font-size:0.72rem;color:var(--text2);line-height:1.4;}
+.card .ico{font-size:1.55rem;display:block;margin-bottom:5px;}
+.card .cn{font-family:'DM Serif Display',serif;font-size:0.83rem;color:var(--text3);margin-bottom:2px;line-height:1.2;}
+.card .cd{font-size:0.66rem;color:var(--text2);line-height:1.3;}
 
 /* MODULE PAGES */
 .mod-page{padding:20px 16px 80px;max-width:640px;margin:0 auto;}
@@ -132,7 +139,7 @@ select.f option{background:#1e2937;}
 .quiz-opt.correct{border-color:var(--green);background:rgba(52,211,153,0.15);color:var(--green);}
 .quiz-opt.wrong{border-color:var(--red);background:rgba(248,113,113,0.15);color:var(--red);}
 
-@media(max-width:600px){.grid{grid-template-columns:1fr;}.res-actions{grid-template-columns:1fr;}.chip{padding:7px 12px;font-size:0.78rem;}.mod-page{padding:16px 12px 70px;}.blk{margin-bottom:15px;}.lbl{font-size:0.68rem;}}
+@media(max-width:600px){.res-actions{grid-template-columns:1fr;}.chip{padding:7px 12px;font-size:0.78rem;}.mod-page{padding:14px 12px 70px;}.blk{margin-bottom:13px;}.lbl{font-size:0.68rem;}}
 </style>
 </head>
 <body>
@@ -176,7 +183,8 @@ select.f option{background:#1e2937;}
     <textarea class="res-box" id="res-modal-text"></textarea>
     <div class="res-actions">
       <button class="res-btn" onclick="copyRes()" id="res-copy-btn"></button>
-      <button class="res-btn pri" onclick="document.getElementById('res-modal').style.display='none'" id="res-done-btn"></button>
+      <button class="res-btn" onclick="sendResToSelf()" id="res-send-btn" style="display:none;"></button>
+      <button class="res-btn pri" onclick="document.getElementById('res-modal').style.display='none'" id="res-done-btn" style="grid-column:span 2;"></button>
     </div>
     <div style="font-size:0.73rem;color:var(--text2);margin-top:10px;text-align:center;" id="res-disclaimer"></div>
   </div>
@@ -223,10 +231,24 @@ select.f option{background:#1e2937;}
         <div style="font-size:1.1rem;color:#fff;font-weight:700;" id="time-saved-value"></div>
       </div>
     </div>
+    <div id="streak-badge" style="display:none;margin-top:10px;background:rgba(251,191,36,0.15);border:1px solid rgba(251,191,36,0.3);border-radius:10px;padding:8px 14px;align-items:center;gap:8px;justify-content:center;">
+      <span style="font-size:1.1rem;">🔥</span>
+      <span style="font-size:0.88rem;color:#fbbf24;font-weight:700;" id="streak-text"></span>
+    </div>
+  </div>
+  <div class="today-widget" id="today-widget">
+    <div class="today-stat">
+      <span class="today-stat-icon">📝</span>
+      <div><div class="today-stat-value" id="today-reports">0</div><div class="today-stat-label" id="today-reports-lbl">reports today</div></div>
+    </div>
+    <div class="today-stat">
+      <span class="today-stat-icon">⏱️</span>
+      <div><div class="today-stat-value" id="today-time">0m</div><div class="today-stat-label" id="today-time-lbl">time saved</div></div>
+    </div>
   </div>
   <button class="qn-btn" onclick="openQnModal()">
-    <span style="font-size:1.6rem;">🎤</span>
-    <div><div id="qn-btn-title">Quick Note</div><div class="qn-sub" id="qn-btn-sub">Speak or type — AI writes the report</div></div>
+    <span class="qn-mic">🎤</span>
+    <div><div id="qn-btn-title">Tell Maya what happened</div><div class="qn-sub" id="qn-btn-sub">Speak or type. Maya writes your report.</div></div>
   </button>
   <div class="grid" id="module-grid"></div>
 </div>
@@ -510,11 +532,33 @@ select.f option{background:#1e2937;}
     <div class="mod-title" id="sup-title">💙 <span id="sup-title-txt"></span></div>
     <div class="mod-desc" id="sup-desc"></div>
 
+    <!-- ZACHTE HERINNERING -->
+    <div id="checkin-nudge" style="display:none;background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.25);border-radius:12px;padding:12px 14px;margin-bottom:16px;font-size:0.85rem;color:#a78bfa;cursor:pointer;" onclick="setSupportTab('burnout')"></div>
+
     <!-- TABS -->
     <div style="display:flex;gap:8px;margin-bottom:18px;">
       <button onclick="setSupportTab('chat')" id="sup-tab-chat" style="flex:1;padding:10px;border-radius:10px;border:1.5px solid rgba(244,114,182,0.5);background:rgba(244,114,182,0.15);color:#f472b6;font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:700;cursor:pointer;"></button>
       <button onclick="setSupportTab('burnout')" id="sup-tab-burnout" style="flex:1;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);color:var(--text2);font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:600;cursor:pointer;"></button>
     </div>
+
+    <!-- PERSOONLIJKE STATS -->
+    <div id="sup-stats" style="display:flex;gap:10px;margin-bottom:16px;">
+      <div style="flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:10px;text-align:center;">
+        <div style="font-size:1.3rem;font-weight:700;color:var(--text3);" id="stat-reports">0</div>
+        <div style="font-size:0.68rem;color:var(--text2);" id="stat-reports-lbl"></div>
+      </div>
+      <div style="flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:10px;text-align:center;">
+        <div style="font-size:1.3rem;font-weight:700;color:#fbbf24;" id="stat-streak">0</div>
+        <div style="font-size:0.68rem;color:var(--text2);" id="stat-streak-lbl"></div>
+      </div>
+      <div style="flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:10px;text-align:center;">
+        <div style="font-size:1.3rem;font-weight:700;color:#34d399;" id="stat-time">0</div>
+        <div style="font-size:0.68rem;color:var(--text2);" id="stat-time-lbl"></div>
+      </div>
+    </div>
+
+    <!-- DEEL MET COLLEGA -->
+    <button id="share-btn" onclick="shareMaya()" style="width:100%;margin-bottom:18px;padding:12px;border-radius:12px;border:1px solid rgba(52,211,153,0.3);background:rgba(52,211,153,0.08);color:#34d399;font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;"></button>
 
     <!-- CHAT TAB -->
     <div id="sup-chat-section">
@@ -640,10 +684,10 @@ const T = {
   en: {
     disc: '🔒 Use room number — never real names · Personal tool only',
     back: 'Back',
-    heroTitle: 'Your AI <span>colleague.<\/span>',
-    heroSub: 'Professional nursing documentation in 30 seconds',
-    qnBtnTitle: 'Quick Note',
-    qnBtnSub: 'Speak or type — AI writes the report',
+    heroTitle: 'Write professional nursing reports in under <span>30 seconds.<\/span>',
+    heroSub: 'Speak or type. Maya writes it for you.',
+    qnBtnTitle: 'Tell Maya what happened',
+    qnBtnSub: 'Speak or type. Maya writes your report.',
     popupDesc: 'Your personal AI companion for nursing documentation. Fast, professional, privacy-friendly.',
     popupRules: '⚠️ Required rules:\n🔒 Always use room number — never real name\n📋 Copy & paste manually into your EHR\n👁️ Always verify before use\n🚫 Not connected to any hospital system',
     popupBtn: 'I understand — let\'s go',
@@ -667,6 +711,7 @@ const T = {
     qnCancel: 'Cancel',
     qnSubmit: '✨ Generate',
     resCopy: '📋 Copy',
+    resSend: '📤 Send to myself',
     resDone: '✓ Done',
     resDisc: '⚠️ Verify before use — you remain responsible',
     loading: 'Generating...',
@@ -837,10 +882,10 @@ const T = {
   nl: {
     disc: '🔒 Kamernummer gebruiken — nooit echte naam · Persoonlijk hulpmiddel',
     back: 'Terug',
-    heroTitle: 'Jouw AI-<span>collega.<\/span>',
-    heroSub: 'Professionele verpleegkundige documentatie in 30 seconden',
-    qnBtnTitle: 'Snelle Notitie',
-    qnBtnSub: 'Spreek in of typ — AI schrijft het verslag',
+    heroTitle: 'Schrijf professionele rapporten in <span>30 seconden.<\/span>',
+    heroSub: 'Spreek of typ. Maya schrijft het voor je.',
+    qnBtnTitle: 'Vertel Maya wat er gebeurde',
+    qnBtnSub: 'Spreek of typ. Maya schrijft je verslag.',
     popupDesc: 'Jouw persoonlijke AI-collega voor WZC-documentatie. Snel, professioneel, privacy-vriendelijk.',
     popupRules: '⚠️ Verplichte regels:\n🔒 Gebruik ALTIJD kamernummer — nooit echte naam\n📋 Kopieer en plak handmatig in EHR\n👁️ Controleer altijd voor gebruik\n🚫 Geen koppeling met ziekenhuissystemen',
     popupBtn: 'Ik begrijp dit — aan de slag',
@@ -864,6 +909,7 @@ const T = {
     qnCancel: 'Annuleer',
     qnSubmit: '✨ Genereer',
     resCopy: '📋 Kopieer',
+    resSend: '📤 Verstuur naar mezelf',
     resDone: '✓ Klaar',
     resDisc: '⚠️ Controleer voor gebruik — jij blijft verantwoordelijk',
     loading: 'Genereren...',
@@ -1026,10 +1072,10 @@ const T = {
   fr: {
     disc:'🔒 Numéro de chambre uniquement — jamais de vrai nom · Outil personnel',
     back:'Retour',
-    heroTitle:'Votre collègue <span>IA.<\/span>',
-    heroSub:'Documentation infirmière professionnelle en 30 secondes',
-    qnBtnTitle:'Note rapide',
-    qnBtnSub:'Parlez ou tapez — l\'IA rédige le rapport',
+    heroTitle:'Rédigez des rapports professionnels en <span>30 secondes.<\/span>',
+    heroSub:'Parlez ou tapez. Maya rédige pour vous.',
+    qnBtnTitle:'Dites à Maya ce qui s\'est passé',
+    qnBtnSub:'Parlez ou tapez. Maya rédige votre rapport.',
     popupDesc:'Votre assistante IA personnelle pour la documentation en soins infirmiers.',
     popupRules:'⚠️ Règles obligatoires:\n🔒 Toujours utiliser le numéro de chambre — jamais le vrai nom\n📋 Copier-coller manuellement dans le dossier\n👁️ Toujours vérifier avant utilisation',
     popupBtn:'Je comprends — commençons',
@@ -1048,7 +1094,7 @@ const T = {
     qnRoomLbl:'Chambre / Patient', qnRoomPh:'ex. Chambre 12',
     qnNoteLbl:'Note (parlez ou tapez)', qnNotePh:'"Patient agité, rassuré, médicament donné..."',
     qnCancel:'Annuler', qnSubmit:'✨ Générer',
-    resCopy:'📋 Copier', resDone:'✓ Terminé',
+    resCopy:'📋 Copier', resSend:'📤 M\'envoyer', resDone:'✓ Terminé',
     resDisc:'⚠️ Vérifiez avant utilisation — vous restez responsable',
     loading:'Génération...', genBtn:'✨ Générer le rapport',
     shift:{title:'📋 Rapport de garde',desc:'Transmission au collègue suivant.',priv:'🔒 Numéro de chambre uniquement',roomLbl:'Chambre (optionnel)',roomPh:'ex. Chambre 5',statusLbl:'État général ⚠️',obsLbl:'Observations (plusieurs possible)',actLbl:'Actions effectuées',fupLbl:'Suivi pour la prochaine garde',notesLbl:'Info supplémentaire (optionnel)',notesPh:'',painPh:'📍 Localisation douleur',medPh:'💊 Quel médicament?',urinePh:'🧫 Résultat?',glycPh:'🩸 Glycémie',status:['😌 Calme','✅ Stable','🟡 Légère inquiétude','🟠 Attention requise','📉 Aggravé','📈 Amélioré'],obs:['✅ Rien à signaler','😣 Douleur','😟 Agité','🧠 Confus','😰 Anxieux','🌡️ Fièvre','🍽️ Peu mangé','💧 Peu bu','🚽 Transit','🌙 Errance','🫁 Respiration','📊 Constantes anormales','🩸 Glycémie','🩹 Plaie','🧫 Symptômes urinaires','⚠️ Chute','😠 Agressivité','😴 Difficile à réveiller'],act:['✅ Aucune action','📞 Médecin appelé','👨‍👩‍👧 Famille contactée','💊 Médicament donné','📊 Constantes prises','🩹 Soins de plaie','🧫 Urine testée','🧪 Prélèvement préparé','🤝 Rassuré','🔄 Repositionné','🛏️ Accompagné au lit'],fup:['✅ Aucun','🌡️ Température','🩸 Glycémie','🧠 Comportement','💧 Hydratation','🩹 Soins de plaie','😣 Douleur','📞 Médecin si besoin','🧪 Labo','🍽️ Alimentation','👁️ État clinique']},
@@ -1237,6 +1283,8 @@ let taskFilter = 'all';
 let tasks = [];
 const multiSel = {};
 let timeSaved = 0; // in minuten
+let currentStreak = 0;
+let lastCheckin = null; // ISO datum string van laatste burnout check-in
 
 // ─── INIT ───
 (function(){
@@ -1297,6 +1345,11 @@ function renderAll() {
   // Result modal
   document.getElementById('res-copy-btn').textContent = t.resCopy;
   document.getElementById('res-done-btn').textContent = t.resDone;
+  const sendBtn = document.getElementById('res-send-btn');
+  if (sendBtn) {
+    sendBtn.textContent = t.resSend;
+    sendBtn.style.display = (navigator.share) ? 'block' : 'none';
+  }
   document.getElementById('res-disclaimer').textContent = t.resDisc;
 
   // Module grid
@@ -1350,6 +1403,14 @@ function renderAll() {
   const installBtn = document.getElementById('install-btn');
   if (installTxt) installTxt.textContent = lang==='nl'?'Installeer Maya op je telefoon':lang==='fr'?'Installer Maya sur votre téléphone':'Install Maya on your phone';
   if (installBtn) installBtn.textContent = lang==='nl'?'Installeer':lang==='fr'?'Installer':'Install';
+
+  // Onmisbaarheid-widgets: streak, stats, check-in nudge, today-progress
+  renderStreak();
+  renderStats();
+  renderCheckinNudge();
+  renderTodayWidget();
+  const shareBtnEl = document.getElementById('share-btn');
+  if (shareBtnEl) shareBtnEl.textContent = (lang==='nl'?'🗣️ Deel Maya met een collega':lang==='fr'?'🗣️ Partager Maya avec un(e) collègue':'🗣️ Share Maya with a colleague');
 }
 
 function renderGrid() {
@@ -2183,6 +2244,9 @@ function showResult(mod, text, isDemo) {
   } catch(e) {}
   // Voeg tijd toe — gemiddeld 8 minuten bespaard per rapport
   addTimeSaved(8);
+  bumpStreak();
+  bumpTodayCount();
+  renderStats();
 }
 
 let copyTimeout;
@@ -2194,6 +2258,14 @@ function copyRes() {
     clearTimeout(copyTimeout);
     copyTimeout = setTimeout(() => { btn.textContent = T[lang].resCopy; }, 2000);
   });
+}
+
+function sendResToSelf() {
+  const text = document.getElementById('res-modal-text').value;
+  const titleTxt = document.getElementById('res-modal-title').textContent || 'Maya';
+  if (navigator.share) {
+    navigator.share({ title: titleTxt, text: text }).catch(() => {});
+  }
 }
 
 // ─── QUICK NOTE ───
@@ -2773,6 +2845,29 @@ Geen bullet points. Spreek haar direct aan als "jij". Klink als een echte colleg
   }
   if (loader) loader.style.display = 'none';
   if (btn) btn.disabled = false;
+  // Markeer check-in als gedaan
+  try { localStorage.setItem('maya-last-checkin', todayStr()); } catch(e) {}
+  renderCheckinNudge();
+}
+
+function renderCheckinNudge() {
+  const nudge = document.getElementById('checkin-nudge');
+  if (!nudge) return;
+  try {
+    const last = localStorage.getItem('maya-last-checkin');
+    let daysSince = 999;
+    if (last) daysSince = Math.floor((new Date(todayStr()) - new Date(last)) / 86400000);
+    if (daysSince >= 5) {
+      nudge.style.display = 'block';
+      nudge.textContent = lang==='nl'
+        ? '💜 Al even niet ingecheckt — hoe gaat het écht met jou? Tik hier.'
+        : lang==='fr'
+        ? '💜 Pas de bilan récemment — comment allez-vous vraiment? Touchez ici.'
+        : "💜 Haven't checked in for a while — how are you really doing? Tap here.";
+    } else {
+      nudge.style.display = 'none';
+    }
+  } catch(e) { nudge.style.display = 'none'; }
 }
 
 // ─── QUIET SHIFT ───
@@ -2838,6 +2933,143 @@ function renderTimeSaved() {
 
   lbl.textContent = lang==='nl'?'Tijd bespaard met Maya':lang==='fr'?'Temps gagné avec Maya':'Time saved with Maya';
   val.textContent = '⏱️ ' + timeStr + (lang==='nl'?' teruggegeven aan je patiënten':lang==='fr'?' rendu à vos patients':' given back to your patients');
+}
+
+// ─── STREAK ───
+function todayStr() {
+  return new Date().toISOString().slice(0,10); // YYYY-MM-DD
+}
+
+// ─── TODAY'S PROGRESS ───
+function getTodayData() {
+  try {
+    const stored = JSON.parse(localStorage.getItem('maya-today') || 'null');
+    if (stored && stored.date === todayStr()) return stored;
+  } catch(e) {}
+  return { date: todayStr(), count: 0 };
+}
+
+function bumpTodayCount() {
+  try {
+    const data = getTodayData();
+    data.count += 1;
+    localStorage.setItem('maya-today', JSON.stringify(data));
+  } catch(e) {}
+  renderTodayWidget();
+}
+
+function renderTodayWidget() {
+  const reportsEl = document.getElementById('today-reports');
+  const timeEl = document.getElementById('today-time');
+  const reportsLbl = document.getElementById('today-reports-lbl');
+  const timeLbl = document.getElementById('today-time-lbl');
+  if (!reportsEl) return;
+
+  const data = getTodayData();
+  const minutesToday = data.count * 8;
+
+  reportsEl.textContent = data.count;
+  timeEl.textContent = minutesToday >= 60
+    ? Math.floor(minutesToday/60) + 'u' + (minutesToday%60 ? (minutesToday%60)+'m' : '')
+    : minutesToday + 'm';
+
+  reportsLbl.textContent = lang==='nl'?'verslagen vandaag':lang==='fr'?"rapports aujourd'hui":'reports today';
+  timeLbl.textContent = lang==='nl'?'tijd bespaard':lang==='fr'?'temps gagné':'time saved';
+}
+
+function loadStreak() {
+  try {
+    currentStreak = parseInt(localStorage.getItem('maya-streak') || '0');
+    const lastUsed = localStorage.getItem('maya-last-used');
+    const today = todayStr();
+    if (lastUsed) {
+      const diffDays = Math.floor((new Date(today) - new Date(lastUsed)) / 86400000);
+      if (diffDays > 1) {
+        // Streak gebroken — meer dan 1 dag niet gebruikt
+        currentStreak = 0;
+        localStorage.setItem('maya-streak', '0');
+      }
+    }
+  } catch(e) { currentStreak = 0; }
+  renderStreak();
+}
+
+function bumpStreak() {
+  try {
+    const today = todayStr();
+    const lastUsed = localStorage.getItem('maya-last-used');
+    if (lastUsed === today) return; // al vandaag geteld
+    if (lastUsed) {
+      const diffDays = Math.floor((new Date(today) - new Date(lastUsed)) / 86400000);
+      currentStreak = diffDays === 1 ? currentStreak + 1 : 1;
+    } else {
+      currentStreak = 1;
+    }
+    localStorage.setItem('maya-streak', String(currentStreak));
+    localStorage.setItem('maya-last-used', today);
+    renderStreak();
+  } catch(e) {}
+}
+
+function renderStreak() {
+  const badge = document.getElementById('streak-badge');
+  const txt = document.getElementById('streak-text');
+  if (!badge || !txt) return;
+  if (currentStreak < 2) { badge.style.display = 'none'; return; }
+  badge.style.display = 'flex';
+  const shiftWord = lang==='nl'?(currentStreak===1?'shift':'shiften'):lang==='fr'?'gardes':'shifts';
+  txt.textContent = currentStreak + ' ' + shiftWord + ' ' + (lang==='nl'?'op rij met Maya':lang==='fr'?'de suite avec Maya':'in a row with Maya');
+}
+
+// ─── PERSOONLIJKE STATS ───
+function renderStats() {
+  const reportsEl = document.getElementById('stat-reports');
+  const streakEl = document.getElementById('stat-streak');
+  const timeEl = document.getElementById('stat-time');
+  if (!reportsEl) return;
+
+  let reportCount = 0;
+  try {
+    const hist = JSON.parse(localStorage.getItem('maya-history') || '[]');
+    // History bewaart maar laatste 5, dus we tellen ook een aparte teller bij voor totaal
+    reportCount = parseInt(localStorage.getItem('maya-report-count') || String(hist.length));
+  } catch(e) {}
+
+  reportsEl.textContent = reportCount;
+  streakEl.textContent = currentStreak;
+  const hrs = Math.floor(timeSaved / 60);
+  timeEl.textContent = hrs > 0 ? hrs + 'u' : timeSaved + 'm';
+
+  document.getElementById('stat-reports-lbl').textContent = lang==='nl'?'Verslagen':lang==='fr'?'Rapports':'Reports';
+  document.getElementById('stat-streak-lbl').textContent = lang==='nl'?'Shiften op rij':lang==='fr'?'Gardes suite':'Streak';
+  document.getElementById('stat-time-lbl').textContent = lang==='nl'?'Tijd bespaard':lang==='fr'?'Temps gagné':'Time saved';
+}
+
+// ─── DEEL MET COLLEGA ───
+function shareMaya() {
+  const shareText = lang==='nl'
+    ? 'Ik gebruik Maya om mijn verpleegkundige rapporten te schrijven — 30 seconden ipv 10 minuten. Probeer het zelf: '
+    : lang==='fr'
+    ? "J'utilise Maya pour rédiger mes rapports infirmiers — 30 secondes au lieu de 10 minutes. Essayez-le: "
+    : 'I use Maya to write my nursing reports — 30 seconds instead of 10 minutes. Try it yourself: ';
+  const url = 'https://mayanurse.com';
+
+  if (navigator.share) {
+    navigator.share({ title: 'Maya NurseMate', text: shareText, url: url }).catch(() => {});
+  } else {
+    // Fallback: kopieer naar klembord
+    const fullText = shareText + url;
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(fullText).then(() => {
+        const btn = document.getElementById('share-btn');
+        if (btn) {
+          const orig = btn.textContent;
+          btn.textContent = lang==='nl'?'✅ Gekopieerd!':lang==='fr'?'✅ Copié!':'✅ Copied!';
+          setTimeout(() => { btn.textContent = orig; }, 2000);
+        }
+      }).catch(() => {});
+    }
+  }
 }
 
 // ─── HISTORY ───
