@@ -139,7 +139,32 @@ select.f option{background:#1e2937;}
 .quiz-opt.correct{border-color:var(--green);background:rgba(52,211,153,0.15);color:var(--green);}
 .quiz-opt.wrong{border-color:var(--red);background:rgba(248,113,113,0.15);color:var(--red);}
 
-@media(max-width:600px){.res-actions{grid-template-columns:1fr;}.chip{padding:7px 12px;font-size:0.78rem;}.mod-page{padding:14px 12px 70px;}.blk{margin-bottom:13px;}.lbl{font-size:0.68rem;}}
+/* DRAFT REPORTS */
+.draft-summary{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px;}
+.draft-sum-stat{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:11px 8px;text-align:center;}
+.draft-sum-val{font-family:'DM Serif Display',serif;font-size:1.25rem;color:var(--text3);line-height:1;margin-bottom:3px;}
+.draft-sum-lbl{font-size:0.63rem;color:var(--text2);line-height:1.25;}
+.draft-filters{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+.draft-filter{padding:6px 14px;border-radius:20px;border:1px solid var(--border2);background:rgba(255,255,255,0.05);color:var(--text2);font-family:'DM Sans',sans-serif;font-size:0.78rem;font-weight:600;cursor:pointer;transition:all 0.15s;}
+.draft-filter.sel{background:linear-gradient(135deg,var(--teal),var(--teal-light));border-color:var(--teal-light);color:#fff;}
+.draft-card{background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px;transition:all 0.2s;}
+.draft-card.done{opacity:0.5;background:rgba(255,255,255,0.03);}
+.draft-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.draft-card-meta{font-size:0.72rem;color:var(--text2);display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.draft-card-room{background:rgba(13,145,159,0.18);color:var(--text3);padding:2px 9px;border-radius:8px;font-weight:700;font-size:0.72rem;}
+.draft-card-type{font-family:'DM Serif Display',serif;font-size:0.92rem;color:var(--text3);margin-bottom:5px;}
+.draft-card-preview{font-size:0.82rem;color:var(--text);line-height:1.55;margin-bottom:10px;white-space:pre-wrap;}
+.draft-card.done .draft-card-preview{max-height:36px;overflow:hidden;}
+.draft-actions{display:flex;gap:7px;}
+.draft-act-btn{flex:1;padding:8px 6px;border-radius:9px;border:1px solid var(--border2);background:rgba(255,255,255,0.06);color:var(--text2);font-size:0.74rem;font-weight:600;cursor:pointer;transition:all 0.15s;text-align:center;}
+.draft-act-btn:hover{border-color:var(--teal-light);color:var(--text3);}
+.draft-act-btn.done-btn{color:var(--green);border-color:rgba(52,211,153,0.3);}
+.draft-act-btn.del-btn{color:var(--red);border-color:rgba(248,113,113,0.25);}
+.draft-empty{text-align:center;padding:40px 20px;color:var(--text2);font-size:0.88rem;}
+.draft-retention{display:flex;align-items:center;justify-content:space-between;margin-top:20px;padding-top:16px;border-top:1px solid var(--border);}
+.draft-retention select{background:rgba(255,255,255,0.07);border:1px solid var(--border2);color:var(--text);padding:6px 10px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.78rem;}
+
+@media(max-width:600px){.res-actions{grid-template-columns:1fr 1fr;}.chip{padding:7px 12px;font-size:0.78rem;}.mod-page{padding:14px 12px 70px;}.blk{margin-bottom:13px;}.lbl{font-size:0.68rem;}.draft-summary{gap:6px;}.draft-sum-val{font-size:1.05rem;}}
 </style>
 </head>
 <body>
@@ -179,12 +204,18 @@ select.f option{background:#1e2937;}
 <!-- RESULT MODAL -->
 <div class="overlay" id="res-modal" style="display:none;">
   <div class="popup" style="text-align:left;max-width:480px;">
-    <div class="res-lbl" id="res-modal-title"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+      <div class="res-lbl" id="res-modal-title" style="margin-bottom:0;"></div>
+      <div id="res-saved-badge" style="display:none;font-size:0.74rem;color:#34d399;font-weight:700;white-space:nowrap;">✓ <span id="res-saved-txt">Draft saved</span></div>
+    </div>
     <textarea class="res-box" id="res-modal-text"></textarea>
+    <div style="font-size:0.72rem;color:var(--text2);margin-top:-8px;margin-bottom:10px;" id="res-edit-hint"></div>
     <div class="res-actions">
-      <button class="res-btn" onclick="copyRes()" id="res-copy-btn"></button>
-      <button class="res-btn" onclick="sendResToSelf()" id="res-send-btn" style="display:none;"></button>
-      <button class="res-btn pri" onclick="document.getElementById('res-modal').style.display='none'" id="res-done-btn" style="grid-column:span 2;"></button>
+      <button class="res-btn pri" onclick="copyRes()" id="res-copy-btn"></button>
+      <button class="res-btn" onclick="editDraftFromResult()" id="res-edit-draft-btn"></button>
+      <button class="res-btn" onclick="sendResToSelf()" id="res-send-btn" style="display:none;grid-column:span 2;"></button>
+      <button class="res-btn" onclick="viewDraftsFromResult()" id="res-view-drafts-btn" style="grid-column:span 2;"></button>
+      <button class="res-btn" onclick="document.getElementById('res-modal').style.display='none'" id="res-done-btn" style="grid-column:span 2;"></button>
     </div>
     <div style="font-size:0.73rem;color:var(--text2);margin-top:10px;text-align:center;" id="res-disclaimer"></div>
   </div>
@@ -207,7 +238,6 @@ select.f option{background:#1e2937;}
   <button class="back-btn" id="back-btn" onclick="goBack()">← <span id="back-lbl">Back</span></button>
   <div class="logo" style="flex:1;">Maya <span>NurseMate</span></div>
   <button onclick="sendFeedback()" title="Feedback" style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);color:#fff;padding:5px 11px;border-radius:16px;font-size:0.75rem;cursor:pointer;font-family:'DM Sans',sans-serif;">💬</button>
-  <button onclick="openHistory()" id="hist-btn" style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);color:#fff;padding:5px 11px;border-radius:16px;font-size:0.75rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;display:none;">📋</button>
   <button class="lang-btn" onclick="cycleLang()">🌐 <span id="lang-display">EN</span></button>
 </div>
 <div class="disc" id="disc-bar"></div>
@@ -224,17 +254,6 @@ select.f option{background:#1e2937;}
   <div class="hero">
     <div class="hero-title" id="hero-title">Your AI <span>colleague.</span></div>
     <div class="hero-sub" id="hero-sub">Professional nursing documentation in 30 seconds</div>
-    <div id="time-saved-bar" style="display:none;margin-top:14px;background:rgba(255,255,255,0.12);border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:10px;">
-      <span style="font-size:1.3rem;">⏱️</span>
-      <div>
-        <div style="font-size:0.72rem;color:rgba(255,255,255,0.7);font-weight:500;" id="time-saved-label"></div>
-        <div style="font-size:1.1rem;color:#fff;font-weight:700;" id="time-saved-value"></div>
-      </div>
-    </div>
-    <div id="streak-badge" style="display:none;margin-top:10px;background:rgba(251,191,36,0.15);border:1px solid rgba(251,191,36,0.3);border-radius:10px;padding:8px 14px;align-items:center;gap:8px;justify-content:center;">
-      <span style="font-size:1.1rem;">🔥</span>
-      <span style="font-size:0.88rem;color:#fbbf24;font-weight:700;" id="streak-text"></span>
-    </div>
   </div>
   <div class="today-widget" id="today-widget">
     <div class="today-stat">
@@ -533,32 +552,11 @@ select.f option{background:#1e2937;}
     <div class="mod-desc" id="sup-desc"></div>
 
     <!-- ZACHTE HERINNERING -->
-    <div id="checkin-nudge" style="display:none;background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.25);border-radius:12px;padding:12px 14px;margin-bottom:16px;font-size:0.85rem;color:#a78bfa;cursor:pointer;" onclick="setSupportTab('burnout')"></div>
-
     <!-- TABS -->
     <div style="display:flex;gap:8px;margin-bottom:18px;">
       <button onclick="setSupportTab('chat')" id="sup-tab-chat" style="flex:1;padding:10px;border-radius:10px;border:1.5px solid rgba(244,114,182,0.5);background:rgba(244,114,182,0.15);color:#f472b6;font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:700;cursor:pointer;"></button>
       <button onclick="setSupportTab('burnout')" id="sup-tab-burnout" style="flex:1;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);color:var(--text2);font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:600;cursor:pointer;"></button>
     </div>
-
-    <!-- PERSOONLIJKE STATS -->
-    <div id="sup-stats" style="display:flex;gap:10px;margin-bottom:16px;">
-      <div style="flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:10px;text-align:center;">
-        <div style="font-size:1.3rem;font-weight:700;color:var(--text3);" id="stat-reports">0</div>
-        <div style="font-size:0.68rem;color:var(--text2);" id="stat-reports-lbl"></div>
-      </div>
-      <div style="flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:10px;text-align:center;">
-        <div style="font-size:1.3rem;font-weight:700;color:#fbbf24;" id="stat-streak">0</div>
-        <div style="font-size:0.68rem;color:var(--text2);" id="stat-streak-lbl"></div>
-      </div>
-      <div style="flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:10px;text-align:center;">
-        <div style="font-size:1.3rem;font-weight:700;color:#34d399;" id="stat-time">0</div>
-        <div style="font-size:0.68rem;color:var(--text2);" id="stat-time-lbl"></div>
-      </div>
-    </div>
-
-    <!-- DEEL MET COLLEGA -->
-    <button id="share-btn" onclick="shareMaya()" style="width:100%;margin-bottom:18px;padding:12px;border-radius:12px;border:1px solid rgba(52,211,153,0.3);background:rgba(52,211,153,0.08);color:#34d399;font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;"></button>
 
     <!-- CHAT TAB -->
     <div id="sup-chat-section">
@@ -624,6 +622,69 @@ select.f option{background:#1e2937;}
 
     <!-- Shift afsluiten -->
     <button id="task-clear-btn" onclick="clearDoneTasks()" style="width:100%;margin-top:16px;padding:11px;border-radius:10px;border:1px solid rgba(148,163,184,0.2);background:transparent;color:rgba(148,163,184,0.5);font-family:'DM Sans',sans-serif;font-size:0.82rem;cursor:pointer;display:none;"></button>
+  </div>
+</div>
+
+<!-- DRAFT REPORTS -->
+<div id="page-drafts" class="page">
+  <div class="mod-page">
+    <div class="mod-title">📝 <span id="drafts-title"></span></div>
+    <div class="mod-desc" id="drafts-desc"></div>
+
+    <!-- Workflow overzicht -->
+    <div class="draft-summary">
+      <div class="draft-sum-stat">
+        <div class="draft-sum-val" id="drf-sum-pending">0</div>
+        <div class="draft-sum-lbl" id="drf-sum-pending-lbl"></div>
+      </div>
+      <div class="draft-sum-stat">
+        <div class="draft-sum-val" id="drf-sum-completed">0</div>
+        <div class="draft-sum-lbl" id="drf-sum-completed-lbl"></div>
+      </div>
+    </div>
+
+    <!-- Disclaimer -->
+    <div class="priv" id="drafts-disclaimer" style="margin-bottom:16px;"></div>
+
+    <!-- Filters -->
+    <div class="draft-filters">
+      <button class="draft-filter sel" onclick="setDraftFilter('all')" id="df-all"></button>
+      <button class="draft-filter" onclick="setDraftFilter('today')" id="df-today"></button>
+      <button class="draft-filter" onclick="setDraftFilter('pending')" id="df-pending"></button>
+      <button class="draft-filter" onclick="setDraftFilter('completed')" id="df-completed"></button>
+    </div>
+
+    <!-- Draft list -->
+    <div id="draft-list"></div>
+    <div class="draft-empty" id="draft-empty" style="display:none;"></div>
+
+    <!-- Retention setting -->
+    <div class="draft-retention">
+      <span style="font-size:0.78rem;color:var(--text2);" id="drf-retention-lbl"></span>
+      <select id="drf-retention-select" onchange="setDraftRetention(this.value)">
+        <option value="24h">24u</option>
+        <option value="7d">7 dagen</option>
+        <option value="30d">30 dagen</option>
+        <option value="never">Nooit</option>
+      </select>
+    </div>
+
+    <!-- Over Maya / Deel (low-priority) -->
+    <div style="text-align:center;margin-top:18px;">
+      <span onclick="shareMaya()" style="font-size:0.76rem;color:var(--text2);opacity:0.7;cursor:pointer;text-decoration:underline dotted;" id="drf-share-link"></span>
+    </div>
+  </div>
+</div>
+
+<!-- DRAFT EDIT MODAL -->
+<div class="overlay" id="draft-edit-modal" style="display:none;">
+  <div class="popup" style="text-align:left;max-width:480px;">
+    <div class="res-lbl" id="draft-edit-title">Edit draft</div>
+    <textarea class="res-box" id="draft-edit-text"></textarea>
+    <div class="res-actions">
+      <button class="res-btn" onclick="document.getElementById('draft-edit-modal').style.display='none'" id="draft-edit-cancel"></button>
+      <button class="res-btn pri" onclick="saveDraftEdit()" id="draft-edit-save"></button>
+    </div>
   </div>
 </div>
 
@@ -700,6 +761,7 @@ const T = {
       { id:'meds', icon:'💊', name:'Medication', desc:'Changes & new prescriptions' },
       { id:'support', icon:'💙', name:'How are you?', desc:'Chat with Maya + burnout check' },
       { id:'tasks', icon:'📋', name:'My Tasks', desc:'Shift reminders & to-do' },
+      { id:'drafts', icon:'📝', name:'Draft Reports', desc:'No draft reports' },
       { id:'learn', icon:'📖', name:'Learn & Quiz', desc:'Tips & clinical quiz', wide:true },
     ],
     qnTitle: 'Quick Note',
@@ -898,6 +960,7 @@ const T = {
       { id:'meds', icon:'💊', name:'Medicatie', desc:'Wijzigingen & nieuwe medicatie' },
       { id:'support', icon:'💙', name:'Hoe gaat het met jou?', desc:'Praat met Maya + burnout check' },
       { id:'tasks', icon:'📋', name:'Mijn Taken', desc:'Shift herinneringen & to-do' },
+      { id:'drafts', icon:'📝', name:'Klad-verslagen', desc:'Geen klad-verslagen' },
       { id:'learn', icon:'📖', name:'Bijleren & Quiz', desc:'Tips & klinische quiz', wide:true },
     ],
     qnTitle: 'Snelle Notitie',
@@ -1088,6 +1151,7 @@ const T = {
       {id:'meds',icon:'💊',name:'Médicaments',desc:'Changements & nouvelles prescriptions'},
       {id:'support',icon:'💙',name:'Comment allez-vous?',desc:'Chat avec Maya + bilan burnout'},
       {id:'tasks',icon:'📋',name:'Mes Tâches',desc:'Rappels de garde & to-do'},
+      {id:'drafts',icon:'📝',name:'Brouillons',desc:'Aucun brouillon'},
       {id:'learn',icon:'📖',name:'Apprendre & Quiz',desc:'Conseils & quiz clinique',wide:true},
     ],
     qnTitle:'Note rapide', qnPriv:'🔒 Numéro de chambre uniquement',
@@ -1263,6 +1327,39 @@ function sendFeedback() {
   window.location.href = 'mailto:' + FEEDBACK_EMAIL + '?subject=' + subject + '&body=' + encodeURIComponent(bodyTxt);
 }
 
+const DRAFTS_T = {
+  en: {
+    title:'Draft Reports', desc:'Reports you collected this shift, ready to enter into your EPR.',
+    disclaimer:'Draft reports are temporary personal notes. Always enter the final report into your official patient record.',
+    filterAll:'All', filterToday:'Today', filterPending:'Pending', filterCompleted:'Completed',
+    sumPending:'pending', sumCompleted:'completed',
+    empty:'No draft reports', emptyView:'No drafts in this view.',
+    markDone:'✔ In EPR', reopen:'↺ Reopen', copyBtn:'📋 Copy', copied:'✓ Copied',
+    retentionLbl:'Keep drafts for', retentionNever:'Never',
+    editTitle:'Edit draft', editCancel:'Cancel', editSave:'Save',
+  },
+  nl: {
+    title:'Klad-verslagen', desc:'Verslagen die je deze shift verzamelde, klaar om in het dossier te zetten.',
+    disclaimer:'Klad-verslagen zijn tijdelijke persoonlijke notities. Zet het definitieve verslag altijd over in je officiële patiëntendossier.',
+    filterAll:'Alles', filterToday:'Vandaag', filterPending:'Te doen', filterCompleted:'Afgerond',
+    sumPending:'te verwerken', sumCompleted:'afgerond',
+    empty:'Geen klad-verslagen', emptyView:'Geen klad-verslagen in deze weergave.',
+    markDone:'✔ In dossier', reopen:'↺ Heropen', copyBtn:'📋 Kopieer', copied:'✓ Gekopieerd',
+    retentionLbl:'Bewaar klad-verslagen', retentionNever:'Nooit',
+    editTitle:'Klad-verslag bewerken', editCancel:'Annuleer', editSave:'Bewaar',
+  },
+  fr: {
+    title:'Brouillons', desc:'Rapports collectés durant cette garde, prêts à entrer dans le DPI.',
+    disclaimer:'Les brouillons sont des notes personnelles temporaires. Entrez toujours le rapport final dans votre dossier patient officiel.',
+    filterAll:'Tout', filterToday:'Aujourd\'hui', filterPending:'En attente', filterCompleted:'Terminés',
+    sumPending:'en attente', sumCompleted:'terminés',
+    empty:'Aucun brouillon', emptyView:'Aucun brouillon dans cette vue.',
+    markDone:'✔ Dans DPI', reopen:'↺ Rouvrir', copyBtn:'📋 Copier', copied:'✓ Copié',
+    retentionLbl:'Conserver les brouillons', retentionNever:'Jamais',
+    editTitle:'Modifier le brouillon', editCancel:'Annuler', editSave:'Enregistrer',
+  },
+};
+
 // ─── STATE ───
 let lang = 'en';
 let currentPage = 'home';
@@ -1280,11 +1377,14 @@ let voiceRec = null;
 let burnEnergy = null, burnFeel = null, burnWork = null;
 let supTab = 'chat';
 let taskFilter = 'all';
+let draftFilter = 'all';
+let editingDraftId = null;
+let currentResultMod = null;
+let currentResultTitle = null;
+let currentDraftId = null;
 let tasks = [];
 const multiSel = {};
 let timeSaved = 0; // in minuten
-let currentStreak = 0;
-let lastCheckin = null; // ISO datum string van laatste burnout check-in
 
 // ─── INIT ───
 (function(){
@@ -1345,6 +1445,14 @@ function renderAll() {
   // Result modal
   document.getElementById('res-copy-btn').textContent = t.resCopy;
   document.getElementById('res-done-btn').textContent = t.resDone;
+  const editDraftBtn = document.getElementById('res-edit-draft-btn');
+  if (editDraftBtn) editDraftBtn.textContent = lang==='nl'?'✏️ Bewaar wijziging':lang==='fr'?'✏️ Enregistrer':'✏️ Save Edit';
+  const viewDraftsBtn = document.getElementById('res-view-drafts-btn');
+  if (viewDraftsBtn) viewDraftsBtn.textContent = lang==='nl'?'📝 Bekijk klad-verslagen':lang==='fr'?'📝 Voir les brouillons':'📝 View Drafts';
+  const savedTxt = document.getElementById('res-saved-txt');
+  if (savedTxt) savedTxt.textContent = lang==='nl'?'Klad opgeslagen':lang==='fr'?'Brouillon enregistré':'Draft saved';
+  const editHint = document.getElementById('res-edit-hint');
+  if (editHint) editHint.textContent = lang==='nl'?'✏️ Tik in de tekst om iets aan te passen':lang==='fr'?'✏️ Touchez le texte pour le modifier':'✏️ Tap the text to edit it';
   const sendBtn = document.getElementById('res-send-btn');
   if (sendBtn) {
     sendBtn.textContent = t.resSend;
@@ -1397,6 +1505,8 @@ function renderAll() {
   // Tasks & Burnout
   renderTasksPage();
   renderBurnoutSection();
+  renderDraftsPage();
+  updateDraftsCardDesc();
 
   // PWA install banner tekst
   const installTxt = document.getElementById('install-txt');
@@ -1404,13 +1514,8 @@ function renderAll() {
   if (installTxt) installTxt.textContent = lang==='nl'?'Installeer Maya op je telefoon':lang==='fr'?'Installer Maya sur votre téléphone':'Install Maya on your phone';
   if (installBtn) installBtn.textContent = lang==='nl'?'Installeer':lang==='fr'?'Installer':'Install';
 
-  // Onmisbaarheid-widgets: streak, stats, check-in nudge, today-progress
-  renderStreak();
-  renderStats();
-  renderCheckinNudge();
+  // Onmisbaarheid-widget: vandaag-overzicht
   renderTodayWidget();
-  const shareBtnEl = document.getElementById('share-btn');
-  if (shareBtnEl) shareBtnEl.textContent = (lang==='nl'?'🗣️ Deel Maya met een collega':lang==='fr'?'🗣️ Partager Maya avec un(e) collègue':'🗣️ Share Maya with a colleague');
 }
 
 function renderGrid() {
@@ -1419,11 +1524,13 @@ function renderGrid() {
   T[lang].modules.forEach(m => {
     const d = document.createElement('div');
     d.className = 'card' + (m.wide ? ' ' : '');
+    d.setAttribute('data-mod-id', m.id);
     if (m.wide) d.style.gridColumn = 'span 2';
     d.innerHTML = '<span class="ico">' + m.icon + '<\/span><div class="cn">' + m.name + '<\/div><div class="cd">' + m.desc + '<\/div>';
     d.onclick = () => openModule(m.id);
     grid.appendChild(d);
   });
+  updateDraftsCardDesc();
 }
 
 function makeChips(containerId, items, key, exclusive) {
@@ -2231,10 +2338,17 @@ async function generate(mod) {
 
 function showResult(mod, text, isDemo) {
   const titles = {shift:T[lang].shift.title, comm:T[lang].comm.title, incident:T[lang].incident.title, wound:T[lang].wound.title, behav:T[lang].behav.title, meds:T[lang].meds.title};
-  document.getElementById('res-modal-title').textContent = titles[mod] || 'Report';
+  const titleTxt = titles[mod] || 'Report';
+  document.getElementById('res-modal-title').textContent = titleTxt;
   document.getElementById('res-modal-text').value = text;
   document.getElementById('res-modal').style.display = 'flex';
-  if (isDemo) return; // demo telt niet mee voor geschiedenis of tijd
+  currentResultMod = mod;
+  currentResultTitle = titleTxt;
+  currentDraftId = null;
+  const badge = document.getElementById('res-saved-badge');
+  if (badge) badge.style.display = 'none';
+  if (isDemo) return; // demo wordt niet automatisch bewaard als klad
+  autoSaveDraft();
   // Sla op in geschiedenis
   try {
     const hist = JSON.parse(localStorage.getItem('maya-history') || '[]');
@@ -2244,9 +2358,7 @@ function showResult(mod, text, isDemo) {
   } catch(e) {}
   // Voeg tijd toe — gemiddeld 8 minuten bespaard per rapport
   addTimeSaved(8);
-  bumpStreak();
   bumpTodayCount();
-  renderStats();
 }
 
 let copyTimeout;
@@ -2279,6 +2391,11 @@ async function submitQn() {
   document.getElementById('res-modal-title').textContent = T[lang].qnTitle;
   document.getElementById('res-modal-text').value = lang==='nl'?'Genereren...':lang==='fr'?'Génération...':'Generating...';
   document.getElementById('res-modal').style.display = 'flex';
+  currentResultMod = 'qn';
+  currentResultTitle = T[lang].qnTitle;
+  currentDraftId = null;
+  const badge = document.getElementById('res-saved-badge');
+  if (badge) badge.style.display = 'none';
   try {
     const prompt = lang==='nl'
       ? `Je bent een ervaren verpleegkundige in een WZC. Schrijf een korte professionele notitie. Max 3 zinnen. Nooit "ik".\nKamer: ${room||'–'}\nInhoud: ${text}`
@@ -2287,6 +2404,7 @@ async function submitQn() {
       : `You are an experienced nurse. Write a short professional note. Max 3 sentences. Never use "I".\nRoom: ${room||'–'}\nContent: ${text}`;
     const result = await callAPI(prompt);
     document.getElementById('res-modal-text').value = result;
+    autoSaveDraft();
   } catch(e) {
     const demo = DEMO_FALLBACK[lang] || DEMO_FALLBACK.en;
     document.getElementById('res-modal-text').value = demo.prefix + demo.generic;
@@ -2747,6 +2865,303 @@ function renderTaskList() {
   });
 }
 
+// ─── DRAFT REPORTS ───
+function loadDraftsArr() {
+  try { return JSON.parse(localStorage.getItem('maya-drafts') || '[]'); }
+  catch(e) { return []; }
+}
+
+function saveDraftsArr(arr) {
+  try { localStorage.setItem('maya-drafts', JSON.stringify(arr)); } catch(e) {}
+}
+
+function cleanupExpiredDrafts() {
+  let retention = 'default';
+  try { retention = localStorage.getItem('maya-draft-retention') || '7d'; } catch(e) { retention = '7d'; }
+  if (retention === 'never') return loadDraftsArr();
+  const ms = retention==='24h' ? 86400000 : retention==='30d' ? 2592000000 : 604800000;
+  const now = Date.now();
+  let drafts = loadDraftsArr();
+  const before = drafts.length;
+  drafts = drafts.filter(d => (now - d.timestamp) < ms);
+  if (drafts.length !== before) saveDraftsArr(drafts);
+  return drafts;
+}
+
+function getRoomForMod(mod) {
+  const map = {shift:'sh-kamer', comm:'comm-kamer', incident:'inc-kamer', wound:'wnd-kamer', behav:'beh-kamer', meds:'med-kamer', qn:'qn-kamer'};
+  const id = map[mod];
+  if (!id) return '';
+  const el = document.getElementById(id);
+  return el ? el.value.trim() : '';
+}
+
+function autoSaveDraft() {
+  if (!currentResultMod) return;
+  const text = document.getElementById('res-modal-text').value;
+  const drafts = loadDraftsArr();
+  const room = getRoomForMod(currentResultMod);
+  const newDraft = {
+    id: Date.now() + Math.random(),
+    timestamp: Date.now(),
+    timeDisplay: new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}),
+    room: room,
+    title: currentResultTitle || 'Report',
+    text: text,
+    mod: currentResultMod,
+    completed: false,
+  };
+  drafts.unshift(newDraft);
+  saveDraftsArr(drafts);
+  currentDraftId = newDraft.id;
+  updateDraftsCardDesc();
+  renderDraftsPage();
+
+  const badge = document.getElementById('res-saved-badge');
+  if (badge) badge.style.display = 'block';
+}
+
+function editDraftFromResult() {
+  // Synchroniseer eventuele bewerkingen in het tekstveld terug naar de opgeslagen klad
+  if (!currentDraftId) return;
+  const drafts = loadDraftsArr();
+  const d = drafts.find(x => x.id === currentDraftId);
+  if (d) {
+    d.text = document.getElementById('res-modal-text').value;
+    saveDraftsArr(drafts);
+    renderDraftsPage();
+    const btn = document.getElementById('res-edit-draft-btn');
+    if (btn) {
+      const orig = btn.textContent;
+      btn.textContent = '✓ ' + (lang==='nl'?'Aangepast':lang==='fr'?'Mis à jour':'Updated');
+      setTimeout(() => { btn.textContent = orig; }, 1500);
+    }
+  }
+}
+
+function viewDraftsFromResult() {
+  document.getElementById('res-modal').style.display = 'none';
+  openModule('drafts');
+}
+
+function updateDraftsCardDesc() {
+  const drafts = cleanupExpiredDrafts();
+  const pending = drafts.filter(d => !d.completed).length;
+  const card = document.querySelector('[data-mod-id="drafts"] .cd');
+  if (!card) return;
+  const subtitle = lang==='nl'?'Klaar om in het dossier te zetten':lang==='fr'?'Prêt à entrer dans le DPI':'Ready to enter into the EPR';
+  if (pending === 0) {
+    card.textContent = DRAFTS_T[lang].empty;
+  } else {
+    const word = lang==='nl'?(pending===1?'wacht':'wachten'):lang==='fr'?(pending===1?'en attente':'en attente'):(pending===1?'waiting':'waiting');
+    card.innerHTML = '<div style="font-weight:700;color:var(--text3);">' + pending + ' ' + word + '<\/div><div style="opacity:0.75;margin-top:1px;">' + subtitle + '<\/div>';
+  }
+}
+
+function setDraftFilter(f) {
+  draftFilter = f;
+  ['all','today','pending','completed'].forEach(x => {
+    const btn = document.getElementById('df-'+x);
+    if (btn) btn.classList.toggle('sel', x===f);
+  });
+  renderDraftsPage();
+}
+
+function toggleDraftDone(id) {
+  const drafts = loadDraftsArr();
+  const d = drafts.find(x => x.id === id);
+  if (d) { d.completed = !d.completed; saveDraftsArr(drafts); }
+  updateDraftsCardDesc();
+  renderDraftsPage();
+}
+
+function deleteDraftItem(id) {
+  let drafts = loadDraftsArr();
+  drafts = drafts.filter(x => x.id !== id);
+  saveDraftsArr(drafts);
+  updateDraftsCardDesc();
+  renderDraftsPage();
+}
+
+function copyDraftItem(id, btnEl) {
+  const drafts = loadDraftsArr();
+  const d = drafts.find(x => x.id === id);
+  if (!d) return;
+  const dt = DRAFTS_T[lang] || DRAFTS_T.en;
+  navigator.clipboard.writeText(d.text).then(() => {
+    if (btnEl) {
+      const orig = btnEl.textContent;
+      btnEl.textContent = dt.copied;
+      setTimeout(() => { btnEl.textContent = orig; }, 1400);
+    }
+    // Ga automatisch naar de volgende openstaande klad — vloeiende workflow bij shift-einde
+    setTimeout(() => {
+      const pendingCards = Array.from(document.querySelectorAll('.draft-card:not(.done)'));
+      const idx = pendingCards.findIndex(c => c.getAttribute('data-draft-id') === String(id));
+      if (idx >= 0 && idx < pendingCards.length - 1) {
+        pendingCards[idx + 1].scrollIntoView({ behavior:'smooth', block:'center' });
+      }
+    }, 300);
+  }).catch(() => {});
+}
+
+function editDraftItem(id) {
+  const drafts = loadDraftsArr();
+  const d = drafts.find(x => x.id === id);
+  if (!d) return;
+  editingDraftId = id;
+  const textEl = document.getElementById('draft-edit-text');
+  const titleEl = document.getElementById('draft-edit-title');
+  if (textEl) textEl.value = d.text;
+  if (titleEl) titleEl.textContent = DRAFTS_T[lang].editTitle;
+  document.getElementById('draft-edit-modal').style.display = 'flex';
+}
+
+function saveDraftEdit() {
+  const drafts = loadDraftsArr();
+  const d = drafts.find(x => x.id === editingDraftId);
+  if (d) {
+    d.text = document.getElementById('draft-edit-text').value;
+    saveDraftsArr(drafts);
+  }
+  document.getElementById('draft-edit-modal').style.display = 'none';
+  renderDraftsPage();
+}
+
+function setDraftRetention(val) {
+  try { localStorage.setItem('maya-draft-retention', val); } catch(e) {}
+  cleanupExpiredDrafts();
+  updateDraftsCardDesc();
+  renderDraftsPage();
+}
+
+function renderDraftsPage() {
+  const dt = DRAFTS_T[lang] || DRAFTS_T.en;
+  const el = id => document.getElementById(id);
+  if (!el('drafts-title')) return;
+
+  el('drafts-title').textContent = dt.title;
+  el('drafts-desc').textContent = dt.desc;
+  el('drafts-disclaimer').textContent = '🔒 ' + dt.disclaimer;
+  el('df-all').textContent = dt.filterAll;
+  el('df-today').textContent = dt.filterToday;
+  el('df-pending').textContent = dt.filterPending;
+  el('df-completed').textContent = dt.filterCompleted;
+  el('drf-sum-pending-lbl').textContent = dt.sumPending;
+  el('drf-sum-completed-lbl').textContent = dt.sumCompleted;
+  el('drf-retention-lbl').textContent = dt.retentionLbl;
+  const shareLink = el('drf-share-link');
+  if (shareLink) shareLink.textContent = lang==='nl'?'Maya delen met een collega':lang==='fr'?'Partager Maya avec un(e) collègue':'Share Maya with a colleague';
+  el('draft-edit-cancel').textContent = dt.editCancel;
+  el('draft-edit-save').textContent = dt.editSave;
+
+  const retSelect = el('drf-retention-select');
+  if (retSelect) {
+    let retention = '7d';
+    try { retention = localStorage.getItem('maya-draft-retention') || '7d'; } catch(e) {}
+    retSelect.value = retention;
+    const opts = retSelect.querySelectorAll('option');
+    opts.forEach(o => {
+      if (o.value === '24h') o.textContent = lang==='nl'?'24u':lang==='fr'?'24h':'24 hours';
+      if (o.value === '7d') o.textContent = lang==='nl'?'7 dagen':lang==='fr'?'7 jours':'7 days';
+      if (o.value === '30d') o.textContent = lang==='nl'?'30 dagen':lang==='fr'?'30 jours':'30 days';
+      if (o.value === 'never') o.textContent = dt.retentionNever;
+    });
+  }
+
+  const drafts = cleanupExpiredDrafts();
+
+  // Workflow-telling
+  const today = todayStr();
+  const todayDrafts = drafts.filter(d => new Date(d.timestamp).toISOString().slice(0,10) === today);
+  el('drf-sum-pending').textContent = drafts.filter(d => !d.completed).length;
+  el('drf-sum-completed').textContent = drafts.filter(d => d.completed).length;
+
+  // Filter
+  let filtered = drafts;
+  if (draftFilter === 'today') filtered = todayDrafts;
+  if (draftFilter === 'pending') filtered = drafts.filter(d => !d.completed);
+  if (draftFilter === 'completed') filtered = drafts.filter(d => d.completed);
+
+  const pendingList = filtered.filter(d => !d.completed);
+  const completedList = filtered.filter(d => d.completed);
+  const ordered = (draftFilter === 'all' || draftFilter === 'today') ? [...pendingList, ...completedList] : filtered;
+
+  const list = el('draft-list');
+  const empty = el('draft-empty');
+  if (!list) return;
+  list.innerHTML = '';
+
+  if (ordered.length === 0) {
+    empty.style.display = 'block';
+    empty.textContent = dt.emptyView;
+    return;
+  }
+  empty.style.display = 'none';
+
+  ordered.forEach(d => {
+    const card = document.createElement('div');
+    card.className = 'draft-card' + (d.completed ? ' done' : '');
+    card.setAttribute('data-draft-id', String(d.id));
+
+    const top = document.createElement('div');
+    top.className = 'draft-card-top';
+    const meta = document.createElement('div');
+    meta.className = 'draft-card-meta';
+    if (d.room) {
+      const roomSpan = document.createElement('span');
+      roomSpan.className = 'draft-card-room';
+      roomSpan.textContent = d.room;
+      meta.appendChild(roomSpan);
+    }
+    const timeSpan = document.createElement('span');
+    timeSpan.textContent = d.timeDisplay;
+    meta.appendChild(timeSpan);
+    top.appendChild(meta);
+    card.appendChild(top);
+
+    const typeEl = document.createElement('div');
+    typeEl.className = 'draft-card-type';
+    typeEl.textContent = d.title;
+    card.appendChild(typeEl);
+
+    const preview = document.createElement('div');
+    preview.className = 'draft-card-preview';
+    preview.textContent = d.text;
+    card.appendChild(preview);
+
+    const actions = document.createElement('div');
+    actions.className = 'draft-actions';
+
+    const copyBtn = document.createElement('button');
+    copyBtn.className = 'draft-act-btn';
+    copyBtn.textContent = dt.copyBtn;
+    copyBtn.onclick = () => copyDraftItem(d.id, copyBtn);
+    actions.appendChild(copyBtn);
+
+    const doneBtn = document.createElement('button');
+    doneBtn.className = 'draft-act-btn done-btn';
+    doneBtn.textContent = d.completed ? dt.reopen : dt.markDone;
+    doneBtn.onclick = () => toggleDraftDone(d.id);
+    actions.appendChild(doneBtn);
+
+    const editBtn = document.createElement('button');
+    editBtn.className = 'draft-act-btn';
+    editBtn.textContent = '✏️';
+    editBtn.onclick = () => editDraftItem(d.id);
+    actions.appendChild(editBtn);
+
+    const delBtn = document.createElement('button');
+    delBtn.className = 'draft-act-btn del-btn';
+    delBtn.textContent = '🗑️';
+    delBtn.onclick = () => deleteDraftItem(d.id);
+    actions.appendChild(delBtn);
+
+    card.appendChild(actions);
+    list.appendChild(card);
+  });
+}
+
 // ─── BURNOUT IN SUPPORT ───
 
 function setSupportTab(tab) {
@@ -2845,29 +3260,6 @@ Geen bullet points. Spreek haar direct aan als "jij". Klink als een echte colleg
   }
   if (loader) loader.style.display = 'none';
   if (btn) btn.disabled = false;
-  // Markeer check-in als gedaan
-  try { localStorage.setItem('maya-last-checkin', todayStr()); } catch(e) {}
-  renderCheckinNudge();
-}
-
-function renderCheckinNudge() {
-  const nudge = document.getElementById('checkin-nudge');
-  if (!nudge) return;
-  try {
-    const last = localStorage.getItem('maya-last-checkin');
-    let daysSince = 999;
-    if (last) daysSince = Math.floor((new Date(todayStr()) - new Date(last)) / 86400000);
-    if (daysSince >= 5) {
-      nudge.style.display = 'block';
-      nudge.textContent = lang==='nl'
-        ? '💜 Al even niet ingecheckt — hoe gaat het écht met jou? Tik hier.'
-        : lang==='fr'
-        ? '💜 Pas de bilan récemment — comment allez-vous vraiment? Touchez ici.'
-        : "💜 Haven't checked in for a while — how are you really doing? Tap here.";
-    } else {
-      nudge.style.display = 'none';
-    }
-  } catch(e) { nudge.style.display = 'none'; }
 }
 
 // ─── QUIET SHIFT ───
@@ -2935,7 +3327,7 @@ function renderTimeSaved() {
   val.textContent = '⏱️ ' + timeStr + (lang==='nl'?' teruggegeven aan je patiënten':lang==='fr'?' rendu à vos patients':' given back to your patients');
 }
 
-// ─── STREAK ───
+// ─── DATUM HELPER ───
 function todayStr() {
   return new Date().toISOString().slice(0,10); // YYYY-MM-DD
 }
@@ -2977,74 +3369,6 @@ function renderTodayWidget() {
   timeLbl.textContent = lang==='nl'?'tijd bespaard':lang==='fr'?'temps gagné':'time saved';
 }
 
-function loadStreak() {
-  try {
-    currentStreak = parseInt(localStorage.getItem('maya-streak') || '0');
-    const lastUsed = localStorage.getItem('maya-last-used');
-    const today = todayStr();
-    if (lastUsed) {
-      const diffDays = Math.floor((new Date(today) - new Date(lastUsed)) / 86400000);
-      if (diffDays > 1) {
-        // Streak gebroken — meer dan 1 dag niet gebruikt
-        currentStreak = 0;
-        localStorage.setItem('maya-streak', '0');
-      }
-    }
-  } catch(e) { currentStreak = 0; }
-  renderStreak();
-}
-
-function bumpStreak() {
-  try {
-    const today = todayStr();
-    const lastUsed = localStorage.getItem('maya-last-used');
-    if (lastUsed === today) return; // al vandaag geteld
-    if (lastUsed) {
-      const diffDays = Math.floor((new Date(today) - new Date(lastUsed)) / 86400000);
-      currentStreak = diffDays === 1 ? currentStreak + 1 : 1;
-    } else {
-      currentStreak = 1;
-    }
-    localStorage.setItem('maya-streak', String(currentStreak));
-    localStorage.setItem('maya-last-used', today);
-    renderStreak();
-  } catch(e) {}
-}
-
-function renderStreak() {
-  const badge = document.getElementById('streak-badge');
-  const txt = document.getElementById('streak-text');
-  if (!badge || !txt) return;
-  if (currentStreak < 2) { badge.style.display = 'none'; return; }
-  badge.style.display = 'flex';
-  const shiftWord = lang==='nl'?(currentStreak===1?'shift':'shiften'):lang==='fr'?'gardes':'shifts';
-  txt.textContent = currentStreak + ' ' + shiftWord + ' ' + (lang==='nl'?'op rij met Maya':lang==='fr'?'de suite avec Maya':'in a row with Maya');
-}
-
-// ─── PERSOONLIJKE STATS ───
-function renderStats() {
-  const reportsEl = document.getElementById('stat-reports');
-  const streakEl = document.getElementById('stat-streak');
-  const timeEl = document.getElementById('stat-time');
-  if (!reportsEl) return;
-
-  let reportCount = 0;
-  try {
-    const hist = JSON.parse(localStorage.getItem('maya-history') || '[]');
-    // History bewaart maar laatste 5, dus we tellen ook een aparte teller bij voor totaal
-    reportCount = parseInt(localStorage.getItem('maya-report-count') || String(hist.length));
-  } catch(e) {}
-
-  reportsEl.textContent = reportCount;
-  streakEl.textContent = currentStreak;
-  const hrs = Math.floor(timeSaved / 60);
-  timeEl.textContent = hrs > 0 ? hrs + 'u' : timeSaved + 'm';
-
-  document.getElementById('stat-reports-lbl').textContent = lang==='nl'?'Verslagen':lang==='fr'?'Rapports':'Reports';
-  document.getElementById('stat-streak-lbl').textContent = lang==='nl'?'Shiften op rij':lang==='fr'?'Gardes suite':'Streak';
-  document.getElementById('stat-time-lbl').textContent = lang==='nl'?'Tijd bespaard':lang==='fr'?'Temps gagné':'Time saved';
-}
-
 // ─── DEEL MET COLLEGA ───
 function shareMaya() {
   const shareText = lang==='nl'
@@ -3061,7 +3385,7 @@ function shareMaya() {
     const fullText = shareText + url;
     if (navigator.clipboard) {
       navigator.clipboard.writeText(fullText).then(() => {
-        const btn = document.getElementById('share-btn');
+        const btn = document.getElementById('drf-share-link');
         if (btn) {
           const orig = btn.textContent;
           btn.textContent = lang==='nl'?'✅ Gekopieerd!':lang==='fr'?'✅ Copié!':'✅ Copied!';
