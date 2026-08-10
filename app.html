@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Maya — NurseMate</title>
+<meta name="description" content="Maya — AI writing assistant for nurses. Fast professional nursing documentation. Not a medical device or EHR.">
+<meta name="robots" content="index,follow">
+<meta property="og:title" content="Maya NurseMate">
+<meta property="og:description" content="AI writing assistant for nurses. Not a medical device or EHR.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mayanurse.com">
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#0a3d4a">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -20,7 +26,7 @@
   --radius:14px;--shadow:0 4px 20px rgba(0,0,0,0.35);
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-html,body{background:var(--bg2);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;}
+html,body{background:var(--bg2);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes pulse{0%,100%{opacity:0.5}50%{opacity:1}}
@@ -38,7 +44,7 @@ html,body{background:var(--bg2);color:var(--text);font-family:'DM Sans',sans-ser
 .disc{background:rgba(252,211,77,0.1);border-bottom:1px solid rgba(252,211,77,0.25);padding:8px 18px;font-size:0.76rem;color:var(--amber);text-align:center;font-weight:500;}
 
 /* PAGES */
-.page{display:none;background:var(--bg2);min-height:calc(100vh - 60px);animation:fadeUp 0.25s ease;}
+.page{display:none;background:var(--bg2);min-height:calc(100vh - 60px);animation:fadeUp 0.25s ease;max-width:640px;margin:0 auto;}
 .page.active{display:block;}
 
 /* DASHBOARD */
@@ -86,7 +92,7 @@ html,body{background:var(--bg2);color:var(--text);font-family:'DM Sans',sans-ser
 .chip:hover{border-color:var(--teal-light);color:var(--text3);}
 .chip.sel{background:linear-gradient(135deg,var(--teal),var(--teal-light));border-color:var(--teal-light);color:#fff;box-shadow:0 2px 10px rgba(13,110,122,0.4);}
 
-input.f,textarea.f,select.f{width:100%;padding:11px 13px;border:1px solid var(--border2);border-radius:10px;background:rgba(255,255,255,0.07);color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.88rem;outline:none;transition:border-color 0.2s;}
+input.f,textarea.f,select.f{width:100%;padding:11px 13px;border:1px solid var(--border2);border-radius:10px;background:rgba(255,255,255,0.07);color:var(--text);font-family:'DM Sans',sans-serif;font-size:16px;outline:none;transition:border-color 0.2s;}
 input.f::placeholder,textarea.f::placeholder{color:rgba(148,163,184,0.5);}
 input.f:focus,textarea.f:focus{border-color:var(--teal-light);}
 textarea.f{min-height:70px;resize:vertical;line-height:1.6;}
@@ -196,7 +202,7 @@ select.f option{background:#1e2937;}
     <span class="lbl" id="qn-note-lbl"></span>
     <div class="voice-row">
       <textarea class="f" id="qn-text" style="min-height:80px;flex:1;" oninput="document.getElementById('qn-validation').style.display='none';refreshQnSubmit();"></textarea>
-      <button class="voice-btn" onclick="toggleVoice(this,'qn-text')">🎤</button>
+      <button class="voice-btn" onclick="toggleVoice(this,'qn-text')" aria-label="Voice input">🎤</button>
     </div>
     <div id="qn-validation" style="display:none;color:var(--red);font-size:0.8rem;margin-top:6px;"></div>
     <div class="loader" id="qn-loader"><div class="spinner"></div><span id="qn-loading-txt"></span></div>
@@ -214,7 +220,7 @@ select.f option{background:#1e2937;}
       <div class="res-lbl" id="res-modal-title" style="margin-bottom:0;"></div>
       <div id="res-saved-badge" style="display:none;font-size:0.74rem;color:#34d399;font-weight:700;white-space:nowrap;">✓ <span id="res-saved-txt">Draft saved</span></div>
     </div>
-    <div style="display:flex;align-items:center;gap:6px;font-size:0.7rem;color:var(--text3);font-weight:700;margin-bottom:8px;" id="res-ai-notice">🤖 <span></span></div>
+    <div style="display:flex;align-items:center;gap:6px;font-size:0.7rem;color:var(--text3);font-weight:700;margin-bottom:8px;" id="res-ai-notice">✨ <span></span></div>
     <textarea class="res-box" id="res-modal-text" oninput="scheduleDraftAutosave();resetVerifyCheckbox('res');"></textarea>
     <div style="font-size:0.72rem;color:var(--text2);margin-top:-8px;margin-bottom:10px;" id="res-edit-hint"></div>
     <div id="res-confidence-check" style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:12px;">
@@ -245,7 +251,7 @@ select.f option{background:#1e2937;}
 <div class="header">
   <button class="back-btn" id="back-btn" onclick="goBack()">← <span id="back-lbl">Back</span></button>
   <div class="logo" style="flex:1;">Maya <span>NurseMate</span></div>
-  <button onclick="sendFeedback()" id="feedback-btn" title="Feedback" style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);color:#fff;padding:5px 11px;border-radius:16px;font-size:0.75rem;cursor:pointer;font-family:'DM Sans',sans-serif;">💬</button>
+  <button onclick="sendFeedback()" id="feedback-btn" title="Feedback" aria-label="Feedback" style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);color:#fff;padding:5px 11px;border-radius:16px;font-size:0.75rem;cursor:pointer;font-family:'DM Sans',sans-serif;">💬</button>
   <button class="lang-btn" onclick="cycleLang()">🌐 <span id="lang-display">EN</span></button>
 </div>
 <div class="disc" id="disc-bar"></div>
@@ -281,6 +287,16 @@ select.f option{background:#1e2937;}
   <div class="grid" id="module-grid"></div>
   <div class="grid-group-lbl" id="grp-other-lbl"></div>
   <div class="grid" id="module-grid-other"></div>
+
+  <!-- FOOTER -->
+  <div style="text-align:center;padding:28px 16px 20px;">
+    <div style="font-size:0.72rem;color:var(--text2);opacity:0.7;margin-bottom:8px;" id="footer-brand">Maya NurseMate · Public Beta</div>
+    <div style="display:flex;gap:14px;justify-content:center;font-size:0.72rem;">
+      <span onclick="openPrivacyPage()" style="color:var(--text2);opacity:0.75;cursor:pointer;text-decoration:underline dotted;" id="footer-privacy-link"></span>
+      <span onclick="openTermsPage()" style="color:var(--text2);opacity:0.75;cursor:pointer;text-decoration:underline dotted;" id="footer-terms-link"></span>
+      <span onclick="sendFeedback()" style="color:var(--text2);opacity:0.75;cursor:pointer;text-decoration:underline dotted;" id="footer-feedback-link"></span>
+    </div>
+  </div>
 </div>
 
 <!-- SHIFT BRIEFING -->
@@ -315,10 +331,10 @@ select.f option{background:#1e2937;}
       <div id="sh-pain-wrap" style="display:none;margin-top:8px;"><input type="text" class="f" id="sh-pain-loc"></div>
       <div id="sh-params-wrap" style="display:none;margin-top:8px;">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;">
-          <input class="f" id="sh-rr" placeholder="BP e.g. 120/70" style="padding:8px 10px;font-size:0.82rem;">
-          <input class="f" id="sh-hf" placeholder="HR e.g. 82" style="padding:8px 10px;font-size:0.82rem;">
-          <input class="f" id="sh-sat" placeholder="SpO2 e.g. 96%" style="padding:8px 10px;font-size:0.82rem;">
-          <input class="f" id="sh-temp" placeholder="Temp e.g. 37.1°C" style="padding:8px 10px;font-size:0.82rem;">
+          <input class="f" id="sh-rr" placeholder="BP e.g. 120/70" style="padding:8px 10px;font-size:16px;">
+          <input class="f" id="sh-hf" placeholder="HR e.g. 82" style="padding:8px 10px;font-size:16px;">
+          <input class="f" id="sh-sat" placeholder="SpO2 e.g. 96%" style="padding:8px 10px;font-size:16px;">
+          <input class="f" id="sh-temp" placeholder="Temp e.g. 37.1°C" style="padding:8px 10px;font-size:16px;">
         </div>
       </div>
       <div id="sh-glyc-wrap" style="display:none;margin-top:8px;"><input type="text" class="f" id="sh-glyc"></div>
@@ -334,7 +350,7 @@ select.f option{background:#1e2937;}
       <div class="chips" id="sh-fup-chips"></div>
     </div>
     <div class="blk"><span class="lbl" id="shift-notes-lbl"></span>
-      <div class="voice-row"><textarea class="f" id="sh-notes"></textarea><button class="voice-btn" onclick="toggleVoice(this,'sh-notes')">🎤</button></div>
+      <div class="voice-row"><textarea class="f" id="sh-notes"></textarea><button class="voice-btn" onclick="toggleVoice(this,'sh-notes')" aria-label="Voice input">🎤</button></div>
     </div>
     </div><!-- end patient input box -->
 
@@ -367,10 +383,10 @@ select.f option{background:#1e2937;}
       </div>
       <div class="blk"><span class="lbl" id="inc-params-lbl"></span>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;">
-          <input class="f" id="inc-rr" placeholder="BP" style="padding:8px 10px;font-size:0.82rem;">
-          <input class="f" id="inc-hf" placeholder="HR" style="padding:8px 10px;font-size:0.82rem;">
-          <input class="f" id="inc-sat" placeholder="SpO2%" style="padding:8px 10px;font-size:0.82rem;">
-          <input class="f" id="inc-temp" placeholder="Temp" style="padding:8px 10px;font-size:0.82rem;">
+          <input class="f" id="inc-rr" placeholder="BP" style="padding:8px 10px;font-size:16px;">
+          <input class="f" id="inc-hf" placeholder="HR" style="padding:8px 10px;font-size:16px;">
+          <input class="f" id="inc-sat" placeholder="SpO2%" style="padding:8px 10px;font-size:16px;">
+          <input class="f" id="inc-temp" placeholder="Temp" style="padding:8px 10px;font-size:16px;">
         </div>
       </div>
     </div>
@@ -389,7 +405,7 @@ select.f option{background:#1e2937;}
     </div>
     <div class="blk" style="margin-top:10px;"><span class="lbl" id="inc-actions-lbl"></span><div class="chips" id="inc-act-chips"></div></div>
     <div class="blk"><span class="lbl" id="inc-notes-lbl"></span>
-      <div class="voice-row"><textarea class="f" id="inc-notes"></textarea><button class="voice-btn" onclick="toggleVoice(this,'inc-notes')">🎤</button></div>
+      <div class="voice-row"><textarea class="f" id="inc-notes"></textarea><button class="voice-btn" onclick="toggleVoice(this,'inc-notes')" aria-label="Voice input">🎤</button></div>
     </div>
     <button class="gen-btn" id="inc-btn" onclick="generate('incident')" disabled></button>
     <div class="loader" id="inc-loader"><div class="spinner"></div><span id="inc-loading-txt"></span></div>
@@ -411,7 +427,7 @@ select.f option{background:#1e2937;}
     <div class="blk"><span class="lbl" id="wnd-care-lbl"></span><div class="chips" id="wnd-care-chips"></div></div>
     <div class="blk"><span class="lbl" id="wnd-fup-lbl"></span><div class="chips" data-key="wnd-fup"></div></div>
     <div class="blk"><span class="lbl" id="wnd-notes-lbl"></span>
-      <div class="voice-row"><textarea class="f" id="wnd-notes"></textarea><button class="voice-btn" onclick="toggleVoice(this,'wnd-notes')">🎤</button></div>
+      <div class="voice-row"><textarea class="f" id="wnd-notes"></textarea><button class="voice-btn" onclick="toggleVoice(this,'wnd-notes')" aria-label="Voice input">🎤</button></div>
     </div>
     <button class="gen-btn" id="wnd-btn" onclick="generate('wound')" disabled></button>
     <div class="loader" id="wnd-loader"><div class="spinner"></div><span id="wnd-loading-txt"></span></div>
@@ -433,7 +449,7 @@ select.f option{background:#1e2937;}
     <div class="blk"><span class="lbl" id="beh-react-lbl"></span><div class="chips" data-key="beh-react"></div></div>
     <div class="blk"><span class="lbl" id="beh-act-lbl"></span><div class="chips" id="beh-act-chips"></div></div>
     <div class="blk"><span class="lbl" id="beh-notes-lbl"></span>
-      <div class="voice-row"><textarea class="f" id="beh-notes"></textarea><button class="voice-btn" onclick="toggleVoice(this,'beh-notes')">🎤</button></div>
+      <div class="voice-row"><textarea class="f" id="beh-notes"></textarea><button class="voice-btn" onclick="toggleVoice(this,'beh-notes')" aria-label="Voice input">🎤</button></div>
     </div>
     <button class="gen-btn" id="beh-btn" onclick="generate('behav')" disabled></button>
     <div class="loader" id="beh-loader"><div class="spinner"></div><span id="beh-loading-txt"></span></div>
@@ -460,7 +476,7 @@ select.f option{background:#1e2937;}
     <div class="blk"><span class="lbl" id="med-dur-lbl"></span><div class="chips" data-key="med-dur"></div></div>
     <div class="blk"><span class="lbl" id="med-fup-lbl"></span><div class="chips" data-key="med-fup"></div></div>
     <div class="blk"><span class="lbl" id="med-notes-lbl"></span>
-      <div class="voice-row"><textarea class="f" id="med-notes"></textarea><button class="voice-btn" onclick="toggleVoice(this,'med-notes')">🎤</button></div>
+      <div class="voice-row"><textarea class="f" id="med-notes"></textarea><button class="voice-btn" onclick="toggleVoice(this,'med-notes')" aria-label="Voice input">🎤</button></div>
     </div>
     <button class="gen-btn" id="med-btn" onclick="generate('meds')" disabled></button>
     <div class="loader" id="med-loader"><div class="spinner"></div><span id="med-loading-txt"></span></div>
@@ -545,13 +561,13 @@ select.f option{background:#1e2937;}
     <div class="scenario" id="comm-sc-other">
       <div class="blk"><span class="lbl" id="comm-other-type-lbl"></span><div class="chips" data-key="comm-other-type"></div></div>
       <div class="blk"><span class="lbl" id="comm-other-desc-lbl"></span>
-        <div class="voice-row"><textarea class="f" id="comm-other-desc" style="min-height:70px;flex:1;"></textarea><button class="voice-btn" onclick="toggleVoice(this,'comm-other-desc')">🎤</button></div>
+        <div class="voice-row"><textarea class="f" id="comm-other-desc" style="min-height:70px;flex:1;"></textarea><button class="voice-btn" onclick="toggleVoice(this,'comm-other-desc')" aria-label="Voice input">🎤</button></div>
       </div>
     </div>
 
     <div class="blk"><span class="lbl" id="comm-by-lbl"></span><div class="chips" data-key="comm-by"></div></div>
     <div class="blk"><span class="lbl" id="comm-notes-lbl"></span>
-      <div class="voice-row"><textarea class="f" id="comm-notes"></textarea><button class="voice-btn" onclick="toggleVoice(this,'comm-notes')">🎤</button></div>
+      <div class="voice-row"><textarea class="f" id="comm-notes"></textarea><button class="voice-btn" onclick="toggleVoice(this,'comm-notes')" aria-label="Voice input">🎤</button></div>
     </div>
     <button class="gen-btn" id="comm-btn" onclick="generate('comm')" disabled></button>
     <div class="loader" id="comm-loader"><div class="spinner"></div><span id="comm-loading-txt"></span></div>
@@ -577,7 +593,7 @@ select.f option{background:#1e2937;}
       <div id="support-chat" style="min-height:160px;margin-bottom:14px;display:flex;flex-direction:column;gap:10px;"></div>
       <div class="voice-row">
         <textarea class="f" id="sup-input" style="min-height:75px;flex:1;resize:none;" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendSupport();}"></textarea>
-        <button class="voice-btn" onclick="toggleVoice(this,'sup-input')">🎤</button>
+        <button class="voice-btn" onclick="toggleVoice(this,'sup-input')" aria-label="Voice input">🎤</button>
       </div>
       <button class="gen-btn" onclick="sendSupport()" id="sup-send-btn" style="margin-top:10px;background:linear-gradient(135deg,#9d174d,#f472b6);box-shadow:0 4px 16px rgba(244,114,182,0.3);"></button>
     </div>
@@ -713,6 +729,40 @@ select.f option{background:#1e2937;}
   </div>
 </div>
 
+<!-- PRIVACY GUARD -->
+<div class="overlay" id="privacy-guard-modal" style="display:none;">
+  <div class="popup" style="text-align:left;max-width:400px;">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+      <span style="font-size:1.2rem;">🔒</span>
+      <div class="res-lbl" id="pg-title" style="margin-bottom:0;"></div>
+    </div>
+    <div style="font-size:0.86rem;color:var(--text);line-height:1.6;margin-bottom:18px;" id="pg-text"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <button class="res-btn pri" onclick="privacyGuardGoBack()" id="pg-back-btn"></button>
+      <button class="res-btn" onclick="privacyGuardProceed()" id="pg-proceed-btn"></button>
+    </div>
+  </div>
+</div>
+
+<!-- PRIVACY PAGE -->
+<div class="overlay" id="privacy-page-modal" style="display:none;">
+  <div class="popup" style="text-align:left;max-width:460px;max-height:80vh;overflow-y:auto;">
+    <div class="res-lbl" id="privacy-page-title" style="margin-bottom:12px;"></div>
+    <ul id="privacy-page-list" style="font-size:0.85rem;color:var(--text);line-height:1.7;margin:0 0 4px 18px;padding:0;"></ul>
+    <button class="res-btn pri" onclick="document.getElementById('privacy-page-modal').style.display='none'" id="privacy-page-close" style="width:100%;margin-top:16px;"></button>
+  </div>
+</div>
+
+<!-- TERMS PAGE -->
+<div class="overlay" id="terms-page-modal" style="display:none;">
+  <div class="popup" style="text-align:left;max-width:460px;max-height:80vh;overflow-y:auto;">
+    <div class="res-lbl" id="terms-page-title" style="margin-bottom:12px;"></div>
+    <div style="font-size:0.85rem;color:var(--text);line-height:1.6;margin-bottom:10px;" id="terms-page-intro"></div>
+    <ul id="terms-page-list" style="font-size:0.85rem;color:var(--text);line-height:1.7;margin:0 0 4px 18px;padding:0;"></ul>
+    <button class="res-btn pri" onclick="document.getElementById('terms-page-modal').style.display='none'" id="terms-page-close" style="width:100%;margin-top:16px;"></button>
+  </div>
+</div>
+
 <!-- CONFIRM DELETE ALL -->
 <div class="overlay" id="drf-confirm-modal" style="display:none;">
   <div class="popup" style="text-align:center;max-width:340px;">
@@ -729,7 +779,7 @@ select.f option{background:#1e2937;}
   <div class="popup" style="text-align:left;max-width:480px;">
     <div class="res-lbl" id="draft-edit-title" style="margin-bottom:2px;">Edit draft</div>
     <div style="font-size:0.72rem;color:var(--text2);margin-bottom:6px;" id="draft-edit-meta"></div>
-    <div style="display:flex;align-items:center;gap:6px;font-size:0.7rem;color:var(--text3);font-weight:700;margin-bottom:8px;" id="draft-ai-notice">🤖 <span></span></div>
+    <div style="display:flex;align-items:center;gap:6px;font-size:0.7rem;color:var(--text3);font-weight:700;margin-bottom:8px;" id="draft-ai-notice">✨ <span></span></div>
     <textarea class="res-box" id="draft-edit-text" oninput="resetVerifyCheckbox('draft')"></textarea>
     <label style="display:flex;align-items:flex-start;gap:8px;font-size:0.82rem;color:var(--text);background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.25);border-radius:10px;padding:10px 12px;margin:10px 0 12px;cursor:pointer;">
       <input type="checkbox" id="draft-verify-check" onchange="refreshVerifyGate('draft')" style="margin-top:2px;flex-shrink:0;width:16px;height:16px;accent-color:var(--teal-light);">
@@ -769,7 +819,7 @@ select.f option{background:#1e2937;}
           <div id="scenario-answer-wrap" style="display:none;margin-top:10px;">
             <div class="voice-row">
               <textarea class="f" id="scenario-answer" style="flex:1;min-height:80px;resize:none;" oninput="document.getElementById('scenario-submit-btn').disabled=!this.value.trim()"></textarea>
-              <button class="voice-btn" onclick="toggleVoice(this,'scenario-answer')">🎤</button>
+              <button class="voice-btn" onclick="toggleVoice(this,'scenario-answer')" aria-label="Voice input">🎤</button>
             </div>
             <button id="scenario-submit-btn" onclick="submitScenario()" disabled style="width:100%;padding:11px;border-radius:10px;border:none;background:linear-gradient(135deg,#059669,#34d399);color:#fff;font-family:'DM Sans',sans-serif;font-weight:600;font-size:0.88rem;cursor:pointer;margin-top:8px;"></button>
           </div>
@@ -806,7 +856,7 @@ const T = {
     heroSub: 'Tell Maya what happened. Maya turns it into a professional nursing report.',
     qnBtnTitle: 'Tell Maya what happened',
     qnBtnSub: 'Speak or type. Maya writes your report.',
-    popupRules: '⚠️ Required rules:\n🔒 Always use room number — never real name\n📋 Copy & paste manually into your EHR\n👁️ Always verify before use\n🚫 Not connected to any hospital system',
+    popupRules: '⚠️ Required rules:\n🔒 Do not use names, dates of birth, or other directly identifying information. Use only the minimum information necessary.\n📋 Copy & paste manually into your EHR\n👁️ Always verify before use\n🚫 Not connected to any hospital system',
     popupBtn: 'I understand — let\'s go',
     modules: [
       { id:'shift', icon:'📋', name:'Shift Briefing', desc:'Write a quick, professional handover', group:'structured' },
@@ -835,7 +885,7 @@ const T = {
     genBtn: '✨ Generate report',
     shift: {
       title:'📋 Shift Briefing', desc:'Handover for the next colleague — quick and professional.',
-      priv:'🔒 Room number only — never patient name',
+      priv:'🔒 No name, date of birth, or ID info',
       roomLbl:'Room / Patient (optional)', roomPh:'e.g. Room 12 or leave blank',
       statusLbl:'General condition ⚠️',
       obsLbl:'What was notable? (multiple)',
@@ -854,7 +904,7 @@ const T = {
     },
     incident: {
       title:'⚠️ Incident Report', desc:'Fall, aggression, wandering, medication error',
-      priv:'🔒 Room number only',
+      priv:'🔒 No name, date of birth, or ID info',
       roomLbl:'Room / Patient', roomPh:'e.g. Room 5',
       typeLbl:'Incident type ⚠️',
       types:['⚠️ Fall','😰 Near fall','😠 Aggression','🚶 Wandering','💊 Medication error','📍 Other'],
@@ -879,7 +929,7 @@ const T = {
     },
     wound: {
       title:'🩹 Wound Care', desc:'Wound note & evolution',
-      priv:'🔒 Room number only',
+      priv:'🔒 No name, date of birth, or ID info',
       roomLbl:'Room / Patient', roomPh:'e.g. Room 2',
       typeLbl:'Wound type ⚠️', types:['🔸 Skin tear','🔴 Pressure injury','💧 Moisture lesion','🩹 Abrasion','🩺 Wound','📍 Other'],
       locLbl:'Location ⚠️', locs:['💪 Right arm','💪 Left arm','✋ Right hand','✋ Left hand','🦵 Right leg','🦵 Left leg','👟 Heel','🔻 Sacrum','🔙 Back','📍 Other'],
@@ -891,7 +941,7 @@ const T = {
     },
     behav: {
       title:'🧠 Behaviour Note', desc:'Behaviour observation — factual, contextual',
-      priv:'🔒 Room number only',
+      priv:'🔒 No name, date of birth, or ID info',
       roomLbl:'Room / Patient', roomPh:'e.g. Room 1',
       typeLbl:'Behaviour type ⚠️', types:['😰 Restlessness','😤 Verbal agitation','😠 Verbal aggression','👊 Physical aggression','📢 Calling out','🚶 Wandering','🚫 Refusing care','😶 Apathy','🧠 Confusion','😌 Calmer than usual'],
       ctxLbl:'Context / When ⚠️', ctxs:['🛁 During care','🧴 During ADL','🍽️ During meal','🦽 During transfer','🌙 At night','🌅 On waking','❓ No clear trigger'],
@@ -903,7 +953,7 @@ const T = {
     },
     meds: {
       title:'💊 Medication Note', desc:'New medication, changes & treatment decisions',
-      priv:'🔒 Room number only',
+      priv:'🔒 No name, date of birth, or ID info',
       roomLbl:'Room / Patient', roomPh:'e.g. Room 7',
       reasonLbl:'Reason ⚠️', reasons:['😣 Pain','🌡️ Fever','🦠 Infection','😟 Agitation','🌙 Sleep','🩺 Blood pressure','🩸 Blood glucose','📞 After doctor contact','🏥 After hospital discharge'],
       changeLbl:'Type of change ⚠️', changes:['▶️ Started','⛔ Stopped','🔁 Dose adjusted','💉 Short course','🏥 Taken over from hospital'],
@@ -915,7 +965,7 @@ const T = {
     },
     comm: {
       title:'⚡ Quick Communication', desc:'Short, direct communication note for the patient record.',
-      priv:'🔒 Room number only — never real name',
+      priv:'🔒 No name, date of birth, or ID info',
       roomLbl:'Room / Patient', roomPh:'e.g. Room 8',
       typeLbl:'Type of communication ⚠️',
       types:['🩺 Doctor contacted','🧪 Lab / advice','🚑 Admission to hospital','🔙 Back from hospital','📞 Telephone approval','🕊️ Passing away','📝 Other'],
@@ -1003,7 +1053,7 @@ const T = {
     heroSub: 'Vertel wat er gebeurd is. Maya maakt er een professioneel verpleegkundig verslag van.',
     qnBtnTitle: 'Vertel Maya wat er gebeurde',
     qnBtnSub: 'Spreek of typ. Maya schrijft je verslag.',
-    popupRules: '⚠️ Verplichte regels:\n🔒 Gebruik ALTIJD kamernummer — nooit echte naam\n📋 Kopieer en plak handmatig in het EPD\n👁️ Controleer altijd voor gebruik\n🚫 Geen koppeling met ziekenhuissystemen',
+    popupRules: '⚠️ Verplichte regels:\n🔒 Gebruik geen naam, geboortedatum of andere rechtstreeks identificerende gegevens. Gebruik alleen de minimale informatie die nodig is.\n📋 Kopieer en plak handmatig in het EPD\n👁️ Controleer altijd voor gebruik\n🚫 Geen koppeling met ziekenhuissystemen',
     popupBtn: 'Ik begrijp dit — aan de slag',
     modules: [
       { id:'shift', icon:'📋', name:'Shift Briefing', desc:'Maak snel een professionele overdracht', group:'structured' },
@@ -1032,7 +1082,7 @@ const T = {
     genBtn: '✨ Maak verslag',
     shift: {
       title:'📋 Shift Briefing', desc:'Overdracht voor de volgende collega — snel en professioneel.',
-      priv:'🔒 Kamernummer, nooit echte naam',
+      priv:'🔒 Geen naam, geboortedatum of identificerende gegevens',
       roomLbl:'Kamer / bewoner (optioneel)', roomPh:'bijv. Kamer 5 — of laat leeg',
       statusLbl:'Algemene toestand ⚠️',
       obsLbl:'Wat viel op? (meerdere mogelijk)',
@@ -1051,7 +1101,7 @@ const T = {
     },
     incident: {
       title:'⚠️ Incidentrapport', desc:'Val, agressie, dwaling, medicatiefout',
-      priv:'🔒 Kamernummer, nooit echte naam',
+      priv:'🔒 Geen naam, geboortedatum of identificerende gegevens',
       roomLbl:'Kamer / bewoner', roomPh:'bijv. Kamer 5',
       typeLbl:'Type incident ⚠️',
       types:['⚠️ Val','😰 Bijna-val','😠 Agressie','🚶 Dwaling','💊 Medicatiefout','📍 Andere'],
@@ -1076,7 +1126,7 @@ const T = {
     },
     wound: {
       title:'🩹 Wondzorg', desc:'Wondnotitie & evolutie vastleggen',
-      priv:'🔒 Kamernummer, nooit echte naam',
+      priv:'🔒 Geen naam, geboortedatum of identificerende gegevens',
       roomLbl:'Kamer / bewoner', roomPh:'bijv. Kamer 2',
       typeLbl:'Type wonde ⚠️', types:['🔸 Skintear','🔴 Decubitus','💧 Vochtletsel','🩹 Schaafwonde','🩺 Wonde','📍 Andere'],
       locLbl:'Locatie ⚠️', locs:['💪 Rechterarm','💪 Linkerarm','✋ Rechterhand','✋ Linkerhand','🦵 Rechterbeen','🦵 Linkerbeen','👟 Hiel','🔻 Stuit','🔙 Rug','📍 Andere'],
@@ -1088,7 +1138,7 @@ const T = {
     },
     behav: {
       title:'🧠 Gedrag & Dementie', desc:'Gedragsnotitie — neutraal, contextueel, WZC-stijl',
-      priv:'🔒 Kamernummer, nooit echte naam',
+      priv:'🔒 Geen naam, geboortedatum of identificerende gegevens',
       roomLbl:'Kamer / bewoner', roomPh:'bijv. Kamer 1',
       typeLbl:'Type gedrag ⚠️', types:['😰 Onrust','😤 Verbale agitatie','😠 Verbale agressie','👊 Fysieke agressie','📢 Roepen','🚶 Dwalen','🚫 Zorgweigering','😶 Apathie','🧠 Verwardheid','😌 Rustiger'],
       ctxLbl:'Context / wanneer ⚠️', ctxs:['🛁 Tijdens zorg','🧴 Tijdens ADL','🍽️ Tijdens maaltijd','🦽 Tijdens transfer','🌙 Nachtelijk','🌅 Bij wakker worden','❓ Geen aanleiding'],
@@ -1100,7 +1150,7 @@ const T = {
     },
     meds: {
       title:'💊 Medicatiewijziging', desc:'Nieuwe medicatie, wijzigingen en behandelbeslissingen',
-      priv:'🔒 Kamernummer, nooit echte naam',
+      priv:'🔒 Geen naam, geboortedatum of identificerende gegevens',
       roomLbl:'Kamer / bewoner', roomPh:'bijv. Kamer 7',
       reasonLbl:'Aanleiding ⚠️', reasons:['😣 Pijn','🌡️ Koorts','🦠 Infectie','😟 Onrust','🌙 Slaap','🩺 Bloeddruk','🩸 Glycemie','📞 Na dokterscontact','🏥 Na ziekenhuisontslag'],
       changeLbl:'Type wijziging ⚠️', changes:['▶️ Opgestart','⛔ Gestopt','🔁 Dosis aangepast','💉 Tijdelijke kuur','🏥 Overgenomen van ziekenhuis'],
@@ -1112,7 +1162,7 @@ const T = {
     },
     comm: {
       title:'⚡ Korte Communicatie', desc:'Korte, directe communicatienota voor het zorgdossier.',
-      priv:'🔒 Kamernummer, nooit echte naam',
+      priv:'🔒 Geen naam, geboortedatum of identificerende gegevens',
       roomLbl:'Kamer / bewoner', roomPh:'bijv. Kamer 8',
       typeLbl:'Type communicatie ⚠️',
       types:['🩺 Huisarts gecontacteerd','🧪 Labo / advies','🚑 Bewoner opgenomen','🔙 Terug uit ziekenhuis','📞 Telefonische goedkeuring','🕊️ Overlijden','📝 Andere'],
@@ -1192,7 +1242,7 @@ const T = {
     heroSub:'Racontez ce qui s\'est passé. Maya en fait un rapport infirmier professionnel.',
     qnBtnTitle:'Dites à Maya ce qui s\'est passé',
     qnBtnSub:'Parlez ou tapez. Maya rédige votre rapport.',
-    popupRules:'⚠️ Règles obligatoires:\n🔒 Toujours utiliser le numéro de chambre — jamais le vrai nom\n📋 Copier-coller manuellement dans le dossier\n👁️ Toujours vérifier avant utilisation',
+    popupRules:'⚠️ Règles obligatoires:\n🔒 N\'utilisez pas de nom, date de naissance ou autre information directement identifiable. Utilisez uniquement les informations minimales nécessaires.\n📋 Copier-coller manuellement dans le dossier\n👁️ Toujours vérifier avant utilisation',
     popupBtn:'Je comprends — commençons',
     modules:[
       {id:'shift',icon:'📋',name:'Rapport de garde',desc:'Rédigez rapidement une transmission professionnelle',group:'structured'},
@@ -1212,14 +1262,14 @@ const T = {
     resCopy:'📋 Copier', resSend:'📤 M\'envoyer', resDone:'✓ Terminé',
     resDisc:'⚠️ Vérifiez avant utilisation — vous restez responsable',
     loading:'Génération...', genBtn:'✨ Générer le rapport',
-    shift:{title:'📋 Rapport de garde',desc:'Transmission au collègue suivant.',priv:'🔒 Numéro de chambre uniquement',roomLbl:'Chambre (optionnel)',roomPh:'ex. Chambre 5',statusLbl:'État général ⚠️',obsLbl:'Observations (plusieurs possible)',actLbl:'Actions effectuées',fupLbl:'Suivi pour la prochaine garde',notesLbl:'Info supplémentaire (optionnel)',notesPh:'',painPh:'📍 Localisation douleur',medPh:'💊 Quel médicament?',urinePh:'🧫 Résultat?',glycPh:'🩸 Glycémie',status:['😌 Calme','✅ Stable','🟡 Légère inquiétude','🟠 Attention requise','📉 Aggravé','📈 Amélioré'],obs:['✅ Rien à signaler','😣 Douleur','😟 Agité','🧠 Confus','😰 Anxieux','🌡️ Fièvre','🍽️ Peu mangé','💧 Peu bu','🚽 Transit','🌙 Errance','🫁 Respiration','📊 Constantes anormales','🩸 Glycémie','🩹 Plaie','🧫 Symptômes urinaires','⚠️ Chute','😠 Agressivité','😴 Difficile à réveiller'],act:['✅ Aucune action','📞 Médecin appelé','👨‍👩‍👧 Famille contactée','💊 Médicament donné','📊 Constantes prises','🩹 Soins de plaie','🧫 Urine testée','🧪 Prélèvement préparé','🤝 Rassuré','🔄 Repositionné','🛏️ Accompagné au lit'],fup:['✅ Aucun','🌡️ Température','🩸 Glycémie','🧠 Comportement','💧 Hydratation','🩹 Soins de plaie','😣 Douleur','📞 Médecin si besoin','🧪 Labo','🍽️ Alimentation','👁️ État clinique']},
-    incident:{title:'⚠️ Rapport d\'incident',desc:'Chute, agressivité, errance, erreur médicamenteuse',priv:'🔒 Numéro de chambre uniquement',roomLbl:'Chambre',roomPh:'ex. Chambre 5',typeLbl:'Type d\'incident ⚠️',types:['⚠️ Chute','😰 Quasi-chute','😠 Agressivité','🚶 Errance','💊 Erreur médicamenteuse','📍 Autre'],locLbl:'Lieu',locs:['🛏️ Chambre','🚿 Salle de bain','🚶 Couloir','🍽️ Salle à manger','🌿 Jardin'],timeLbl:'Heure',foundLbl:'Comment découvert?',founds:['👁️ Trouvé par terre','👀 Chute témoin','🗣️ Signalé par patient','👥 Signalé par collègue'],headLbl:'Impact crânien?',heads:['✅ Oui','❌ Non'],injuryLbl:'État après (plusieurs)',injuries:['✅ Conscient & orienté','🙌 Aucune blessure','😣 Douleur','🫧 Gonflement','🦴 Fracture suspectée','🩹 Blessure visible','🧠 Confus','❌ Perte de conscience'],painPh:'📍 Localisation douleur',paramsLbl:'Constantes (optionnel)',agrTypeLbl:'Type d\'agressivité',agrTypes:['🗣️ Verbale','👊 Physique → soignant','👊 Physique → résident','⚠️ Auto-agression','💥 Dégâts matériels'],agrCauseLbl:'Déclencheur',agrCauses:['❓ Inconnu','😣 Douleur','🧠 Confusion','😤 Frustration','😰 Peur','🛁 Pendant les soins'],agrInjLbl:'Blessure',agrInjs:['🙌 Aucune','🩹 Traitée','📞 Médecin notifié'],wandFoundLbl:'Où retrouvé?',wandFounds:['🏠 Dans le service','🚶 Hors service','🌿 Hors bâtiment'],wandCondLbl:'État au retour',wandConds:['✅ Calme & indemne','🧠 Confus','⚠️ Blessé'],medTypeLbl:'Type d\'erreur',medTypes:['💊 Mauvais médicament','🔢 Mauvaise dose','❌ Oublié','⏰ Mauvais moment'],medNameLbl:'Nom du médicament',actionsLbl:'Actions (plusieurs)',actions:['📞 Médecin notifié','👨‍👩‍👧 Famille notifiée','🤝 Rassuré','🩹 Soins','💊 Antalgique','👁️ Surveillance','🏥 Hôpital','🔒 Environnement sécurisé'],notesLbl:'Notes (optionnel)',notesPh:'Détails...'},
-    wound:{title:'🩹 Soins de plaie',desc:'Note de plaie & évolution',priv:'🔒 Numéro de chambre uniquement',roomLbl:'Chambre',roomPh:'ex. Chambre 2',typeLbl:'Type de plaie ⚠️',types:['🔸 Skin tear','🔴 Escarre','💧 Lésion humidité','🩹 Abrasion','🩺 Plaie','📍 Autre'],locLbl:'Localisation ⚠️',locs:['💪 Bras droit','💪 Bras gauche','✋ Main droite','✋ Main gauche','🦵 Jambe droite','🦵 Jambe gauche','👟 Talon','🔻 Sacrum','🔙 Dos','📍 Autre'],evolLbl:'Évolution',evols:['✅ Améliorée','😐 Stable','📉 Aggravée','🆕 Premier pansement'],aspLbl:'Aspect (plusieurs)',asps:['✅ Pas d\'infection','🔴 Rougeur','💧 Humide','🏜️ Sec','🟡 Exsudat','👃 Odeur','😣 Douleur','⚫ Nécrose'],careLbl:'Soins effectués (plusieurs)',cares:['🧴 Nettoyé','🔵 Désinfecté','🛡️ Couvert','🔄 Pansement changé','🩹 Pansement silicone','🩹 Compresse'],fupLbl:'Suivi',fups:['📅 Demain','📅 2 jours','📅 3 jours','📞 Médecin','👩‍⚕️ Spécialiste','👁️ Observer'],notesLbl:'Notes (optionnel)',notesPh:''},
-    behav:{title:'🧠 Note comportementale',desc:'Observation comportementale — factuelle, contextuelle',priv:'🔒 Numéro de chambre uniquement',roomLbl:'Chambre',roomPh:'ex. Chambre 1',typeLbl:'Type de comportement ⚠️',types:['😰 Agitation','😤 Agitation verbale','😠 Agressivité verbale','👊 Agressivité physique','📢 Cris','🚶 Errance','🚫 Refus de soins','😶 Apathie','🧠 Confusion','😌 Plus calme'],ctxLbl:'Contexte ⚠️',ctxs:['🛁 Pendant soins','🧴 ADL','🍽️ Repas','🦽 Transfert','🌙 Nuit','🌅 Au réveil','❓ Sans raison'],intLbl:'Intensité',ints:['🟢 Légère','🟡 Modérée','🔴 Sévère'],causeLbl:'Cause possible',causes:['😣 Douleur','😨 Peur','😴 Fatigue','🔊 Suractivation','🔄 Changement','❓ Inconnu'],reactLbl:'Réponse à l\'approche',reacts:['✅ Réassurance efficace','🎵 Distraction efficace','😌 Calmé spontanément','⚠️ Difficile à calmer','🔄 Comportement persistant'],actLbl:'Actions (plusieurs)',acts:['🤝 Rassuré','🎵 Distraction','🏠 Environnement calme','📞 Médecin','👨‍👩‍👧 Famille','✅ Désescalade','🙌 Aucune blessure','💊 Médicament (prescription)'],notesLbl:'Notes (optionnel)',notesPh:'Détail factuel...'},
-    meds:{title:'💊 Note médicamenteuse',desc:'Nouveau médicament, changements & décisions thérapeutiques',priv:'🔒 Numéro de chambre uniquement',roomLbl:'Chambre',roomPh:'ex. Chambre 7',reasonLbl:'Raison ⚠️',reasons:['😣 Douleur','🌡️ Fièvre','🦠 Infection','😟 Agitation','🌙 Sommeil','🩺 Tension','🩸 Glycémie','📞 Après contact médecin','🏥 Après hospitalisation'],changeLbl:'Type de changement ⚠️',changes:['▶️ Débuté','⛔ Arrêté','🔁 Dose modifiée','💉 Cure courte','🏥 Repris de l\'hôpital'],nameLbl:'Médicament ⚠️',namePh:'Nom (ex. Paracétamol)',dosePh:'Dose (ex. 500mg)',freqLbl:'Fréquence',freqs:['1x/jour','2x/jour','3x/jour','4x/jour','Si besoin'],durLbl:'Durée',durs:['1 fois','3 jours','5 jours','7 jours','Chronique'],fupLbl:'Suivi',fups:['📈 Surveiller l\'effet','😣 Douleur','🌡️ Température','🩸 Glycémie','✅ Aucun'],notesLbl:'Notes (optionnel)',notesPh:'Info brève...'},
+    shift:{title:'📋 Rapport de garde',desc:'Transmission au collègue suivant.',priv:'🔒 Pas de nom, date de naissance ou données identifiantes',roomLbl:'Chambre (optionnel)',roomPh:'ex. Chambre 5',statusLbl:'État général ⚠️',obsLbl:'Observations (plusieurs possible)',actLbl:'Actions effectuées',fupLbl:'Suivi pour la prochaine garde',notesLbl:'Info supplémentaire (optionnel)',notesPh:'',painPh:'📍 Localisation douleur',medPh:'💊 Quel médicament?',urinePh:'🧫 Résultat?',glycPh:'🩸 Glycémie',status:['😌 Calme','✅ Stable','🟡 Légère inquiétude','🟠 Attention requise','📉 Aggravé','📈 Amélioré'],obs:['✅ Rien à signaler','😣 Douleur','😟 Agité','🧠 Confus','😰 Anxieux','🌡️ Fièvre','🍽️ Peu mangé','💧 Peu bu','🚽 Transit','🌙 Errance','🫁 Respiration','📊 Constantes anormales','🩸 Glycémie','🩹 Plaie','🧫 Symptômes urinaires','⚠️ Chute','😠 Agressivité','😴 Difficile à réveiller'],act:['✅ Aucune action','📞 Médecin appelé','👨‍👩‍👧 Famille contactée','💊 Médicament donné','📊 Constantes prises','🩹 Soins de plaie','🧫 Urine testée','🧪 Prélèvement préparé','🤝 Rassuré','🔄 Repositionné','🛏️ Accompagné au lit'],fup:['✅ Aucun','🌡️ Température','🩸 Glycémie','🧠 Comportement','💧 Hydratation','🩹 Soins de plaie','😣 Douleur','📞 Médecin si besoin','🧪 Labo','🍽️ Alimentation','👁️ État clinique']},
+    incident:{title:'⚠️ Rapport d\'incident',desc:'Chute, agressivité, errance, erreur médicamenteuse',priv:'🔒 Pas de nom, date de naissance ou données identifiantes',roomLbl:'Chambre',roomPh:'ex. Chambre 5',typeLbl:'Type d\'incident ⚠️',types:['⚠️ Chute','😰 Quasi-chute','😠 Agressivité','🚶 Errance','💊 Erreur médicamenteuse','📍 Autre'],locLbl:'Lieu',locs:['🛏️ Chambre','🚿 Salle de bain','🚶 Couloir','🍽️ Salle à manger','🌿 Jardin'],timeLbl:'Heure',foundLbl:'Comment découvert?',founds:['👁️ Trouvé par terre','👀 Chute témoin','🗣️ Signalé par patient','👥 Signalé par collègue'],headLbl:'Impact crânien?',heads:['✅ Oui','❌ Non'],injuryLbl:'État après (plusieurs)',injuries:['✅ Conscient & orienté','🙌 Aucune blessure','😣 Douleur','🫧 Gonflement','🦴 Fracture suspectée','🩹 Blessure visible','🧠 Confus','❌ Perte de conscience'],painPh:'📍 Localisation douleur',paramsLbl:'Constantes (optionnel)',agrTypeLbl:'Type d\'agressivité',agrTypes:['🗣️ Verbale','👊 Physique → soignant','👊 Physique → résident','⚠️ Auto-agression','💥 Dégâts matériels'],agrCauseLbl:'Déclencheur',agrCauses:['❓ Inconnu','😣 Douleur','🧠 Confusion','😤 Frustration','😰 Peur','🛁 Pendant les soins'],agrInjLbl:'Blessure',agrInjs:['🙌 Aucune','🩹 Traitée','📞 Médecin notifié'],wandFoundLbl:'Où retrouvé?',wandFounds:['🏠 Dans le service','🚶 Hors service','🌿 Hors bâtiment'],wandCondLbl:'État au retour',wandConds:['✅ Calme & indemne','🧠 Confus','⚠️ Blessé'],medTypeLbl:'Type d\'erreur',medTypes:['💊 Mauvais médicament','🔢 Mauvaise dose','❌ Oublié','⏰ Mauvais moment'],medNameLbl:'Nom du médicament',actionsLbl:'Actions (plusieurs)',actions:['📞 Médecin notifié','👨‍👩‍👧 Famille notifiée','🤝 Rassuré','🩹 Soins','💊 Antalgique','👁️ Surveillance','🏥 Hôpital','🔒 Environnement sécurisé'],notesLbl:'Notes (optionnel)',notesPh:'Détails...'},
+    wound:{title:'🩹 Soins de plaie',desc:'Note de plaie & évolution',priv:'🔒 Pas de nom, date de naissance ou données identifiantes',roomLbl:'Chambre',roomPh:'ex. Chambre 2',typeLbl:'Type de plaie ⚠️',types:['🔸 Skin tear','🔴 Escarre','💧 Lésion humidité','🩹 Abrasion','🩺 Plaie','📍 Autre'],locLbl:'Localisation ⚠️',locs:['💪 Bras droit','💪 Bras gauche','✋ Main droite','✋ Main gauche','🦵 Jambe droite','🦵 Jambe gauche','👟 Talon','🔻 Sacrum','🔙 Dos','📍 Autre'],evolLbl:'Évolution',evols:['✅ Améliorée','😐 Stable','📉 Aggravée','🆕 Premier pansement'],aspLbl:'Aspect (plusieurs)',asps:['✅ Pas d\'infection','🔴 Rougeur','💧 Humide','🏜️ Sec','🟡 Exsudat','👃 Odeur','😣 Douleur','⚫ Nécrose'],careLbl:'Soins effectués (plusieurs)',cares:['🧴 Nettoyé','🔵 Désinfecté','🛡️ Couvert','🔄 Pansement changé','🩹 Pansement silicone','🩹 Compresse'],fupLbl:'Suivi',fups:['📅 Demain','📅 2 jours','📅 3 jours','📞 Médecin','👩‍⚕️ Spécialiste','👁️ Observer'],notesLbl:'Notes (optionnel)',notesPh:''},
+    behav:{title:'🧠 Note comportementale',desc:'Observation comportementale — factuelle, contextuelle',priv:'🔒 Pas de nom, date de naissance ou données identifiantes',roomLbl:'Chambre',roomPh:'ex. Chambre 1',typeLbl:'Type de comportement ⚠️',types:['😰 Agitation','😤 Agitation verbale','😠 Agressivité verbale','👊 Agressivité physique','📢 Cris','🚶 Errance','🚫 Refus de soins','😶 Apathie','🧠 Confusion','😌 Plus calme'],ctxLbl:'Contexte ⚠️',ctxs:['🛁 Pendant soins','🧴 ADL','🍽️ Repas','🦽 Transfert','🌙 Nuit','🌅 Au réveil','❓ Sans raison'],intLbl:'Intensité',ints:['🟢 Légère','🟡 Modérée','🔴 Sévère'],causeLbl:'Cause possible',causes:['😣 Douleur','😨 Peur','😴 Fatigue','🔊 Suractivation','🔄 Changement','❓ Inconnu'],reactLbl:'Réponse à l\'approche',reacts:['✅ Réassurance efficace','🎵 Distraction efficace','😌 Calmé spontanément','⚠️ Difficile à calmer','🔄 Comportement persistant'],actLbl:'Actions (plusieurs)',acts:['🤝 Rassuré','🎵 Distraction','🏠 Environnement calme','📞 Médecin','👨‍👩‍👧 Famille','✅ Désescalade','🙌 Aucune blessure','💊 Médicament (prescription)'],notesLbl:'Notes (optionnel)',notesPh:'Détail factuel...'},
+    meds:{title:'💊 Note médicamenteuse',desc:'Nouveau médicament, changements & décisions thérapeutiques',priv:'🔒 Pas de nom, date de naissance ou données identifiantes',roomLbl:'Chambre',roomPh:'ex. Chambre 7',reasonLbl:'Raison ⚠️',reasons:['😣 Douleur','🌡️ Fièvre','🦠 Infection','😟 Agitation','🌙 Sommeil','🩺 Tension','🩸 Glycémie','📞 Après contact médecin','🏥 Après hospitalisation'],changeLbl:'Type de changement ⚠️',changes:['▶️ Débuté','⛔ Arrêté','🔁 Dose modifiée','💉 Cure courte','🏥 Repris de l\'hôpital'],nameLbl:'Médicament ⚠️',namePh:'Nom (ex. Paracétamol)',dosePh:'Dose (ex. 500mg)',freqLbl:'Fréquence',freqs:['1x/jour','2x/jour','3x/jour','4x/jour','Si besoin'],durLbl:'Durée',durs:['1 fois','3 jours','5 jours','7 jours','Chronique'],fupLbl:'Suivi',fups:['📈 Surveiller l\'effet','😣 Douleur','🌡️ Température','🩸 Glycémie','✅ Aucun'],notesLbl:'Notes (optionnel)',notesPh:'Info brève...'},
     comm:{
       title:'⚡ Communication rapide', desc:'Note de communication courte et directe.',
-      priv:'🔒 Numéro de chambre uniquement',
+      priv:'🔒 Pas de nom, date de naissance ou données identifiantes',
       roomLbl:'Chambre / Patient', roomPh:'ex. Chambre 8',
       typeLbl:'Type de communication ⚠️',
       types:['🩺 Médecin contacté','🧪 Labo / conseil','🚑 Admission hôpital','🔙 Retour hôpital','📞 Approbation téléphonique','🕊️ Décès','📝 Autre'],
@@ -1337,12 +1387,13 @@ const BURNOUT_T = {
 };
 
 // ─── FEEDBACK & DEMO ───
-const FEEDBACK_EMAIL = ''; // <-- Vul hier je feedback-e-mailadres in voordat je live gaat
+// REQUIRED BEFORE PUBLIC LAUNCH: replace with real feedback email
+const FEEDBACK_EMAIL = 'YOUR_EMAIL_HERE';
 
 function sendFeedback() {
   const btn = document.getElementById('feedback-btn');
-  if (!FEEDBACK_EMAIL || !FEEDBACK_EMAIL.trim()) {
-    // Geen geldig adres ingesteld — geen foutieve mailto-link openen, gewoon vriendelijk melden
+  if (!FEEDBACK_EMAIL || !FEEDBACK_EMAIL.trim() || FEEDBACK_EMAIL === 'YOUR_EMAIL_HERE') {
+    // Placeholder nog niet vervangen — geen foutieve mailto-link openen, gewoon vriendelijk melden
     if (btn) {
       const orig = btn.textContent;
       btn.textContent = lang==='nl'?'Tijdelijk niet beschikbaar':lang==='fr'?'Temporairement indisponible':'Temporarily unavailable';
@@ -1350,14 +1401,14 @@ function sendFeedback() {
     }
     return;
   }
-  const subject = encodeURIComponent('Maya NurseMate feedback');
-  const bodyTxt = lang==='nl' ? 'Hoi Flora, mijn feedback over Maya: ' : lang==='fr' ? 'Bonjour, mon retour sur Maya: ' : 'Hi, my feedback about Maya: ';
+  const subject = encodeURIComponent('Maya NurseMate Beta Feedback');
+  const bodyTxt = lang==='nl' ? 'Hoi, ik test Maya NurseMate. Mijn feedback is: ' : lang==='fr' ? 'Bonjour, je teste Maya NurseMate. Mon retour est: ' : "Hi, I'm testing Maya NurseMate. My feedback is: ";
   window.location.href = 'mailto:' + FEEDBACK_EMAIL + '?subject=' + subject + '&body=' + encodeURIComponent(bodyTxt);
 }
 
-// Feature flags: Medicatie en Mijn Taken zijn nog niet definitief goedgekeurd —
-// code blijft bestaan, maar de modules worden voorlopig niet getoond op het dashboard.
-const FEATURE_FLAGS = { meds: false, tasks: false };
+// Feature flags: deze modules zijn nog niet klaar voor de publieke beta —
+// code blijft volledig bestaan, enkel het dashboard-icoon wordt verborgen.
+const FEATURE_FLAGS = { meds: false, tasks: false, support: false, learn: false };
 
 const DRAFTS_T = {
   en: {
@@ -1465,7 +1516,7 @@ function renderAll() {
   const popSub = document.getElementById('popup-sub');
   if (popSub) popSub.textContent = lang==='nl'?'Jouw persoonlijke schrijfhulp voor verpleegkundige verslagen. Gebruik geen namen of rechtstreeks identificerende gegevens.':lang==='fr'?"Votre assistant d'écriture personnel pour les rapports infirmiers. N'utilisez pas de noms ni d'autres données directement identifiantes.":'Your personal writing assistant for nursing reports. Do not use names or other directly identifying information.';
   const popRule = document.getElementById('popup-rule');
-  if (popRule) popRule.textContent = lang==='nl'?'Gebruik kamernummer — nooit echte naam. Controleer altijd voor gebruik.':lang==='fr'?'Utilisez le numéro de chambre — jamais le vrai nom. Vérifiez toujours avant utilisation.':'Use room number — never real name. Always verify before use.';
+  if (popRule) popRule.textContent = lang==='nl'?'Gebruik geen naam, geboortedatum of andere rechtstreeks identificerende gegevens. Gebruik alleen de minimale informatie die nodig is.':lang==='fr'?"N'utilisez pas de nom, date de naissance ou autre information directement identifiable. Utilisez uniquement les informations minimales nécessaires.":'Do not use names, dates of birth, or other directly identifying information. Use only the minimum information necessary.';
   document.getElementById('popup-btn').textContent = t.popupBtn;
 
   // Quick note modal
@@ -1488,16 +1539,16 @@ function renderAll() {
   const editHint = document.getElementById('res-edit-hint');
   if (editHint) editHint.textContent = lang==='nl'?'✏️ Tik in de tekst om iets aan te passen':lang==='fr'?'✏️ Touchez le texte pour le modifier':'✏️ Tap the text to edit it';
   const resAiNotice = document.querySelector('#res-ai-notice span');
-  if (resAiNotice) resAiNotice.textContent = lang==='nl'?'AI-gegenereerde tekst':lang==='fr'?'Texte généré par IA':'AI-generated text';
+  if (resAiNotice) resAiNotice.textContent = lang==='nl'?'AI-concept — controleer vóór gebruik':lang==='fr'?'Brouillon généré par IA — vérifiez avant utilisation':'AI-generated draft — review before use';
   const resVerifyLbl = document.getElementById('res-verify-lbl');
-  if (resVerifyLbl) resVerifyLbl.textContent = lang==='nl'?'Ik heb deze tekst gelezen en gecontroleerd — ze klopt.':lang==='fr'?"J'ai lu et vérifié ce texte — il est correct.":'I have read and verified this text — it is correct.';
+  if (resVerifyLbl) resVerifyLbl.textContent = lang==='nl'?'Ik heb dit AI-concept gecontroleerd en pas het aan waar nodig.':lang==='fr'?"J'ai vérifié ce brouillon généré par IA et je l'adapterai si nécessaire.":'I have reviewed this AI-generated draft and will edit it where needed.';
   const ccTitle = document.getElementById('res-cc-title');
   const ccSub = document.getElementById('res-cc-sub');
   const ccAddBtn = document.getElementById('res-cc-add-btn');
   const ccDoneBtn = document.getElementById('res-cc-done-btn');
   const ccAlreadyDismissed = ccSub && ccSub.style.display === 'none';
   if (ccTitle) ccTitle.textContent = ccAlreadyDismissed
-    ? (lang==='nl'?'Nagekeken':lang==='fr'?'Vérifié':'Reviewed')
+    ? (lang==='nl'?'Klaar':lang==='fr'?'Terminé':'Done')
     : (lang==='nl'?'Nog iets toevoegen?':lang==='fr'?'Autre chose à ajouter?':'Anything else to add?');
   if (ccSub) ccSub.textContent = lang==='nl'?'Wil je nog iets toevoegen over pijn, mobiliteit, voeding of vocht, gedrag of veiligheid — indien van toepassing?':lang==='fr'?'Souhaitez-vous ajouter quelque chose sur la douleur, la mobilité, l\'alimentation ou l\'hydratation, le comportement ou la sécurité — le cas échéant?':'Would you like to add anything about pain, mobility, nutrition or hydration, behaviour, or safety — if applicable?';
   if (ccAddBtn) ccAddBtn.textContent = lang==='nl'?'Aanvullen':lang==='fr'?'Compléter':'Add more';
@@ -1512,6 +1563,14 @@ function renderAll() {
 
   // Module grid
   renderGrid();
+  const footerBrand = document.getElementById('footer-brand');
+  if (footerBrand) footerBrand.textContent = 'Maya NurseMate · ' + (lang==='nl'?'Publieke bèta':lang==='fr'?'Bêta publique':'Public Beta');
+  const footerPriv = document.getElementById('footer-privacy-link');
+  if (footerPriv) footerPriv.textContent = lang==='nl'?'Privacy':lang==='fr'?'Confidentialité':'Privacy';
+  const footerTerms = document.getElementById('footer-terms-link');
+  if (footerTerms) footerTerms.textContent = lang==='nl'?'Voorwaarden':lang==='fr'?'Conditions':'Terms';
+  const footerFeedback = document.getElementById('footer-feedback-link');
+  if (footerFeedback) footerFeedback.textContent = lang==='nl'?'Feedback':lang==='fr'?'Retour':'Feedback';
 
   // Module pages
   renderShift();
@@ -1577,6 +1636,8 @@ function renderGrid() {
   T[lang].modules.forEach(m => {
     if (m.id === 'meds' && !FEATURE_FLAGS.meds) return;
     if (m.id === 'tasks' && !FEATURE_FLAGS.tasks) return;
+    if (m.id === 'support' && !FEATURE_FLAGS.support) return;
+    if (m.id === 'learn' && !FEATURE_FLAGS.learn) return;
     const targetGrid = m.group === 'other' ? gridOther : grid;
     const d = document.createElement('div');
     d.className = 'card' + (m.wide ? ' ' : '');
@@ -1591,6 +1652,11 @@ function renderGrid() {
   const otherLbl = document.getElementById('grp-other-lbl');
   if (structLbl) structLbl.textContent = lang==='nl'?'GESTRUCTUREERDE VERSLAGEN':lang==='fr'?'RAPPORTS STRUCTURÉS':'STRUCTURED REPORTS';
   if (otherLbl) otherLbl.textContent = lang==='nl'?'ANDERE HULPMIDDELEN':lang==='fr'?'AUTRES OUTILS':'OTHER TOOLS';
+
+  // Verberg de "andere hulpmiddelen"-kop volledig als die groep leeg is (bv. tijdens de beta)
+  const otherIsEmpty = gridOther.children.length === 0;
+  if (otherLbl) otherLbl.style.display = otherIsEmpty ? 'none' : '';
+  gridOther.style.display = otherIsEmpty ? 'none' : '';
 
   updateDraftsCardDesc();
 }
@@ -2484,6 +2550,10 @@ async function generate(mod) {
   btn.disabled = true;
   try {
     const prompt = buildPrompt(mod);
+    if (checkPrivacyPatterns(prompt)) {
+      const proceed = await showPrivacyGuard();
+      if (!proceed) { btn.disabled = false; loader.classList.remove('vis'); return; }
+    }
     const result = await callAPI(prompt, null, mod === 'shift' && patients.length > 0 ? 1000 : 600);
     if (!result || !result.trim()) throw new Error('empty-result');
     const draftId = showResult(mod, result);
@@ -2585,7 +2655,7 @@ function dismissConfidenceCheck() {
   const title = document.getElementById('res-cc-title');
   if (actions) actions.style.display = 'none';
   if (sub) sub.style.display = 'none';
-  if (title) title.textContent = lang==='nl'?'Nagekeken':lang==='fr'?'Vérifié':'Reviewed';
+  if (title) title.textContent = lang==='nl'?'Klaar':lang==='fr'?'Terminé':'Done';
 }
 
 function resetVerifyCheckbox(scope) {
@@ -2625,6 +2695,149 @@ function markDoneFromModal() {
 }
 
 // ─── OVER MAYA — DUIDELIJKE PRODUCTGRENZEN ───
+// ─── PRIVACY GUARD — eenvoudige, lokale patroonherkenning ───
+// Dit is GEEN volledige PII-detector. Enkel een rustige herinnering bij
+// duidelijke patronen (datum, telefoon, e-mail, lange cijferreeks). Alles
+// gebeurt lokaal in de browser — er wordt niets extra naar de server gestuurd.
+let privacyGuardResolver = null;
+
+function checkPrivacyPatterns(text) {
+  if (!text) return false;
+  const patterns = [
+    /\b\d{1,2}[\/\-.]\d{1,2}[\/\-.](\d{4}|\d{2})\b/, // datum-achtig (bv. geboortedatum)
+    /\b(\+?\d{2,4}[\s.-]?)?\d{2,3}[\s.-]\d{2,3}[\s.-]\d{2,3}([\s.-]\d{2,3})?\b/, // telefoonnummer-achtig
+    /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/, // e-mailadres
+    /\b\d{8,}\b/, // lange, aaneengesloten cijferreeks (mogelijk ID-nummer)
+  ];
+  return patterns.some(p => p.test(text));
+}
+
+function showPrivacyGuard() {
+  const dt = { }; // teksten worden hieronder rechtstreeks per taal gezet
+  document.getElementById('pg-title').textContent = lang==='nl'?'Even controleren':lang==='fr'?'Vérification rapide':'Quick check';
+  document.getElementById('pg-text').textContent = lang==='nl'
+    ? 'Mogelijk identificerende informatie gevonden. Controleer je invoer en verwijder persoonsgegevens voordat je verdergaat.'
+    : lang==='fr'
+    ? 'Des informations potentiellement identifiantes ont été détectées. Vérifiez votre saisie et supprimez les données personnelles avant de continuer.'
+    : 'Potentially identifying information detected. Review your input and remove personal data before continuing.';
+  document.getElementById('pg-back-btn').textContent = lang==='nl'?'Terug en controleren':lang==='fr'?'Retour et vérifier':'Go back and check';
+  document.getElementById('pg-proceed-btn').textContent = lang==='nl'?'Ik heb gecontroleerd':lang==='fr'?"J'ai vérifié":'I have checked';
+  document.getElementById('privacy-guard-modal').style.display = 'flex';
+  return new Promise(resolve => { privacyGuardResolver = resolve; });
+}
+
+function privacyGuardGoBack() {
+  document.getElementById('privacy-guard-modal').style.display = 'none';
+  if (privacyGuardResolver) { privacyGuardResolver(false); privacyGuardResolver = null; }
+}
+
+function privacyGuardProceed() {
+  document.getElementById('privacy-guard-modal').style.display = 'none';
+  if (privacyGuardResolver) { privacyGuardResolver(true); privacyGuardResolver = null; }
+}
+
+// ─── PRIVACY PAGE ───
+function openPrivacyPage() {
+  const isNl = lang === 'nl';
+  const isFr = lang === 'fr';
+  document.getElementById('privacy-page-title').textContent = isNl?'Privacy':isFr?'Confidentialité':'Privacy';
+  document.getElementById('privacy-page-close').textContent = isNl?'Sluiten':isFr?'Fermer':'Close';
+
+  const items = isNl ? [
+    'Maya is een AI-schrijfassistent voor verpleegkundigen.',
+    'Gebruik geen namen, geboortedata of andere rechtstreeks identificerende persoonsgegevens.',
+    'Voer alleen de minimale informatie in die nodig is om een verslag te schrijven.',
+    'Tekst die je invoert kan naar de geconfigureerde AI-backend worden gestuurd om een conceptverslag te genereren.',
+    'Klad-verslagen kunnen tijdelijk lokaal op je toestel worden opgeslagen.',
+    'Je kan lokale klad-verslagen op elk moment zelf verwijderen.',
+    'Maya is geen officieel patiëntendossier.',
+    'Het definitieve verslag hoort altijd in het officiële EPD / patiëntendossier.',
+    'Maya verkoopt geen patiëntgegevens.',
+    'Contact: [VUL BEDRIJFSNAAM EN CONTACTGEGEVENS IN VOOR PUBLIEKE LANCERING]',
+  ] : isFr ? [
+    'Maya est une assistante IA d\'écriture pour infirmiers.',
+    'N\'utilisez pas de noms, dates de naissance ou autres données personnelles directement identifiantes.',
+    'Saisissez uniquement les informations minimales nécessaires pour rédiger un rapport.',
+    'Le texte que vous saisissez peut être envoyé au service IA configuré pour générer un brouillon.',
+    'Les brouillons peuvent être stockés temporairement en local sur votre appareil.',
+    'Vous pouvez supprimer vos brouillons locaux à tout moment.',
+    'Maya n\'est pas un dossier patient officiel.',
+    'Le rapport final doit toujours être saisi dans le dossier patient / DPI officiel.',
+    'Maya ne vend pas de données patients.',
+    'Contact: [À COMPLÉTER AVANT LE LANCEMENT PUBLIC — NOM DE L\'ENTREPRISE ET COORDONNÉES]',
+  ] : [
+    'Maya is an AI writing assistant for nurses.',
+    'Do not use names, dates of birth, or other directly identifying personal information.',
+    'Enter only the minimum information necessary to write a report.',
+    'Text you enter may be sent to the configured AI backend to generate a draft.',
+    'Draft reports may be stored temporarily, locally on your device.',
+    'You can delete your local drafts at any time.',
+    'Maya is not an official patient record.',
+    'The final report must always be entered into the official EPR / patient record.',
+    'Maya does not sell patient data.',
+    'Contact: [FILL IN COMPANY NAME AND CONTACT DETAILS BEFORE PUBLIC LAUNCH]',
+  ];
+
+  const list = document.getElementById('privacy-page-list');
+  list.innerHTML = '';
+  items.forEach(txt => {
+    const li = document.createElement('li');
+    li.textContent = txt; // veilig: enkel ontwikkelaars-tekst, geen gebruikersinvoer
+    list.appendChild(li);
+  });
+  document.getElementById('privacy-page-modal').style.display = 'flex';
+}
+
+// ─── TERMS / DISCLAIMER PAGE ───
+function openTermsPage() {
+  const isNl = lang === 'nl';
+  const isFr = lang === 'fr';
+  document.getElementById('terms-page-title').textContent = isNl?'Belangrijke informatie':isFr?'Informations importantes':'Important information';
+  document.getElementById('terms-page-close').textContent = isNl?'Sluiten':isFr?'Fermer':'Close';
+  document.getElementById('terms-page-intro').textContent = isNl?'Maya:':isFr?'Maya:':'Maya:';
+
+  const items = isNl ? [
+    'helpt verpleegkundige observaties omzetten in een professioneel conceptverslag;',
+    'kan fouten maken;',
+    'mag geen vervanging zijn voor professioneel klinisch oordeel;',
+    'geeft geen diagnose;',
+    'geeft geen behandeladvies;',
+    'is geen medicatievoorschrijfsysteem;',
+    'is geen elektronisch patiëntendossier (EPD);',
+    'vereist altijd menselijke controle vóór gebruik;',
+    'laat de gebruiker verantwoordelijk voor de definitieve verslaggeving.',
+  ] : isFr ? [
+    'aide à transformer des observations infirmières en brouillon de rapport professionnel;',
+    'peut faire des erreurs;',
+    'ne remplace pas un jugement clinique professionnel;',
+    'ne pose pas de diagnostic;',
+    'ne donne pas de conseil de traitement;',
+    'n\'est pas un système de prescription médicamenteuse;',
+    'n\'est pas un dossier patient électronique (DPI);',
+    'nécessite toujours une vérification humaine avant utilisation;',
+    'laisse l\'utilisateur responsable du rapport final.',
+  ] : [
+    'helps turn nursing observations into a professional draft report;',
+    'can make mistakes;',
+    'must not replace professional clinical judgment;',
+    'does not provide a diagnosis;',
+    'does not give treatment advice;',
+    'is not a medication prescribing system;',
+    'is not an Electronic Patient Record (EPR);',
+    'always requires human review before use;',
+    'leaves the user responsible for the final report.',
+  ];
+
+  const list = document.getElementById('terms-page-list');
+  list.innerHTML = '';
+  items.forEach(txt => {
+    const li = document.createElement('li');
+    li.textContent = txt;
+    list.appendChild(li);
+  });
+  document.getElementById('terms-page-modal').style.display = 'flex';
+}
+
 function openAboutMaya() {
   const isNl = lang === 'nl';
   const isFr = lang === 'fr';
@@ -2771,6 +2984,11 @@ async function submitQn() {
     return;
   }
   if (qnSubmitting) return; // voorkom dubbele indiening bij dubbeltikken
+
+  if (checkPrivacyPatterns(text)) {
+    const proceed = await showPrivacyGuard();
+    if (!proceed) return; // Terug en controleren — niets verzonden, invoer blijft gewoon staan
+  }
 
   qnSubmitting = true;
   const btn = document.getElementById('qn-submit');
@@ -3613,9 +3831,9 @@ function renderDraftsPage() {
   el('draft-edit-cancel').textContent = dt.editCancel;
   el('draft-edit-save').textContent = dt.editSave;
   const draftAiNotice = document.querySelector('#draft-ai-notice span');
-  if (draftAiNotice) draftAiNotice.textContent = lang==='nl'?'AI-gegenereerde tekst':lang==='fr'?'Texte généré par IA':'AI-generated text';
+  if (draftAiNotice) draftAiNotice.textContent = lang==='nl'?'AI-concept — controleer vóór gebruik':lang==='fr'?'Brouillon généré par IA — vérifiez avant utilisation':'AI-generated draft — review before use';
   const draftVerifyLbl = document.getElementById('draft-verify-lbl');
-  if (draftVerifyLbl) draftVerifyLbl.textContent = lang==='nl'?'Ik heb deze tekst gelezen en gecontroleerd — ze klopt.':lang==='fr'?"J'ai lu et vérifié ce texte — il est correct.":'I have read and verified this text — it is correct.';
+  if (draftVerifyLbl) draftVerifyLbl.textContent = lang==='nl'?'Ik heb dit AI-concept gecontroleerd en pas het aan waar nodig.':lang==='fr'?"J'ai vérifié ce brouillon généré par IA et je l'adapterai si nécessaire.":'I have reviewed this AI-generated draft and will edit it where needed.';
   refreshVerifyGate('draft');
   const openCopyBtn = el('draft-edit-copy');
   if (openCopyBtn) openCopyBtn.textContent = dt.copyBtn;
@@ -3939,6 +4157,50 @@ function shareMaya() {
     showShareError();
   }
 }
+
+// ─── ACCESSIBILITY: Escape sluit modal, focus blijft binnen de open modal ───
+function getOpenOverlay() {
+  const overlays = document.querySelectorAll('.overlay');
+  let open = null;
+  overlays.forEach(o => { if (o.style.display === 'flex') open = o; });
+  return open;
+}
+
+document.addEventListener('keydown', (e) => {
+  const openOverlay = getOpenOverlay();
+  if (!openOverlay) return;
+
+  if (e.key === 'Escape') {
+    openOverlay.style.display = 'none';
+    return;
+  }
+
+  if (e.key === 'Tab') {
+    const focusable = openOverlay.querySelectorAll('button:not([disabled]), [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+    if (focusable.length === 0) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  }
+});
+
+// Zet focus automatisch op het eerste bruikbare element zodra een modal verschijnt
+new MutationObserver((mutations) => {
+  mutations.forEach((m) => {
+    if (m.attributeName !== 'style') return;
+    const el = m.target;
+    if (el.classList && el.classList.contains('overlay') && el.style.display === 'flex') {
+      const focusable = el.querySelector('button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])');
+      if (focusable) setTimeout(() => focusable.focus(), 50);
+    }
+  });
+}).observe(document.body, { attributes: true, attributeFilter: ['style'], subtree: true });
 
 // ─── PWA ───
 if ('serviceWorker' in navigator) {
