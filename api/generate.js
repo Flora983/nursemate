@@ -2,12 +2,7 @@
 // Beveiligde versie: alleen eigen website, limiet per gebruiker, begrensde lengte,
 // en alleen voor gebruikers met een geldig abonnement (Stripe).
 
-import { verifyToken, checkSubscription } from "../lib/subscription.js";
-
-const ALLOWED_ORIGINS = [
-  "https://mayanurse.com",
-  "https://www.mayanurse.com",
-];
+import { ALLOWED_ORIGINS, verifyToken, checkSubscription } from "../lib/subscription.js";
 
 const MAX_REQUESTS_PER_HOUR = 30;   // per gebruiker (IP-adres)
 const MAX_TOKENS_CAP = 1500;        // maximale lengte van het antwoord

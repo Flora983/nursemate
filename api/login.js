@@ -6,13 +6,8 @@
 
 import crypto from "node:crypto";
 import {
-  normalizeEmail, isValidEmail, signToken, verifyToken, codeHash, safeEqual, checkSubscription,
+  ALLOWED_ORIGINS, normalizeEmail, isValidEmail, signToken, verifyToken, codeHash, safeEqual, checkSubscription,
 } from "../lib/subscription.js";
-
-const ALLOWED_ORIGINS = [
-  "https://mayanurse.com",
-  "https://www.mayanurse.com",
-];
 
 const CODE_VALID_MS = 10 * 60 * 1000;            // code is 10 minuten geldig
 const ACCESS_VALID_MS = 30 * 24 * 60 * 60 * 1000; // toegangspas is 30 dagen geldig

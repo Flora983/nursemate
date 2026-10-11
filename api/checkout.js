@@ -3,12 +3,7 @@
 // Managed Payments (Stripe als merchant of record) + 7 dagen gratis proefperiode.
 // De prijs komt uit de Vercel-omgevingsvariabele STRIPE_PRICE_ID.
 
-import { normalizeEmail, isValidEmail, stripePost } from "../lib/subscription.js";
-
-const ALLOWED_ORIGINS = [
-  "https://mayanurse.com",
-  "https://www.mayanurse.com",
-];
+import { ALLOWED_ORIGINS, normalizeEmail, isValidEmail, stripePost } from "../lib/subscription.js";
 
 const TRIAL_DAYS = 7;
 const MAX_CHECKOUTS_PER_HOUR = 10; // per gebruiker (IP-adres)
