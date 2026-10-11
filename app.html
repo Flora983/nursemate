@@ -297,6 +297,7 @@ select.f option{background:#1e2937;}
       <span onclick="openPrivacyPage()" style="color:var(--text2);opacity:0.75;cursor:pointer;text-decoration:underline dotted;" id="footer-privacy-link"></span>
       <span onclick="openTermsPage()" style="color:var(--text2);opacity:0.75;cursor:pointer;text-decoration:underline dotted;" id="footer-terms-link"></span>
       <span onclick="sendFeedback()" style="color:var(--text2);opacity:0.75;cursor:pointer;text-decoration:underline dotted;" id="footer-feedback-link"></span>
+      <span onclick="openLicenseModal()" style="color:var(--text2);opacity:0.75;cursor:pointer;text-decoration:underline dotted;" id="footer-license-link"></span>
     </div>
   </div>
 </div>
@@ -746,6 +747,24 @@ select.f option{background:#1e2937;}
   </div>
 </div>
 
+<!-- ABONNEMENT / LICENTIECODE -->
+<div class="overlay" id="license-modal" style="display:none;">
+  <div class="popup" style="text-align:left;max-width:400px;">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+      <span style="font-size:1.2rem;">🔑</span>
+      <div class="res-lbl" id="lic-title" style="margin-bottom:0;"></div>
+    </div>
+    <div id="lic-alert" style="display:none;background:rgba(252,211,77,0.1);border:1px solid rgba(252,211,77,0.25);border-radius:10px;padding:11px 14px;font-size:0.84rem;color:var(--amber);margin-bottom:12px;line-height:1.6;"></div>
+    <div style="font-size:0.86rem;color:var(--text);line-height:1.6;margin-bottom:14px;" id="lic-text"></div>
+    <span class="lbl" id="lic-input-lbl"></span>
+    <input type="text" class="f" id="lic-input" autocomplete="off" autocapitalize="off" spellcheck="false" style="margin-bottom:6px;" oninput="document.getElementById('lic-saved').style.display='none'">
+    <div id="lic-saved" style="display:none;font-size:0.78rem;color:var(--green);font-weight:700;margin-bottom:6px;"></div>
+    <button class="res-btn pri" onclick="saveLicenseKey()" id="lic-save-btn" style="width:100%;margin-top:6px;"></button>
+    <button class="res-btn" onclick="openCheckout()" id="lic-subscribe-btn" style="width:100%;margin-top:10px;"></button>
+    <button class="res-btn" onclick="closeLicenseModal()" id="lic-close-btn" style="width:100%;margin-top:10px;"></button>
+  </div>
+</div>
+
 <!-- PRIVACY PAGE -->
 <div class="overlay" id="privacy-page-modal" style="display:none;">
   <div class="popup" style="text-align:left;max-width:460px;max-height:80vh;overflow-y:auto;">
@@ -849,6 +868,11 @@ select.f option{background:#1e2937;}
 </div>
 
 <script>
+// ─── ABONNEMENT ───
+// Plak hier de link naar je Lemon Squeezy-betaalpagina (tussen de aanhalingstekens).
+// Zolang hij leeg is, wordt de knop "Abonneer" niet getoond.
+const LEMON_CHECKOUT_URL = '';
+
 // ─── TRANSLATIONS ───
 const T = {
   en: {
@@ -1448,6 +1472,97 @@ const DRAFTS_T = {
   },
 };
 
+// ─── ABONNEMENT: TEKSTEN + LICENTIECODE ───
+const LICENSE_T = {
+  en: {
+    footer:'Subscription', title:'Your subscription',
+    text:'Maya NurseMate works with a subscription. Start with a 7-day free trial. After subscribing you receive a license key by email — enter it below.',
+    inputLbl:'License key', save:'Save key', saved:'✓ Saved. You can try again now.', empty:'Please enter your license key first.',
+    subscribe:'Subscribe — 7 days free', close:'Close',
+    missing:'You have not entered a license key yet. Enter the key from your email, or subscribe to start your free trial.',
+    invalid:'This license key was not recognised. Check that you copied the full key from your email, or subscribe below.',
+    expired:'Your subscription has ended. Renew your subscription to keep using Maya. Your drafts on this device are not lost.',
+  },
+  nl: {
+    footer:'Abonnement', title:'Je abonnement',
+    text:'Maya NurseMate werkt met een abonnement. Je begint met 7 dagen gratis proberen. Na het afsluiten krijg je een licentiecode per e-mail — vul die hieronder in.',
+    inputLbl:'Licentiecode', save:'Code opslaan', saved:'✓ Opgeslagen. Je kunt het nu opnieuw proberen.', empty:'Vul eerst je licentiecode in.',
+    subscribe:'Abonneer — 7 dagen gratis', close:'Sluiten',
+    missing:'Je hebt nog geen licentiecode ingevuld. Vul de code uit je e-mail in, of neem een abonnement om gratis te beginnen.',
+    invalid:'Deze licentiecode werd niet herkend. Kijk of je de volledige code uit je e-mail hebt gekopieerd, of neem hieronder een abonnement.',
+    expired:'Je abonnement is afgelopen. Verleng je abonnement om Maya verder te gebruiken. Je klad-verslagen op dit toestel zijn niet verloren.',
+  },
+  fr: {
+    footer:'Abonnement', title:'Votre abonnement',
+    text:"Maya NurseMate fonctionne avec un abonnement. Commencez par 7 jours d'essai gratuit. Après l'abonnement, vous recevez un code de licence par e-mail — saisissez-le ci-dessous.",
+    inputLbl:'Code de licence', save:'Enregistrer le code', saved:'✓ Enregistré. Vous pouvez réessayer.', empty:"Saisissez d'abord votre code de licence.",
+    subscribe:"S'abonner — 7 jours gratuits", close:'Fermer',
+    missing:"Vous n'avez pas encore saisi de code de licence. Saisissez le code reçu par e-mail, ou abonnez-vous pour commencer gratuitement.",
+    invalid:"Ce code de licence n'a pas été reconnu. Vérifiez que vous avez copié le code complet de votre e-mail, ou abonnez-vous ci-dessous.",
+    expired:'Votre abonnement est terminé. Renouvelez-le pour continuer à utiliser Maya. Vos brouillons sur cet appareil ne sont pas perdus.',
+  },
+};
+const LICENSE_STORAGE_KEY = 'maya-license';
+let licenseReason = null; // 'missing' | 'invalid' | 'expired' | null
+
+function getLicenseKey() {
+  try { return (localStorage.getItem(LICENSE_STORAGE_KEY) || '').trim(); } catch(e) { return ''; }
+}
+
+function renderLicenseModal() {
+  const t = LICENSE_T[lang];
+  const set = (id, txt) => { const el = document.getElementById(id); if (el) el.textContent = txt; };
+  set('lic-title', t.title);
+  set('lic-text', t.text);
+  set('lic-input-lbl', t.inputLbl);
+  set('lic-save-btn', t.save);
+  set('lic-subscribe-btn', t.subscribe);
+  set('lic-close-btn', t.close);
+  const alertEl = document.getElementById('lic-alert');
+  if (alertEl) {
+    alertEl.textContent = licenseReason ? t[licenseReason] : '';
+    alertEl.style.display = licenseReason ? 'block' : 'none';
+  }
+  const subBtn = document.getElementById('lic-subscribe-btn');
+  if (subBtn) subBtn.style.display = LEMON_CHECKOUT_URL ? 'block' : 'none';
+}
+
+function openLicenseModal(reason) {
+  licenseReason = reason || null;
+  renderLicenseModal();
+  const input = document.getElementById('lic-input');
+  if (input) input.value = getLicenseKey();
+  document.getElementById('lic-saved').style.display = 'none';
+  document.getElementById('license-modal').style.display = 'flex';
+}
+
+function closeLicenseModal() {
+  document.getElementById('license-modal').style.display = 'none';
+}
+
+function saveLicenseKey() {
+  const input = document.getElementById('lic-input');
+  const savedEl = document.getElementById('lic-saved');
+  const key = (input.value || '').trim();
+  if (!key) {
+    savedEl.textContent = LICENSE_T[lang].empty;
+    savedEl.style.color = 'var(--red)';
+    savedEl.style.display = 'block';
+    return;
+  }
+  try { localStorage.setItem(LICENSE_STORAGE_KEY, key); } catch(e) {}
+  licenseReason = null;
+  renderLicenseModal();
+  savedEl.textContent = LICENSE_T[lang].saved;
+  savedEl.style.color = 'var(--green)';
+  savedEl.style.display = 'block';
+}
+
+function openCheckout() {
+  if (!LEMON_CHECKOUT_URL) return;
+  window.open(LEMON_CHECKOUT_URL, '_blank', 'noopener');
+}
+
 // ─── STATE ───
 let lang = 'en';
 let currentPage = 'home';
@@ -1573,6 +1688,9 @@ function renderAll() {
   if (footerTerms) footerTerms.textContent = lang==='nl'?'Voorwaarden':lang==='fr'?'Conditions':'Terms';
   const footerFeedback = document.getElementById('footer-feedback-link');
   if (footerFeedback) footerFeedback.textContent = lang==='nl'?'Feedback':lang==='fr'?'Retour':'Feedback';
+  const footerLicense = document.getElementById('footer-license-link');
+  if (footerLicense) footerLicense.textContent = LICENSE_T[lang].footer;
+  renderLicenseModal();
 
   // Module pages
   renderShift();
@@ -2207,7 +2325,10 @@ Write the full handover, one paragraph per patient.`;
 
 // ─── API ───
 async function callAPI(prompt, system, maxTokens) {
-  const body = { messages:[{role:'user',content:prompt}], max_tokens: maxTokens||600 };
+  // Zonder licentiecode niet eens naar de server gaan: meteen uitleg tonen
+  const licenseKey = getLicenseKey();
+  if (!licenseKey) { openLicenseModal('missing'); throw new Error('license'); }
+  const body = { messages:[{role:'user',content:prompt}], max_tokens: maxTokens||600, license_key: licenseKey };
   if (system) body.system = system;
   const res = await fetch('/api/generate', {
     method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)
@@ -2218,6 +2339,12 @@ async function callAPI(prompt, system, maxTokens) {
   } catch(e) {
     // Server gaf geen geldige JSON terug (bv. netwerk- of serverfout) — veilig opvangen
     throw new Error('invalid-response');
+  }
+  // Code ontbreekt, klopt niet of is verlopen → vriendelijke uitleg met knop "Abonneer".
+  // ('check_failed' = storing bij Lemon Squeezy → gewone "probeer opnieuw"-melding)
+  if (data && ['missing','invalid','expired'].includes(data.license)) {
+    openLicenseModal(data.license);
+    throw new Error('license');
   }
   if (!res.ok) throw new Error((data && data.error) ? JSON.stringify(data.error) : 'API error');
   const text = data && data.content && data.content[0] && data.content[0].text;
@@ -2568,7 +2695,9 @@ async function generate(mod) {
       renderPatientList();
     }
   } catch(e) {
-    if (e.message === 'save-failed') {
+    if (e.message === 'license') {
+      // Uitleg staat al in het abonnementsvenster; invoer blijft bewaard
+    } else if (e.message === 'save-failed') {
       err.textContent = lang==='nl'
         ? 'Het verslag werd gemaakt, maar kon niet veilig worden opgeslagen. Je invoer is niet verloren. Probeer opnieuw.'
         : lang==='fr'
@@ -2581,7 +2710,7 @@ async function generate(mod) {
         ? "Le rapport n'a pas pu être créé. Vos données ne sont pas perdues. Vérifiez votre connexion et réessayez."
         : 'The report could not be created. Your input is not lost. Check your connection and try again.';
     }
-    err.classList.add('vis');
+    if (e.message !== 'license') err.classList.add('vis');
   } finally {
     loader.classList.remove('vis');
     refreshBtns();
@@ -3069,7 +3198,7 @@ Nurse's input: ${text}`;
     resetConfidenceCheck();
   } catch(e) {
     // Origineel behouden — niets wissen, duidelijke fout met retry-mogelijkheid
-    if (validation) {
+    if (validation && e.message !== 'license') {
       validation.textContent = lang==='nl'?'Er ging iets mis. Probeer opnieuw.':lang==='fr'?"Une erreur s'est produite. Réessayez.":'Something went wrong. Please retry.';
       validation.style.display = 'block';
     }
@@ -3112,12 +3241,19 @@ async function sendSupport() {
     : lang==='fr'
     ? `Vous êtes Maya, une collègue IA bienveillante pour les infirmiers. Écoutez d'abord. Validez les émotions. Une question douce à la fois. Max 4 phrases. En cas de crise: orientez vers un professionnel. Répondez en français.`
     : `You are Maya, a warm AI companion for nurses. Listen first. Validate feelings. Ask one gentle question at a time. Max 4 sentences. If crisis: gently suggest professional support. Respond in English.`;
+  const licenseKey = getLicenseKey();
+  if (!licenseKey) { supportHistory.pop(); openLicenseModal('missing'); return; }
   try {
     const res = await fetch('/api/generate', {
       method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({messages:supportHistory, system, max_tokens:400})
+      body: JSON.stringify({messages:supportHistory, system, max_tokens:400, license_key: licenseKey})
     });
     const data = await res.json();
+    if (data && ['missing','invalid','expired'].includes(data.license)) {
+      supportHistory.pop();
+      openLicenseModal(data.license);
+      return;
+    }
     const reply = data.content?.[0]?.text || '...';
     supportHistory.push({role:'assistant', content:reply});
     addChatMsg('maya', reply);
@@ -4070,7 +4206,7 @@ async function generateQuietShift() {
   } catch(e) {
     // Geen vaste zin, geen resultaatmodal, geen klad, geen teller — ook bij een "rustige shift"
     // mag een API-fout nooit een zorgverslag produceren. Zelfde foutmelding als andere modules.
-    if (err) {
+    if (err && e.message !== 'license') {
       err.textContent = lang==='nl'
         ? 'Het verslag kon niet worden gemaakt. Je invoer is niet verloren. Controleer je verbinding en probeer opnieuw.'
         : lang==='fr'
