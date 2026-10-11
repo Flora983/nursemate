@@ -885,11 +885,6 @@ select.f option{background:#1e2937;}
 </div>
 
 <script>
-// ─── ABONNEMENT ───
-// Plak hier de link naar je Stripe-betaalpagina (Payment Link, tussen de aanhalingstekens).
-// Zolang hij leeg is, wordt de knop "Abonneer" niet getoond.
-const STRIPE_CHECKOUT_URL = '';
-
 // ─── TRANSLATIONS ───
 const T = {
   en: {
@@ -1497,6 +1492,8 @@ const LICENSE_T = {
     emailLbl:'Email address', sendCode:'Send code', codeLbl:'Code from your email', verify:'Log in', otherEmail:'Use another email address',
     sent:'If this email address has an active subscription or free trial, you will receive a 6-digit code within a minute. No email? Check your spam folder, and make sure you use the same address as when you subscribed.',
     loggedIn:'Logged in as', logout:'Log out', loginOk:'✓ You are logged in. You can try again now.',
+    welcome:'✓ Thank you! Your subscription is active. You can use Maya right away.',
+    welcomeLogin:'✓ Thank you! Your 7-day free trial has started. Log in now with the same email address you just used.',
     subscribe:'Subscribe — 7 days free', close:'Close',
     badEmail:'Please enter a valid email address.',
     wrongCode:'This code is incorrect or has expired. Try again or request a new code.',
@@ -1511,6 +1508,8 @@ const LICENSE_T = {
     emailLbl:'E-mailadres', sendCode:'Stuur code', codeLbl:'Code uit je e-mail', verify:'Inloggen', otherEmail:'Ander e-mailadres gebruiken',
     sent:'Als dit e-mailadres een actief abonnement of proefperiode heeft, krijg je binnen een minuut een code van 6 cijfers. Geen e-mail? Kijk in je spam, en controleer of je hetzelfde adres gebruikt als bij het afsluiten.',
     loggedIn:'Ingelogd als', logout:'Uitloggen', loginOk:'✓ Je bent ingelogd. Je kunt het nu opnieuw proberen.',
+    welcome:'✓ Bedankt! Je abonnement is actief. Je kunt Maya meteen gebruiken.',
+    welcomeLogin:'✓ Bedankt! Je 7 dagen gratis proberen zijn gestart. Log nu in met hetzelfde e-mailadres dat je net gebruikte.',
     subscribe:'Abonneer — 7 dagen gratis', close:'Sluiten',
     badEmail:'Vul een geldig e-mailadres in.',
     wrongCode:'Deze code klopt niet of is verlopen. Probeer opnieuw of vraag een nieuwe code.',
@@ -1525,6 +1524,8 @@ const LICENSE_T = {
     emailLbl:'Adresse e-mail', sendCode:'Envoyer le code', codeLbl:'Code reçu par e-mail', verify:'Se connecter', otherEmail:'Utiliser une autre adresse e-mail',
     sent:"Si cette adresse e-mail a un abonnement actif ou un essai gratuit, vous recevrez un code à 6 chiffres dans la minute. Pas d'e-mail ? Vérifiez vos spams et utilisez la même adresse que lors de l'abonnement.",
     loggedIn:'Connecté(e) en tant que', logout:'Se déconnecter', loginOk:'✓ Vous êtes connecté(e). Vous pouvez réessayer.',
+    welcome:'✓ Merci ! Votre abonnement est actif. Vous pouvez utiliser Maya tout de suite.',
+    welcomeLogin:"✓ Merci ! Vos 7 jours d'essai gratuit ont commencé. Connectez-vous maintenant avec la même adresse e-mail.",
     subscribe:"S'abonner — 7 jours gratuits", close:'Fermer',
     badEmail:'Saisissez une adresse e-mail valide.',
     wrongCode:"Ce code est incorrect ou a expiré. Réessayez ou demandez un nouveau code.",
@@ -1595,8 +1596,6 @@ function renderLicenseModal() {
     alertEl.textContent = licenseReason ? t[licenseReason] : '';
     alertEl.style.display = licenseReason ? 'block' : 'none';
   }
-  const subBtn = document.getElementById('lic-subscribe-btn');
-  if (subBtn) subBtn.style.display = STRIPE_CHECKOUT_URL ? 'block' : 'none';
 }
 
 function openLicenseModal(reason) {
@@ -1687,9 +1686,47 @@ function logoutMaya() {
   showLoginStep('email');
 }
 
-function openCheckout() {
-  if (!STRIPE_CHECKOUT_URL) return;
-  window.open(STRIPE_CHECKOUT_URL, '_blank', 'noopener');
+// Naar de Stripe-betaalpagina (7 dagen gratis). De server maakt de pagina aan
+// met de prijs uit Vercel; een ingevuld e-mailadres wordt alvast meegegeven.
+async function openCheckout() {
+  const btn = document.getElementById('lic-subscribe-btn');
+  const loader = document.getElementById('lic-loader');
+  const typed = document.getElementById('lic-email').value.trim();
+  const auth = getAuth();
+  const email = typed || (auth ? auth.email : '');
+  btn.disabled = true; loader.classList.add('vis'); hideLicenseMsg();
+  try {
+    const res = await fetch('/api/checkout', {
+      method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email, lang })
+    });
+    const data = await res.json();
+    if (!data || !data.ok || !data.url) throw new Error(data && data.reason || 'checkout');
+    try { if (email) localStorage.setItem('maya-checkout-email', email); } catch(e) {}
+    window.location.href = data.url;
+  } catch(e) {
+    showLicenseMsg(e.message === 'too_many' ? LICENSE_T[lang].tooMany : LICENSE_T[lang].error);
+    btn.disabled = false; loader.classList.remove('vis');
+  }
+}
+
+// Terug van Stripe na het afsluiten: bedanken en meteen naar het inloggen
+function handleCheckoutReturn() {
+  let params;
+  try { params = new URLSearchParams(window.location.search); } catch(e) { return; }
+  if (params.get('abonnement') !== 'ok') return;
+  try { history.replaceState(null, '', window.location.pathname); } catch(e) {}
+  let email = '';
+  try { email = localStorage.getItem('maya-checkout-email') || ''; localStorage.removeItem('maya-checkout-email'); } catch(e) {}
+  const auth = getAuth();
+  if (auth && (!email || auth.email === email.toLowerCase())) {
+    openLicenseModal();
+    showLicenseMsg(LICENSE_T[lang].welcome, true);
+    return;
+  }
+  openLicenseModal();
+  showLoginStep('email');
+  if (email) document.getElementById('lic-email').value = email;
+  showLicenseMsg(LICENSE_T[lang].welcomeLogin, true);
 }
 
 // ─── STATE ───
@@ -1731,6 +1768,7 @@ const multiSel = {};
   loadSavedPatients();
   refreshBtns();
   initSupportGreeting();
+  handleCheckoutReturn();
 })();
 
 function cycleLang() {
