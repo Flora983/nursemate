@@ -3,7 +3,7 @@
 // Managed Payments (Stripe als merchant of record) + 7 dagen gratis proefperiode.
 // De prijs komt uit de Vercel-omgevingsvariabele STRIPE_PRICE_ID.
 
-import { ALLOWED_ORIGINS, normalizeEmail, isValidEmail, stripePost } from "../lib/subscription.js";
+import { isAllowedOrigin, normalizeEmail, isValidEmail, stripePost } from "../lib/subscription.js";
 
 const TRIAL_DAYS = 7;
 const MAX_CHECKOUTS_PER_HOUR = 10; // per gebruiker (IP-adres)
@@ -29,7 +29,7 @@ export default async function handler(req, res) {
 
   // 1. Alleen verzoeken vanaf mayanurse.com
   const origin = req.headers.origin || "";
-  if (!ALLOWED_ORIGINS.includes(origin)) {
+  if (!isAllowedOrigin(req)) {
     return res.status(403).json({ ok: false, reason: "forbidden" });
   }
 

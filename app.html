@@ -1498,7 +1498,9 @@ const LICENSE_T = {
     badEmail:'Please enter a valid email address.',
     wrongCode:'This code is incorrect or has expired. Try again or request a new code.',
     tooMany:'Too many attempts. Please wait a while and try again.',
-    error:'Something went wrong. Please try again shortly.',
+    error:'Something went wrong. Please try again shortly.', errorCode:'error code',
+    unreachable:'Maya cannot reach the server. Check your internet connection and reload the page.',
+    redirected:'The server is asking you to log in first (Vercel protection). Reload the page; if Vercel asks you to log in, do so and try again.',
     login:'Please log in to use Maya. Use the email address you subscribed with, or subscribe to start your free trial.',
     inactive:'We could not find an active subscription or free trial for this email address. Subscribe or renew to keep using Maya. Your drafts on this device are not lost.',
   },
@@ -1514,7 +1516,9 @@ const LICENSE_T = {
     badEmail:'Vul een geldig e-mailadres in.',
     wrongCode:'Deze code klopt niet of is verlopen. Probeer opnieuw of vraag een nieuwe code.',
     tooMany:'Te veel pogingen. Wacht even en probeer het later opnieuw.',
-    error:'Er ging iets mis. Probeer het zo opnieuw.',
+    error:'Er ging iets mis. Probeer het zo opnieuw.', errorCode:'foutcode',
+    unreachable:'Maya kan de server niet bereiken. Controleer je internetverbinding en herlaad de pagina.',
+    redirected:'De server vraagt eerst om in te loggen (Vercel-beveiliging). Herlaad de pagina; vraagt Vercel om in te loggen, doe dat en probeer opnieuw.',
     login:'Log in om Maya te gebruiken. Gebruik het e-mailadres van je abonnement, of neem een abonnement om gratis te beginnen.',
     inactive:'We vinden geen actief abonnement of proefperiode voor dit e-mailadres. Neem een abonnement of verleng het om Maya verder te gebruiken. Je klad-verslagen op dit toestel zijn niet verloren.',
   },
@@ -1530,7 +1534,9 @@ const LICENSE_T = {
     badEmail:'Saisissez une adresse e-mail valide.',
     wrongCode:"Ce code est incorrect ou a expiré. Réessayez ou demandez un nouveau code.",
     tooMany:'Trop de tentatives. Patientez un moment puis réessayez.',
-    error:"Une erreur s'est produite. Réessayez dans un instant.",
+    error:"Une erreur s'est produite. Réessayez dans un instant.", errorCode:"code d'erreur",
+    unreachable:'Maya ne parvient pas à joindre le serveur. Vérifiez votre connexion internet et rechargez la page.',
+    redirected:"Le serveur demande d'abord une connexion (protection Vercel). Rechargez la page ; si Vercel vous demande de vous connecter, faites-le puis réessayez.",
     login:"Connectez-vous pour utiliser Maya. Utilisez l'adresse e-mail de votre abonnement, ou abonnez-vous pour commencer gratuitement.",
     inactive:"Aucun abonnement actif ni essai gratuit trouvé pour cette adresse e-mail. Abonnez-vous ou renouvelez pour continuer à utiliser Maya. Vos brouillons sur cet appareil ne sont pas perdus.",
   },
@@ -1614,21 +1620,46 @@ function closeLicenseModal() {
   document.getElementById('license-modal').style.display = 'none';
 }
 
-async function loginRequest(payload) {
-  const res = await fetch('/api/login', {
-    method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)
-  });
+// Vraag aan Maya's eigen server. Geeft altijd een antwoord { ok, reason, ... } terug,
+// ook bij problemen, zodat de melding precies zegt wat er misging.
+async function serverRequest(path, payload) {
+  let res;
+  try {
+    res = await fetch(path, {
+      method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload),
+      redirect:'manual', // Maya's server stuurt nooit door; een omleiding = beveiliging ervoor
+    });
+  } catch(e) {
+    console.error('Maya: server niet bereikbaar', path, e);
+    return { ok:false, reason:'unreachable' };
+  }
+  if (res.type === 'opaqueredirect' || (res.status >= 300 && res.status < 400)) {
+    console.error('Maya: aanvraag omgeleid (bv. Vercel-beveiliging)', path);
+    return { ok:false, reason:'redirected' };
+  }
   let data = null;
   try { data = await res.json(); } catch(e) {}
-  return data || { ok:false, reason:'error' };
+  if (!data) {
+    console.error('Maya: onverwacht antwoord', path, res.status);
+    return { ok:false, reason:'http_' + res.status };
+  }
+  if (!data.ok && !data.reason) data.reason = 'http_' + res.status;
+  return data;
+}
+
+function loginRequest(payload) {
+  return serverRequest('/api/login', payload);
 }
 
 function loginErrorText(reason) {
   const t = LICENSE_T[lang];
-  return reason === 'bad_email' ? t.badEmail
-    : reason === 'wrong_code' ? t.wrongCode
-    : reason === 'too_many' ? t.tooMany
-    : t.error;
+  if (reason === 'bad_email') return t.badEmail;
+  if (reason === 'wrong_code') return t.wrongCode;
+  if (reason === 'too_many') return t.tooMany;
+  if (reason === 'redirected') return t.redirected;
+  if (reason === 'unreachable') return t.unreachable;
+  // Andere fouten: algemene melding + korte foutcode om door te geven
+  return t.error + (reason ? ' (' + t.errorCode + ': ' + reason + ')' : '');
 }
 
 async function sendLoginCode() {
@@ -1695,18 +1726,14 @@ async function openCheckout() {
   const auth = getAuth();
   const email = typed || (auth ? auth.email : '');
   btn.disabled = true; loader.classList.add('vis'); hideLicenseMsg();
-  try {
-    const res = await fetch('/api/checkout', {
-      method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email, lang })
-    });
-    const data = await res.json();
-    if (!data || !data.ok || !data.url) throw new Error(data && data.reason || 'checkout');
+  const data = await serverRequest('/api/checkout', { email, lang });
+  if (data.ok && data.url) {
     try { if (email) localStorage.setItem('maya-checkout-email', email); } catch(e) {}
     window.location.href = data.url;
-  } catch(e) {
-    showLicenseMsg(e.message === 'too_many' ? LICENSE_T[lang].tooMany : LICENSE_T[lang].error);
-    btn.disabled = false; loader.classList.remove('vis');
+    return;
   }
+  showLicenseMsg(loginErrorText(data.reason));
+  btn.disabled = false; loader.classList.remove('vis');
 }
 
 // Terug van Stripe na het afsluiten: bedanken en meteen naar het inloggen

@@ -6,7 +6,7 @@
 
 import crypto from "node:crypto";
 import {
-  ALLOWED_ORIGINS, normalizeEmail, isValidEmail, signToken, verifyToken, codeHash, safeEqual, checkSubscription,
+  isAllowedOrigin, normalizeEmail, isValidEmail, signToken, verifyToken, codeHash, safeEqual, checkSubscription,
 } from "../lib/subscription.js";
 
 const CODE_VALID_MS = 10 * 60 * 1000;            // code is 10 minuten geldig
@@ -81,8 +81,7 @@ export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).end();
 
   // 1. Alleen verzoeken vanaf mayanurse.com
-  const origin = req.headers.origin || "";
-  if (!ALLOWED_ORIGINS.includes(origin)) {
+  if (!isAllowedOrigin(req)) {
     return res.status(403).json({ ok: false, reason: "forbidden" });
   }
 

@@ -2,7 +2,7 @@
 // Beveiligde versie: alleen eigen website, limiet per gebruiker, begrensde lengte,
 // en alleen voor gebruikers met een geldig abonnement (Stripe).
 
-import { ALLOWED_ORIGINS, verifyToken, checkSubscription } from "../lib/subscription.js";
+import { isAllowedOrigin, verifyToken, checkSubscription } from "../lib/subscription.js";
 
 const MAX_REQUESTS_PER_HOUR = 30;   // per gebruiker (IP-adres)
 const MAX_TOKENS_CAP = 1500;        // maximale lengte van het antwoord
@@ -45,8 +45,7 @@ export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).end();
 
   // 1. Alleen verzoeken vanaf mayanurse.com
-  const origin = req.headers.origin || "";
-  if (!ALLOWED_ORIGINS.includes(origin)) {
+  if (!isAllowedOrigin(req)) {
     return errorReply(res, 403, "Toegang geweigerd.");
   }
 
