@@ -1,5 +1,8 @@
 // Maya NurseMate — /api/generate
-// Beveiligde versie: alleen eigen website, limiet per gebruiker, begrensde lengte.
+// Beveiligde versie: alleen eigen website, limiet per gebruiker, begrensde lengte,
+// en alleen voor gebruikers met een geldig abonnement (Stripe).
+
+import { verifyToken, checkSubscription } from "../lib/subscription.js";
 
 const ALLOWED_ORIGINS = [
   "https://mayanurse.com",
@@ -34,79 +37,14 @@ function errorReply(res, status, text, extra) {
   return res.status(status).json({ content: [{ type: "text", text }], error: true, ...extra });
 }
 
-// ─── Abonnement: licentiecode controleren bij Lemon Squeezy ───
-// Een goedgekeurde code wordt 5 minuten onthouden, zodat niet elke aanvraag
-// Lemon Squeezy opnieuw vraagt (limiet: 60 controles per minuut).
-// Afgekeurde codes worden niet onthouden: wie net betaald heeft, kan meteen verder.
-const LICENSE_CACHE_MS = 5 * 60 * 1000;
-const licenseCache = new Map(); // code -> tijdstip tot wanneer ze goedgekeurd blijft
-
-const LICENSE_MESSAGES = {
-  missing:
-    "Vul je licentiecode in om Maya te gebruiken. / Saisissez votre code de licence pour utiliser Maya. / Enter your license key to use Maya.",
-  invalid:
-    "Deze licentiecode is niet geldig. / Ce code de licence n'est pas valide. / This license key is not valid.",
-  expired:
-    "Je abonnement is verlopen. / Votre abonnement a expiré. / Your subscription has expired.",
+const ACCESS_MESSAGES = {
+  login:
+    "Log in om Maya te gebruiken. / Connectez-vous pour utiliser Maya. / Please log in to use Maya.",
+  inactive:
+    "Geen actief abonnement gevonden. / Aucun abonnement actif trouvé. / No active subscription found.",
   check_failed:
     "Je abonnement kon even niet gecontroleerd worden. Probeer het zo opnieuw. / Impossible de vérifier votre abonnement pour le moment. Réessayez. / Your subscription could not be checked right now. Please try again.",
 };
-
-// Geeft terug: "ok", "invalid", "expired" of "check_failed"
-async function checkLicense(key) {
-  const now = Date.now();
-  if ((licenseCache.get(key) || 0) > now) return "ok";
-
-  const storeId = process.env.LEMON_STORE_ID;
-  const productId = process.env.LEMON_PRODUCT_ID;
-  if (!storeId || !productId) {
-    console.error("LEMON_STORE_ID of LEMON_PRODUCT_ID ontbreekt in Vercel.");
-    return "check_failed";
-  }
-
-  let response, data;
-  try {
-    response = await fetch("https://api.lemonsqueezy.com/v1/licenses/validate", {
-      method: "POST",
-      headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: new URLSearchParams({ license_key: key }).toString(),
-      signal: AbortSignal.timeout(8000),
-    });
-    data = await response.json();
-  } catch (err) {
-    console.error("Lemon Squeezy niet bereikbaar:", err?.message);
-    return "check_failed";
-  }
-
-  // Storing of drukte bij Lemon Squeezy: niet de schuld van de gebruiker
-  if (response.status === 429 || response.status >= 500) {
-    console.error("Lemon Squeezy fout:", response.status);
-    return "check_failed";
-  }
-
-  const lk = data?.license_key;
-  const meta = data?.meta;
-
-  // Code hoort niet bij jouw winkel of product: altijd weigeren
-  if (lk && meta && (String(meta.store_id) !== String(storeId) || String(meta.product_id) !== String(productId))) {
-    return "invalid";
-  }
-  if (lk?.status === "expired" || (lk?.expires_at && Date.parse(lk.expires_at) < now)) {
-    return "expired";
-  }
-  // "active" = in gebruik, "inactive" = geldig maar nog nooit geactiveerd. Beide zijn goed.
-  // "disabled" (handmatig uitgezet) of een onbekende code = niet goed.
-  if (data?.valid !== true || !meta || !["active", "inactive"].includes(lk?.status)) {
-    return "invalid";
-  }
-
-  licenseCache.set(key, now + LICENSE_CACHE_MS);
-  if (licenseCache.size > 5000) licenseCache.clear(); // geheugen niet laten vollopen
-  return "ok";
-}
 
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).end();
@@ -154,15 +92,16 @@ export default async function handler(req, res) {
 
   const tokens = Math.min(Number(max_tokens) || 1000, MAX_TOKENS_CAP);
 
-  // 4. Geldig abonnement? Zonder geldige licentiecode wordt OpenAI niet aangeroepen.
-  const licenseKey = typeof req.body?.license_key === "string" ? req.body.license_key.trim() : "";
-  if (!licenseKey || licenseKey.length > 100) {
-    return errorReply(res, 401, LICENSE_MESSAGES.missing, { license: "missing" });
+  // 4. Geldig abonnement? Zonder geldige toegangspas + abonnement wordt OpenAI niet aangeroepen.
+  //    De toegangspas krijg je pas na het inloggen met een code per e-mail (/api/login).
+  const access = verifyToken(req.body?.auth_token, "a");
+  if (!access) {
+    return errorReply(res, 401, ACCESS_MESSAGES.login, { license: "login" });
   }
-  const licenseResult = await checkLicense(licenseKey);
-  if (licenseResult !== "ok") {
-    const status = licenseResult === "check_failed" ? 503 : 403;
-    return errorReply(res, status, LICENSE_MESSAGES[licenseResult], { license: licenseResult });
+  const subscription = await checkSubscription(access.e, access.o);
+  if (subscription !== "ok") {
+    const reason = subscription === "none" ? "inactive" : "check_failed";
+    return errorReply(res, reason === "inactive" ? 403 : 503, ACCESS_MESSAGES[reason], { license: reason });
   }
 
   // 5. Vraag aan OpenAI

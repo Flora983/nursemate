@@ -756,10 +756,27 @@ select.f option{background:#1e2937;}
     </div>
     <div id="lic-alert" style="display:none;background:rgba(252,211,77,0.1);border:1px solid rgba(252,211,77,0.25);border-radius:10px;padding:11px 14px;font-size:0.84rem;color:var(--amber);margin-bottom:12px;line-height:1.6;"></div>
     <div style="font-size:0.86rem;color:var(--text);line-height:1.6;margin-bottom:14px;" id="lic-text"></div>
-    <span class="lbl" id="lic-input-lbl"></span>
-    <input type="text" class="f" id="lic-input" autocomplete="off" autocapitalize="off" spellcheck="false" style="margin-bottom:6px;" oninput="document.getElementById('lic-saved').style.display='none'">
-    <div id="lic-saved" style="display:none;font-size:0.78rem;color:var(--green);font-weight:700;margin-bottom:6px;"></div>
-    <button class="res-btn pri" onclick="saveLicenseKey()" id="lic-save-btn" style="width:100%;margin-top:6px;"></button>
+    <!-- Stap 1: e-mailadres -->
+    <div id="lic-step-email">
+      <span class="lbl" id="lic-email-lbl"></span>
+      <input type="email" class="f" id="lic-email" autocomplete="email" autocapitalize="off" spellcheck="false" style="margin-bottom:6px;" oninput="hideLicenseMsg()" onkeydown="if(event.key==='Enter')sendLoginCode()">
+      <button class="res-btn pri" onclick="sendLoginCode()" id="lic-send-btn" style="width:100%;margin-top:6px;"></button>
+    </div>
+    <!-- Stap 2: code uit de e-mail -->
+    <div id="lic-step-code" style="display:none;">
+      <div style="font-size:0.82rem;color:var(--text2);line-height:1.6;margin-bottom:10px;" id="lic-sent-text"></div>
+      <span class="lbl" id="lic-code-lbl"></span>
+      <input type="text" class="f" id="lic-code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" style="margin-bottom:6px;letter-spacing:4px;font-size:1.1rem;" oninput="hideLicenseMsg()" onkeydown="if(event.key==='Enter')verifyLoginCode()">
+      <button class="res-btn pri" onclick="verifyLoginCode()" id="lic-verify-btn" style="width:100%;margin-top:6px;"></button>
+      <button class="res-btn" onclick="showLoginStep('email')" id="lic-other-email-btn" style="width:100%;margin-top:10px;"></button>
+    </div>
+    <!-- Ingelogd -->
+    <div id="lic-step-done" style="display:none;">
+      <div style="font-size:0.86rem;color:var(--text);margin-bottom:10px;"><span id="lic-logged-lbl"></span> <strong id="lic-logged-email" style="color:var(--text3);word-break:break-all;"></strong></div>
+      <button class="res-btn" onclick="logoutMaya()" id="lic-logout-btn" style="width:100%;"></button>
+    </div>
+    <div id="lic-msg" style="display:none;font-size:0.8rem;font-weight:600;margin-top:8px;line-height:1.5;"></div>
+    <div class="loader" id="lic-loader"><div class="spinner"></div></div>
     <button class="res-btn" onclick="openCheckout()" id="lic-subscribe-btn" style="width:100%;margin-top:10px;"></button>
     <button class="res-btn" onclick="closeLicenseModal()" id="lic-close-btn" style="width:100%;margin-top:10px;"></button>
   </div>
@@ -869,9 +886,9 @@ select.f option{background:#1e2937;}
 
 <script>
 // ─── ABONNEMENT ───
-// Plak hier de link naar je Lemon Squeezy-betaalpagina (tussen de aanhalingstekens).
+// Plak hier de link naar je Stripe-betaalpagina (Payment Link, tussen de aanhalingstekens).
 // Zolang hij leeg is, wordt de knop "Abonneer" niet getoond.
-const LEMON_CHECKOUT_URL = '';
+const STRIPE_CHECKOUT_URL = '';
 
 // ─── TRANSLATIONS ───
 const T = {
@@ -1472,41 +1489,88 @@ const DRAFTS_T = {
   },
 };
 
-// ─── ABONNEMENT: TEKSTEN + LICENTIECODE ───
+// ─── ABONNEMENT: TEKSTEN + INLOGGEN ───
 const LICENSE_T = {
   en: {
     footer:'Subscription', title:'Your subscription',
-    text:'Maya NurseMate works with a subscription. Start with a 7-day free trial. After subscribing you receive a license key by email — enter it below.',
-    inputLbl:'License key', save:'Save key', saved:'✓ Saved. You can try again now.', empty:'Please enter your license key first.',
+    text:'Maya NurseMate works with a subscription. Start with a 7-day free trial. Log in with the email address you used to subscribe — we will email you a code.',
+    emailLbl:'Email address', sendCode:'Send code', codeLbl:'Code from your email', verify:'Log in', otherEmail:'Use another email address',
+    sent:'If this email address has an active subscription or free trial, you will receive a 6-digit code within a minute. No email? Check your spam folder, and make sure you use the same address as when you subscribed.',
+    loggedIn:'Logged in as', logout:'Log out', loginOk:'✓ You are logged in. You can try again now.',
     subscribe:'Subscribe — 7 days free', close:'Close',
-    missing:'You have not entered a license key yet. Enter the key from your email, or subscribe to start your free trial.',
-    invalid:'This license key was not recognised. Check that you copied the full key from your email, or subscribe below.',
-    expired:'Your subscription has ended. Renew your subscription to keep using Maya. Your drafts on this device are not lost.',
+    badEmail:'Please enter a valid email address.',
+    wrongCode:'This code is incorrect or has expired. Try again or request a new code.',
+    tooMany:'Too many attempts. Please wait a while and try again.',
+    error:'Something went wrong. Please try again shortly.',
+    login:'Please log in to use Maya. Use the email address you subscribed with, or subscribe to start your free trial.',
+    inactive:'We could not find an active subscription or free trial for this email address. Subscribe or renew to keep using Maya. Your drafts on this device are not lost.',
   },
   nl: {
     footer:'Abonnement', title:'Je abonnement',
-    text:'Maya NurseMate werkt met een abonnement. Je begint met 7 dagen gratis proberen. Na het afsluiten krijg je een licentiecode per e-mail — vul die hieronder in.',
-    inputLbl:'Licentiecode', save:'Code opslaan', saved:'✓ Opgeslagen. Je kunt het nu opnieuw proberen.', empty:'Vul eerst je licentiecode in.',
+    text:'Maya NurseMate werkt met een abonnement. Je begint met 7 dagen gratis proberen. Log in met het e-mailadres waarmee je je abonnement afsloot — je krijgt een code per e-mail.',
+    emailLbl:'E-mailadres', sendCode:'Stuur code', codeLbl:'Code uit je e-mail', verify:'Inloggen', otherEmail:'Ander e-mailadres gebruiken',
+    sent:'Als dit e-mailadres een actief abonnement of proefperiode heeft, krijg je binnen een minuut een code van 6 cijfers. Geen e-mail? Kijk in je spam, en controleer of je hetzelfde adres gebruikt als bij het afsluiten.',
+    loggedIn:'Ingelogd als', logout:'Uitloggen', loginOk:'✓ Je bent ingelogd. Je kunt het nu opnieuw proberen.',
     subscribe:'Abonneer — 7 dagen gratis', close:'Sluiten',
-    missing:'Je hebt nog geen licentiecode ingevuld. Vul de code uit je e-mail in, of neem een abonnement om gratis te beginnen.',
-    invalid:'Deze licentiecode werd niet herkend. Kijk of je de volledige code uit je e-mail hebt gekopieerd, of neem hieronder een abonnement.',
-    expired:'Je abonnement is afgelopen. Verleng je abonnement om Maya verder te gebruiken. Je klad-verslagen op dit toestel zijn niet verloren.',
+    badEmail:'Vul een geldig e-mailadres in.',
+    wrongCode:'Deze code klopt niet of is verlopen. Probeer opnieuw of vraag een nieuwe code.',
+    tooMany:'Te veel pogingen. Wacht even en probeer het later opnieuw.',
+    error:'Er ging iets mis. Probeer het zo opnieuw.',
+    login:'Log in om Maya te gebruiken. Gebruik het e-mailadres van je abonnement, of neem een abonnement om gratis te beginnen.',
+    inactive:'We vinden geen actief abonnement of proefperiode voor dit e-mailadres. Neem een abonnement of verleng het om Maya verder te gebruiken. Je klad-verslagen op dit toestel zijn niet verloren.',
   },
   fr: {
     footer:'Abonnement', title:'Votre abonnement',
-    text:"Maya NurseMate fonctionne avec un abonnement. Commencez par 7 jours d'essai gratuit. Après l'abonnement, vous recevez un code de licence par e-mail — saisissez-le ci-dessous.",
-    inputLbl:'Code de licence', save:'Enregistrer le code', saved:'✓ Enregistré. Vous pouvez réessayer.', empty:"Saisissez d'abord votre code de licence.",
+    text:"Maya NurseMate fonctionne avec un abonnement. Commencez par 7 jours d'essai gratuit. Connectez-vous avec l'adresse e-mail utilisée pour l'abonnement — vous recevrez un code par e-mail.",
+    emailLbl:'Adresse e-mail', sendCode:'Envoyer le code', codeLbl:'Code reçu par e-mail', verify:'Se connecter', otherEmail:'Utiliser une autre adresse e-mail',
+    sent:"Si cette adresse e-mail a un abonnement actif ou un essai gratuit, vous recevrez un code à 6 chiffres dans la minute. Pas d'e-mail ? Vérifiez vos spams et utilisez la même adresse que lors de l'abonnement.",
+    loggedIn:'Connecté(e) en tant que', logout:'Se déconnecter', loginOk:'✓ Vous êtes connecté(e). Vous pouvez réessayer.',
     subscribe:"S'abonner — 7 jours gratuits", close:'Fermer',
-    missing:"Vous n'avez pas encore saisi de code de licence. Saisissez le code reçu par e-mail, ou abonnez-vous pour commencer gratuitement.",
-    invalid:"Ce code de licence n'a pas été reconnu. Vérifiez que vous avez copié le code complet de votre e-mail, ou abonnez-vous ci-dessous.",
-    expired:'Votre abonnement est terminé. Renouvelez-le pour continuer à utiliser Maya. Vos brouillons sur cet appareil ne sont pas perdus.',
+    badEmail:'Saisissez une adresse e-mail valide.',
+    wrongCode:"Ce code est incorrect ou a expiré. Réessayez ou demandez un nouveau code.",
+    tooMany:'Trop de tentatives. Patientez un moment puis réessayez.',
+    error:"Une erreur s'est produite. Réessayez dans un instant.",
+    login:"Connectez-vous pour utiliser Maya. Utilisez l'adresse e-mail de votre abonnement, ou abonnez-vous pour commencer gratuitement.",
+    inactive:"Aucun abonnement actif ni essai gratuit trouvé pour cette adresse e-mail. Abonnez-vous ou renouvelez pour continuer à utiliser Maya. Vos brouillons sur cet appareil ne sont pas perdus.",
   },
 };
-const LICENSE_STORAGE_KEY = 'maya-license';
-let licenseReason = null; // 'missing' | 'invalid' | 'expired' | null
+const AUTH_STORAGE_KEY = 'maya-auth';
+let licenseReason = null;   // 'login' | 'inactive' | null
+let loginStep = 'email';    // 'email' | 'code' | 'done'
+let loginChallenge = null;  // ondertekend bewijs van de verstuurde code (alleen in het geheugen)
 
-function getLicenseKey() {
-  try { return (localStorage.getItem(LICENSE_STORAGE_KEY) || '').trim(); } catch(e) { return ''; }
+// Toegangspas op dit toestel: { token, email }
+function getAuth() {
+  try {
+    const a = JSON.parse(localStorage.getItem(AUTH_STORAGE_KEY) || 'null');
+    return (a && typeof a.token === 'string') ? a : null;
+  } catch(e) { return null; }
+}
+function setAuth(a) {
+  try {
+    if (a) localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(a));
+    else localStorage.removeItem(AUTH_STORAGE_KEY);
+  } catch(e) {}
+}
+
+function showLoginStep(step) {
+  loginStep = step;
+  document.getElementById('lic-step-email').style.display = step === 'email' ? 'block' : 'none';
+  document.getElementById('lic-step-code').style.display = step === 'code' ? 'block' : 'none';
+  document.getElementById('lic-step-done').style.display = step === 'done' ? 'block' : 'none';
+  if (step === 'code') document.getElementById('lic-code').value = '';
+  hideLicenseMsg();
+}
+
+function showLicenseMsg(text, ok) {
+  const el = document.getElementById('lic-msg');
+  el.textContent = text;
+  el.style.color = ok ? 'var(--green)' : 'var(--red)';
+  el.style.display = 'block';
+}
+function hideLicenseMsg() {
+  const el = document.getElementById('lic-msg');
+  if (el) el.style.display = 'none';
 }
 
 function renderLicenseModal() {
@@ -1514,25 +1578,36 @@ function renderLicenseModal() {
   const set = (id, txt) => { const el = document.getElementById(id); if (el) el.textContent = txt; };
   set('lic-title', t.title);
   set('lic-text', t.text);
-  set('lic-input-lbl', t.inputLbl);
-  set('lic-save-btn', t.save);
+  set('lic-email-lbl', t.emailLbl);
+  set('lic-send-btn', t.sendCode);
+  set('lic-sent-text', t.sent);
+  set('lic-code-lbl', t.codeLbl);
+  set('lic-verify-btn', t.verify);
+  set('lic-other-email-btn', t.otherEmail);
+  set('lic-logged-lbl', t.loggedIn);
+  set('lic-logout-btn', t.logout);
   set('lic-subscribe-btn', t.subscribe);
   set('lic-close-btn', t.close);
+  const auth = getAuth();
+  set('lic-logged-email', auth ? auth.email : '');
   const alertEl = document.getElementById('lic-alert');
   if (alertEl) {
     alertEl.textContent = licenseReason ? t[licenseReason] : '';
     alertEl.style.display = licenseReason ? 'block' : 'none';
   }
   const subBtn = document.getElementById('lic-subscribe-btn');
-  if (subBtn) subBtn.style.display = LEMON_CHECKOUT_URL ? 'block' : 'none';
+  if (subBtn) subBtn.style.display = STRIPE_CHECKOUT_URL ? 'block' : 'none';
 }
 
 function openLicenseModal(reason) {
   licenseReason = reason || null;
   renderLicenseModal();
-  const input = document.getElementById('lic-input');
-  if (input) input.value = getLicenseKey();
-  document.getElementById('lic-saved').style.display = 'none';
+  const auth = getAuth();
+  if (auth && reason !== 'inactive') showLoginStep('done');
+  else if (loginStep !== 'code') {
+    showLoginStep('email');
+    if (auth) document.getElementById('lic-email').value = auth.email;
+  } else hideLicenseMsg();
   document.getElementById('license-modal').style.display = 'flex';
 }
 
@@ -1540,27 +1615,81 @@ function closeLicenseModal() {
   document.getElementById('license-modal').style.display = 'none';
 }
 
-function saveLicenseKey() {
-  const input = document.getElementById('lic-input');
-  const savedEl = document.getElementById('lic-saved');
-  const key = (input.value || '').trim();
-  if (!key) {
-    savedEl.textContent = LICENSE_T[lang].empty;
-    savedEl.style.color = 'var(--red)';
-    savedEl.style.display = 'block';
-    return;
+async function loginRequest(payload) {
+  const res = await fetch('/api/login', {
+    method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)
+  });
+  let data = null;
+  try { data = await res.json(); } catch(e) {}
+  return data || { ok:false, reason:'error' };
+}
+
+function loginErrorText(reason) {
+  const t = LICENSE_T[lang];
+  return reason === 'bad_email' ? t.badEmail
+    : reason === 'wrong_code' ? t.wrongCode
+    : reason === 'too_many' ? t.tooMany
+    : t.error;
+}
+
+async function sendLoginCode() {
+  const email = document.getElementById('lic-email').value.trim();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showLicenseMsg(LICENSE_T[lang].badEmail); return; }
+  const btn = document.getElementById('lic-send-btn');
+  const loader = document.getElementById('lic-loader');
+  btn.disabled = true; loader.classList.add('vis'); hideLicenseMsg();
+  try {
+    const data = await loginRequest({ action:'send', email, lang });
+    if (data.ok && data.challenge) {
+      loginChallenge = data.challenge;
+      showLoginStep('code');
+      document.getElementById('lic-code').focus();
+    } else {
+      showLicenseMsg(loginErrorText(data.reason));
+    }
+  } catch(e) {
+    showLicenseMsg(LICENSE_T[lang].error);
+  } finally {
+    btn.disabled = false; loader.classList.remove('vis');
   }
-  try { localStorage.setItem(LICENSE_STORAGE_KEY, key); } catch(e) {}
-  licenseReason = null;
+}
+
+async function verifyLoginCode() {
+  const code = document.getElementById('lic-code').value.replace(/\s/g, '');
+  if (!/^\d{6}$/.test(code) || !loginChallenge) { showLicenseMsg(LICENSE_T[lang].wrongCode); return; }
+  const btn = document.getElementById('lic-verify-btn');
+  const loader = document.getElementById('lic-loader');
+  btn.disabled = true; loader.classList.add('vis'); hideLicenseMsg();
+  try {
+    const data = await loginRequest({ action:'verify', challenge: loginChallenge, code });
+    if (data.ok && data.token) {
+      setAuth({ token: data.token, email: data.email });
+      loginChallenge = null;
+      licenseReason = null;
+      renderLicenseModal();
+      showLoginStep('done');
+      showLicenseMsg(LICENSE_T[lang].loginOk, true);
+    } else {
+      showLicenseMsg(loginErrorText(data.reason));
+    }
+  } catch(e) {
+    showLicenseMsg(LICENSE_T[lang].error);
+  } finally {
+    btn.disabled = false; loader.classList.remove('vis');
+  }
+}
+
+function logoutMaya() {
+  setAuth(null);
+  loginChallenge = null;
+  document.getElementById('lic-email').value = '';
   renderLicenseModal();
-  savedEl.textContent = LICENSE_T[lang].saved;
-  savedEl.style.color = 'var(--green)';
-  savedEl.style.display = 'block';
+  showLoginStep('email');
 }
 
 function openCheckout() {
-  if (!LEMON_CHECKOUT_URL) return;
-  window.open(LEMON_CHECKOUT_URL, '_blank', 'noopener');
+  if (!STRIPE_CHECKOUT_URL) return;
+  window.open(STRIPE_CHECKOUT_URL, '_blank', 'noopener');
 }
 
 // ─── STATE ───
@@ -2324,11 +2453,20 @@ Write the full handover, one paragraph per patient.`;
 }
 
 // ─── API ───
+// Niet ingelogd of geen actief abonnement → vriendelijke uitleg met inloggen en "Abonneer".
+// ('check_failed' = storing bij Stripe → gewone "probeer opnieuw"-melding)
+function handleAccessError(data) {
+  if (!data || !['login','inactive'].includes(data.license)) return false;
+  if (data.license === 'login') setAuth(null); // pas verlopen of ongeldig: opnieuw inloggen
+  openLicenseModal(data.license);
+  return true;
+}
+
 async function callAPI(prompt, system, maxTokens) {
-  // Zonder licentiecode niet eens naar de server gaan: meteen uitleg tonen
-  const licenseKey = getLicenseKey();
-  if (!licenseKey) { openLicenseModal('missing'); throw new Error('license'); }
-  const body = { messages:[{role:'user',content:prompt}], max_tokens: maxTokens||600, license_key: licenseKey };
+  // Niet ingelogd: niet eens naar de server gaan, meteen uitleg tonen
+  const auth = getAuth();
+  if (!auth) { openLicenseModal('login'); throw new Error('license'); }
+  const body = { messages:[{role:'user',content:prompt}], max_tokens: maxTokens||600, auth_token: auth.token };
   if (system) body.system = system;
   const res = await fetch('/api/generate', {
     method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)
@@ -2340,12 +2478,7 @@ async function callAPI(prompt, system, maxTokens) {
     // Server gaf geen geldige JSON terug (bv. netwerk- of serverfout) — veilig opvangen
     throw new Error('invalid-response');
   }
-  // Code ontbreekt, klopt niet of is verlopen → vriendelijke uitleg met knop "Abonneer".
-  // ('check_failed' = storing bij Lemon Squeezy → gewone "probeer opnieuw"-melding)
-  if (data && ['missing','invalid','expired'].includes(data.license)) {
-    openLicenseModal(data.license);
-    throw new Error('license');
-  }
+  if (handleAccessError(data)) throw new Error('license');
   if (!res.ok) throw new Error((data && data.error) ? JSON.stringify(data.error) : 'API error');
   const text = data && data.content && data.content[0] && data.content[0].text;
   return text || '';
@@ -2884,6 +3017,7 @@ function openPrivacyPage() {
     'Maya is geen officieel patiëntendossier.',
     'Het definitieve verslag hoort altijd in het officiële EPD / patiëntendossier.',
     'Maya verkoopt geen patiëntgegevens.',
+    'Om je abonnement te controleren gebruikt Maya je e-mailadres bij Stripe (betalingen) en verstuurt het een inlogcode per e-mail. Je e-mailadres wordt nooit samen met je verslagen bewaard.',
     'Contact: [VUL BEDRIJFSNAAM EN CONTACTGEGEVENS IN VOOR PUBLIEKE LANCERING]',
   ] : isFr ? [
     'Maya est une assistante IA d\'écriture pour infirmiers.',
@@ -2895,6 +3029,7 @@ function openPrivacyPage() {
     'Maya n\'est pas un dossier patient officiel.',
     'Le rapport final doit toujours être saisi dans le dossier patient / DPI officiel.',
     'Maya ne vend pas de données patients.',
+    "Pour vérifier votre abonnement, Maya utilise votre adresse e-mail auprès de Stripe (paiements) et envoie un code de connexion par e-mail. Votre adresse e-mail n'est jamais conservée avec vos rapports.",
     'Contact: [À COMPLÉTER AVANT LE LANCEMENT PUBLIC — NOM DE L\'ENTREPRISE ET COORDONNÉES]',
   ] : [
     'Maya is an AI writing assistant for nurses.',
@@ -2906,6 +3041,7 @@ function openPrivacyPage() {
     'Maya is not an official patient record.',
     'The final report must always be entered into the official EPR / patient record.',
     'Maya does not sell patient data.',
+    'To check your subscription, Maya uses your email address with Stripe (payments) and sends a login code by email. Your email address is never stored together with your reports.',
     'Contact: [FILL IN COMPANY NAME AND CONTACT DETAILS BEFORE PUBLIC LAUNCH]',
   ];
 
@@ -3241,19 +3377,15 @@ async function sendSupport() {
     : lang==='fr'
     ? `Vous êtes Maya, une collègue IA bienveillante pour les infirmiers. Écoutez d'abord. Validez les émotions. Une question douce à la fois. Max 4 phrases. En cas de crise: orientez vers un professionnel. Répondez en français.`
     : `You are Maya, a warm AI companion for nurses. Listen first. Validate feelings. Ask one gentle question at a time. Max 4 sentences. If crisis: gently suggest professional support. Respond in English.`;
-  const licenseKey = getLicenseKey();
-  if (!licenseKey) { supportHistory.pop(); openLicenseModal('missing'); return; }
+  const auth = getAuth();
+  if (!auth) { supportHistory.pop(); openLicenseModal('login'); return; }
   try {
     const res = await fetch('/api/generate', {
       method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({messages:supportHistory, system, max_tokens:400, license_key: licenseKey})
+      body: JSON.stringify({messages:supportHistory, system, max_tokens:400, auth_token: auth.token})
     });
     const data = await res.json();
-    if (data && ['missing','invalid','expired'].includes(data.license)) {
-      supportHistory.pop();
-      openLicenseModal(data.license);
-      return;
-    }
+    if (handleAccessError(data)) { supportHistory.pop(); return; }
     const reply = data.content?.[0]?.text || '...';
     supportHistory.push({role:'assistant', content:reply});
     addChatMsg('maya', reply);
