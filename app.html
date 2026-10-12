@@ -257,6 +257,21 @@ select.f option{background:#1e2937;}
   <button class="lang-btn" onclick="cycleLang()">🌐 <span id="lang-display">EN</span></button>
 </div>
 <div class="disc" id="disc-bar"></div>
+<div id="ios-install" style="display:none;position:fixed;left:12px;right:12px;bottom:calc(14px + env(safe-area-inset-bottom));z-index:9999;background:#0f2433;border:1px solid rgba(127,224,234,0.35);border-radius:18px;padding:16px 16px 14px;box-shadow:0 10px 30px rgba(0,0,0,0.45);font-family:'DM Sans',sans-serif;color:#e8f3f5;">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <img src="/icons/apple-touch-icon.png" alt="" style="width:36px;height:36px;border-radius:9px;">
+      <strong id="ios-title" style="font-size:0.95rem;">Zet Maya op je beginscherm</strong>
+    </div>
+    <button onclick="closeIosInstall()" aria-label="Sluiten" style="background:transparent;border:none;color:rgba(255,255,255,0.6);font-size:1.1rem;cursor:pointer;padding:4px 6px;">✕</button>
+  </div>
+  <ol style="margin:0;padding-left:20px;font-size:0.86rem;line-height:1.6;">
+    <li id="ios-s1">Tik onderaan op het deelknopje <span style="display:inline-block;vertical-align:-3px;"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" stroke="#7fe0ea" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 11V1M4.5 4.5 8 1l3.5 3.5"/><path d="M5 7H3a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1h-2"/></svg></span></li>
+    <li id="ios-s2">Scroll en kies <b>Zet op beginscherm</b></li>
+    <li id="ios-s3">Tik rechtsboven op <b>Voeg toe</b></li>
+  </ol>
+  <div style="text-align:center;margin-top:8px;color:#7fe0ea;font-size:1.3rem;line-height:1;" aria-hidden="true">↓</div>
+</div>
 <div id="install-banner" style="display:none;background:linear-gradient(135deg,#0a3d4a,#0f8fa0);padding:10px 18px;align-items:center;justify-content:space-between;gap:10px;">
   <div style="font-size:0.8rem;color:rgba(255,255,255,0.9);font-family:'DM Sans',sans-serif;">📱 <span id="install-txt">Install Maya on your phone</span></div>
   <div style="display:flex;gap:8px;">
@@ -1500,6 +1515,7 @@ function cycleLang() {
 function closePopup() {
   localStorage.setItem('maya-seen','1');
   document.getElementById('popup').style.display = 'none';
+  setTimeout(showIosInstall, 1200);
 }
 
 // ─── RENDER ALL TEXT ───
@@ -4230,6 +4246,44 @@ function installApp() {
     });
   }
 }
+
+// iPhone/iPad: geen installeerknop mogelijk, dus tonen we korte uitleg
+const IOS_TXT = {
+  nl:{t:'Zet Maya op je beginscherm', s1:'Tik onderaan op het deelknopje ', s2:'Scroll en kies <b>Zet op beginscherm</b>', s3:'Tik rechtsboven op <b>Voeg toe</b>'},
+  fr:{t:'Ajoutez Maya à votre écran d\'accueil', s1:'Touchez le bouton Partager en bas ', s2:'Faites défiler et choisissez <b>Sur l\'écran d\'accueil</b>', s3:'Touchez <b>Ajouter</b> en haut à droite'},
+  en:{t:'Add Maya to your home screen', s1:'Tap the Share button at the bottom ', s2:'Scroll and choose <b>Add to Home Screen</b>', s3:'Tap <b>Add</b> in the top right'}
+};
+function isIos() {
+  const ua = navigator.userAgent || '';
+  return /iPhone|iPad|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+}
+function isStandalone() {
+  return window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches;
+}
+function closeIosInstall() {
+  const el = document.getElementById('ios-install');
+  if (el) el.style.display = 'none';
+  try { localStorage.setItem('maya_ios_install_closed', String(Date.now())); } catch (e) {}
+}
+function showIosInstall() {
+  if (!isIos() || isStandalone()) return;
+  const pop = document.getElementById('popup');
+  if (pop && getComputedStyle(pop).display !== 'none') return; // eerst welkomstvenster
+  let closed = 0;
+  try { closed = Number(localStorage.getItem('maya_ios_install_closed') || 0); } catch (e) {}
+  if (closed && Date.now() - closed < 7 * 24 * 60 * 60 * 1000) return; // 1 week niet meer tonen
+  const t = IOS_TXT[lang] || IOS_TXT.en;
+  const el = document.getElementById('ios-install');
+  if (!el) return;
+  const icon = document.querySelector('#ios-s1 span');
+  const iconHtml = icon ? icon.outerHTML : '';
+  document.getElementById('ios-title').textContent = t.t;
+  document.getElementById('ios-s1').innerHTML = t.s1 + iconHtml;
+  document.getElementById('ios-s2').innerHTML = t.s2;
+  document.getElementById('ios-s3').innerHTML = t.s3;
+  el.style.display = 'block';
+}
+window.addEventListener('load', () => setTimeout(showIosInstall, 2500));
 
 // ─── VOICE ───
 let voiceBtn = null;
