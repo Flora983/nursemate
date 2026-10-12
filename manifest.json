@@ -1,12 +1,14 @@
 {
+  "id": "/app.html",
   "name": "Maya NurseMate",
   "short_name": "Maya",
-  "description": "AI companion for nurses — shift briefings, incident reports, wound care & more",
+  "description": "AI-schrijfhulp voor verpleegkundigen: shift briefings, incidentverslagen en wondzorgnotities in 30 seconden. Nederlands, Frans en Engels.",
   "start_url": "/app.html",
+  "scope": "/",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#0a111f",
   "theme_color": "#0a3d4a",
-  "orientation": "portrait",
   "icons": [
     {
       "src": "/icons/icon-192.png",
@@ -32,6 +34,6 @@
     "health",
     "productivity"
   ],
-  "lang": "en",
+  "lang": "nl",
   "dir": "ltr"
 }
