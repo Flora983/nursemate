@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.mayanurse.app",
+      "sha256_cert_fingerprints": [
+        "A4:0A:8F:03:5C:FD:8F:1E:72:3B:04:93:A0:58:B7:E3:92:A6:70:E0:5C:CD:68:AA:A8:73:57:A4:3F:F6:9C:D1"
+      ]
+    }
+  }
+]
