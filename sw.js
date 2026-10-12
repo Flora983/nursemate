@@ -1,4 +1,4 @@
-const CACHE = 'maya-v3';
+const CACHE = 'maya-v4';
 const ASSETS = ['/', '/app.html'];
 
 self.addEventListener('install', e => {
